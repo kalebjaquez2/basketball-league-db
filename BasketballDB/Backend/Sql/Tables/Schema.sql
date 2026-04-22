@@ -7,10 +7,10 @@ DROP TABLE IF EXISTS Basketball.Games;
 DROP TABLE IF EXISTS Basketball.Teams;
 DROP TABLE IF EXISTS Basketball.Seasons;
 DROP TABLE IF EXISTS Basketball.League;
-DROP TABLE IF EXISTS Basketball.Location;
+DROP TABLE IF EXISTS Basketball.[Location];
 GO
 
-CREATE TABLE Basketball.Location
+CREATE TABLE Basketball.[Location]
 (
     LocationID INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
     City NVARCHAR(64) NOT NULL,

@@ -9,7 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataDelegates\" />
-    <Folder Include="Sql\Tables\" />
     <Folder Include="Sql\Procedures\" />
   </ItemGroup>
 </Project>
