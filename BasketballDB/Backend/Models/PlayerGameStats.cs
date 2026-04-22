@@ -15,7 +15,7 @@ namespace Backend.Models
         public int Rebounds { get; }
         public int Assists { get; }
 
-        publics PlayerGameStats(int playerID, int points, int playingTime,
+        public PlayerGameStats(int playerID, int points, int playingTime,
             int turnovers, int rebounds, int assists)
         {
             PlayerID = playerID;
