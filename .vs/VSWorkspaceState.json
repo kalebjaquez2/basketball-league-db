@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\BasketballDB",
+    "\\database"
   ],
-  "SelectedNode": "\\BasketballDB.sln",
+  "SelectedNode": "\\BasketballDB\\BasketballDB.sln",
   "PreviewInSolutionExplorer": false
 }

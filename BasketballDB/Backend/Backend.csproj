@@ -1,19 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="DataDelegates\" />
     <Folder Include="Sql\Tables\" />
     <Folder Include="Sql\Procedures\" />
   </ItemGroup>
-
 </Project>
