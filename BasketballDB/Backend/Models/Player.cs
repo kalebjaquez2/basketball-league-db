@@ -17,7 +17,7 @@ namespace Backend.Models
         public string? Height { get; }
         public int? Weight { get; }
 
-        internal Player(int playerID, int gameID, int jerseyNumber, string firstName,
+        public Player(int playerID, int gameID, int jerseyNumber, string firstName,
             string lastName, int? age, string? height, int? weight)
         {
             PlayerID = playerID;
