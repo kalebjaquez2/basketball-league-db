@@ -3,6 +3,7 @@ BEGIN
     CREATE TABLE Basketball.PlayerGameStats
     (
         PlayerID INT NOT NULL,
+         GameID INT NOT NULL,
         Points INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Points DEFAULT(0),
         PlayingTime INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_PlayingTime DEFAULT(0),
         Turnovers INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Turnovers DEFAULT(0),
