@@ -7,13 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DataDelegates\" />
-    <Folder Include="Sql\Tables\" />
-    <Folder Include="Sql\Procedures\" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
   </ItemGroup>
 
 </Project>
