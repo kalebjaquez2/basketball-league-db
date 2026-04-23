@@ -1,10 +1,15 @@
-﻿using System.Windows;
+﻿using Backend.Repositories;
+using DataAccess;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Frontend
 {
     public partial class MainWindow : Window
     {
+        // Example connection string - adjust to match your SSMS setup
+        private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDb;Initial Catalog=BasketballLeague560;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Application Name=""SQL Server Management Studio"";Command Timeout=0";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -13,15 +18,18 @@ namespace Frontend
 
         private void LoadLeagues()
         {
-            // TODO: Replace with real data from Backend
-            // Example: LeagueTilesControl.ItemsSource = LeagueRepository.GetAllLeagues();
-            var sampleLeagues = new[]
+            try
             {
-                new { LeagueID = 1, LeagueName = "Adult League", Location = "Downtown Rec Center" },
-                new { LeagueID = 2, LeagueName = "Youth League", Location = "Downtown Rec Center" },
-                new { LeagueID = 3, LeagueName = "3v3 Summer League", Location = "Downtown Rec Center" }
-            };
-            LeagueTilesControl.ItemsSource = sampleLeagues;
+                var executor = new SqlCommandExecutor(ConnectionString);
+                var repo = new SqlLeagueRepository(executor);
+
+                // Use the backend to fetch all leagues
+                LeagueTilesControl.ItemsSource = repo.RetrieveLeagues();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not load leagues: {ex.Message}");
+            }
         }
 
         private void ShowHomeScreen()
@@ -38,10 +46,19 @@ namespace Frontend
 
         private void AddLeague_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open Add League dialog/page
-            // Example: new AddLeagueWindow().ShowDialog();
-            // Then reload leagues after adding
-            // LoadLeagues();
+            // 1. Create the backend infrastructure
+            var executor = new SqlCommandExecutor(ConnectionString);
+            var repo = new SqlLeagueRepository(executor);
+
+            // 2. Pass the repo into the dialog
+            var dialog = new AddLeagueDialog(repo);
+            dialog.Owner = this;
+
+            if (dialog.ShowDialog() == true)
+            {
+                // 3. Success! Refresh the list
+                LoadLeagues();
+            }
         }
 
         private void LeagueTile_Click(object sender, RoutedEventArgs e)

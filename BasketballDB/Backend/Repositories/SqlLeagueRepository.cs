@@ -9,13 +9,12 @@ namespace Backend.Repositories
     {
         private readonly SqlCommandExecutor executor = executor;
 
-        public League CreateLeague(string leagueName, string location)
+        public League CreateLeague(string leagueName, int locationId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(leagueName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(location);
 
             return executor.ExecuteNonQuery(
-                new CreateLeagueDelegate(leagueName, location));
+                new CreateLeagueDelegate(leagueName, locationId)); // Pass int here
         }
 
         public League FetchLeague(int leagueID)
@@ -31,13 +30,12 @@ namespace Backend.Repositories
                 new RetrieveLeaguesDelegate());
         }
 
-        public League UpdateLeague(int leagueID, string leagueName, string location)
+        public League UpdateLeague(int leagueID, string leagueName, int locationId)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(leagueName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(location);
 
             return executor.ExecuteReader(
-                new UpdateLeagueDelegate(leagueID, leagueName, location))
+                new UpdateLeagueDelegate(leagueID, leagueName, locationId))
                 ?? throw new RecordNotFoundException(leagueID.ToString());
         }
 
@@ -46,16 +44,18 @@ namespace Backend.Repositories
 
 
 
-
         // ── Delegates ──────────────────────────────────────────
 
-        private class CreateLeagueDelegate(string leagueName, string location)
+        // Update these parameters to take 'int locationId'
+        private class CreateLeagueDelegate(string leagueName, int locationId)
             : NonQueryDataDelegate<League>("Basketball.CreateLeague")
         {
             public override void PrepareCommand(Command command)
             {
                 command.Parameters.AddWithValue("LeagueName", leagueName);
-                command.Parameters.AddWithValue("Location", location);
+                // This MUST match the @LocationID name in your Stored Procedure
+                command.Parameters.AddWithValue("LocationID", locationId);
+
                 var p = command.Parameters.Add("LeagueID", SqlDbType.Int);
                 p.Direction = ParameterDirection.Output;
             }
@@ -63,7 +63,9 @@ namespace Backend.Repositories
             public override League Translate(Command command)
             {
                 var leagueID = command.GetParameterValue<int>("LeagueID");
-                return new League(leagueID, leagueName, location);
+                // Pass locationId as the 4th argument
+                return new League(leagueID, leagueName, "Location Linked", locationId);
+      
             }
         }
 
@@ -96,15 +98,14 @@ namespace Backend.Repositories
             }
         }
 
-        private class UpdateLeagueDelegate(int leagueID,
-            string leagueName, string location)
-            : DataReaderDelegate<League?>("Basketball.UpdateLeague")
+        private class UpdateLeagueDelegate(int leagueID, string leagueName, int locationId) // Change string to int
+           : DataReaderDelegate<League?>("Basketball.UpdateLeague")
         {
             public override void PrepareCommand(Command command)
             {
                 command.Parameters.AddWithValue("LeagueID", leagueID);
                 command.Parameters.AddWithValue("LeagueName", leagueName);
-                command.Parameters.AddWithValue("Location", location);
+                command.Parameters.AddWithValue("LocationID", locationId); // Use LocationID
             }
 
             public override League? Translate(Command command, IDataRowReader reader)
@@ -131,7 +132,8 @@ namespace Backend.Repositories
             return new League(
                 reader.GetInt32("LeagueID"),
                 reader.GetString("LeagueName"),
-                reader.GetString("Location")
+                reader.GetString("Location"),   // This is the City/State string from the JOIN
+                reader.GetInt32("LocationID")  // Add this to satisfy the 4th parameter
             );
         }
     }

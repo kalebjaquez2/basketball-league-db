@@ -12,7 +12,7 @@ namespace Backend.Repositories
         /// <summary>
         /// Creates a new league in the database.
         /// </summary>
-        League CreateLeague(string leagueName, string location);
+        League CreateLeague(string leagueName, int locationID);
 
         /// <summary>
         /// Fetches a league by ID. Throws RecordNotFoundException if not found.
@@ -27,6 +27,6 @@ namespace Backend.Repositories
         /// <summary>
         /// Updates an existing league.
         /// </summary>
-        League UpdateLeague(int leagueID, string leagueName, string location);
+        League UpdateLeague(int leagueID, string leagueName, int locationId);
     }
 }
