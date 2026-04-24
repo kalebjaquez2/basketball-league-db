@@ -16,9 +16,7 @@ BEGIN
     );
 END;
 
-/****************************
- * Unique Constraints
- ****************************/
+/* Unique Constraints */
 IF NOT EXISTS
     (
         SELECT *
