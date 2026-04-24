@@ -1,42 +1,54 @@
--- Create League
 CREATE OR ALTER PROCEDURE Basketball.CreateLeague
     @LeagueName NVARCHAR(64),
-    @Location NVARCHAR(64),
+    @LocationID INT, 
     @LeagueID INT OUTPUT
 AS
-INSERT Basketball.League(LeagueName, Location)
-VALUES(@LeagueName, @Location);
-SET @LeagueID = SCOPE_IDENTITY();
+BEGIN
+    INSERT Basketball.League(LeagueName, LocationID)
+    VALUES(@LeagueName, @LocationID);
+    
+    SET @LeagueID = SCOPE_IDENTITY();
+END
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveLeagues
+AS
+BEGIN
+    SELECT L.LeagueID, L.LeagueName, 
+           (Loc.City + ', ' + Loc.State) AS [Location], -- Merges city/state for the UI
+           L.LocationID
+    FROM Basketball.League L
+    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID;
+END
 GO
 
 -- Fetch League by ID
 CREATE OR ALTER PROCEDURE Basketball.FetchLeague
     @LeagueID INT
 AS
-SELECT LeagueID, LeagueName, Location
-FROM Basketball.League
-WHERE LeagueID = @LeagueID;
+BEGIN
+    SELECT L.LeagueID, L.LeagueName, 
+           (Loc.City + ', ' + Loc.State) AS [Location], 
+           L.LocationID
+    FROM Basketball.League L
+    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID
+    WHERE L.LeagueID = @LeagueID;
+END
 GO
 
--- Retrieve all Leagues
-CREATE OR ALTER PROCEDURE Basketball.RetrieveLeagues
-AS
-SELECT LeagueID, LeagueName, Location
-FROM Basketball.League;
-GO
-
--- Update League
+-- Fix Update League
 CREATE OR ALTER PROCEDURE Basketball.UpdateLeague
     @LeagueID INT,
     @LeagueName NVARCHAR(64),
-    @Location NVARCHAR(64)
+    @LocationID INT -- Changed from NVARCHAR to INT
 AS
-UPDATE Basketball.League
-SET LeagueName = @LeagueName,
-    Location = @Location
-WHERE LeagueID = @LeagueID;
+BEGIN
+    UPDATE Basketball.League
+    SET LeagueName = @LeagueName,
+        LocationID = @LocationID -- Changed from Location to LocationID
+    WHERE LeagueID = @LeagueID;
 
-SELECT LeagueID, LeagueName, Location
-FROM Basketball.League
-WHERE LeagueID = @LeagueID;
+    -- Return the updated record
+    EXEC Basketball.FetchLeague @LeagueID;
+END
 GO
