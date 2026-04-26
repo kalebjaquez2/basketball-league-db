@@ -1,0 +1,60 @@
+﻿<Window x:Class="Frontend.AddTeamDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Team" Height="300" Width="460"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True" Background="#0D0D0D">
+
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#999999"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#F05A28"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1A1A1A" CornerRadius="8,8,0,0">
+            <Grid>
+                <TextBlock Text="REGISTER NEW TEAM" Foreground="#999999" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" Margin="16,0"/>
+                <Button Content="✕" HorizontalAlignment="Right" Width="40" Background="Transparent" BorderThickness="0" Foreground="#555555" Cursor="Hand" Click="Close_Click"/>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="1" Margin="30">
+            <TextBlock Text="TEAM NAME" Style="{StaticResource FieldLabel}"/>
+            <TextBox x:Name="TeamNameBox" Style="{StaticResource InputBox}" MaxLength="64" Margin="0,0,0,20"/>
+
+            <TextBlock x:Name="ErrorMessage" Foreground="#FF4444" FontSize="12" Margin="0,0,0,10" Visibility="Collapsed"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="CANCEL" Click="Close_Click" Background="Transparent" Foreground="#666" Margin="0,0,15,0" Cursor="Hand" BorderThickness="0"/>
+                <Button Content="CREATE TEAM" Background="#F05A28" Foreground="White" FontWeight="Bold" Padding="20,10" Click="Save_Click" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

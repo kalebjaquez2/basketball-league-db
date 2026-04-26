@@ -36,5 +36,27 @@ namespace Frontend
                 mainWindow.HomeScreen.Visibility = Visibility.Visible;
             }
         }
+
+        private void AddSeason_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Create the dialog (you'll likely build this next)
+            var dialog = new AddSeasonDialog(_league, _connectionString);
+            dialog.Owner = Window.GetWindow(this);
+
+            // 2. Show the dialog and check if the user saved
+            if (dialog.ShowDialog() == true)
+            {
+                // 3. Refresh the list so the new season appears immediately
+                LoadSeasons();
+            }
+        }
+
+        private void SeasonTile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is Season selectedSeason)
+            {
+                this.NavigationService.Navigate(new TeamsPage(selectedSeason, _connectionString));
+            }
+        }
     }
 }
