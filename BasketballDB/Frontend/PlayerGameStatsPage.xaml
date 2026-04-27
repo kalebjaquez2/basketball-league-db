@@ -1,0 +1,58 @@
+﻿<Page x:Class="Frontend.BoxScorePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Box Score" Background="#0D0D0D">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <Button Content="← BACK" Click="Back_Click" Background="Transparent" Foreground="#555" BorderThickness="0" HorizontalAlignment="Left" Cursor="Hand"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                <TextBlock x:Name="HomeTeamHeader" Text="HOME" FontSize="32" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="VS" FontSize="20" Foreground="#F05A28" Margin="30,0" VerticalAlignment="Center" FontWeight="Black"/>
+                <TextBlock x:Name="AwayTeamHeader" Text="AWAY" FontSize="32" FontWeight="Bold" Foreground="White"/>
+            </StackPanel>
+            <Rectangle Height="2" Fill="#2E2E2E" HorizontalAlignment="Stretch"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock x:Name="HomeLabel" Text="HOME STATS" Foreground="#F05A28" FontWeight="Bold" Margin="0,0,0,10"/>
+                <DataGrid x:Name="HomeStatsGrid" AutoGenerateColumns="False" CanUserAddRows="False" 
+                          Background="#1A1A1A" Foreground="White" RowBackground="#1A1A1A" 
+                          BorderBrush="#2E2E2E" HorizontalGridLinesBrush="#2E2E2E" VerticalGridLinesBrush="#2E2E2E">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="PLAYER" Binding="{Binding PlayerName}" Width="2*"/>
+                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="*"/>
+                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="*"/>
+                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock x:Name="AwayLabel" Text="AWAY STATS" Foreground="#F05A28" FontWeight="Bold" Margin="0,0,0,10"/>
+                <DataGrid x:Name="AwayStatsGrid" AutoGenerateColumns="False" CanUserAddRows="False" 
+                          Background="#1A1A1A" Foreground="White" RowBackground="#1A1A1A"
+                          BorderBrush="#2E2E2E" HorizontalGridLinesBrush="#2E2E2E" VerticalGridLinesBrush="#2E2E2E">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="PLAYER" Binding="{Binding PlayerName}" Width="2*"/>
+                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="*"/>
+                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="*"/>
+                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page> 

@@ -55,6 +55,15 @@ namespace Frontend
             }
         }
 
+        private void GameTile_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the data from the button's context
+            if (sender is Button btn && btn.DataContext is Game selectedGame)
+            {
+                this.NavigationService.Navigate(new BoxScorePage(selectedGame, _connectionString));
+            }
+        }
+
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             if (NavigationService.CanGoBack)

@@ -40,42 +40,54 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="#1A1A1A" Padding="24,20" CornerRadius="8" BorderBrush="#2E2E2E" BorderThickness="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                    <Button Cursor="Hand" Click="GameTile_Click" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="MainBorder" Background="#1A1A1A" Padding="24,20" CornerRadius="8" BorderBrush="#2E2E2E" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
-                                <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
-                            </StackPanel>
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                        </StackPanel>
 
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
-                                <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
-                                    <TextBlock Text="{Binding HomeTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
-                                    <TextBlock Text=" - " Foreground="White" FontSize="14" Opacity="0.8"/>
-                                    <TextBlock Text="{Binding AwayTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
-                                </StackPanel>
-                            </StackPanel>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
+                                            <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding HomeTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
+                                                <TextBlock Text=" - " Foreground="White" FontSize="14" Opacity="0.8"/>
+                                                <TextBlock Text="{Binding AwayTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
+                                            </StackPanel>
+                                        </StackPanel>
 
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
-                                <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
-                            </StackPanel>
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                        </StackPanel>
 
-                            <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" Foreground="#999" FontSize="14" HorizontalAlignment="Right"/>
-                                <Border Background="#242424" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding CourtNumber, StringFormat='COURT {0}'}" Foreground="#F05A28" FontSize="10" FontWeight="Bold"/>
+                                        <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" Foreground="#999" FontSize="14" HorizontalAlignment="Right"/>
+                                            <Border Background="#242424" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding CourtNumber, StringFormat='COURT {0}'}" Foreground="#F05A28" FontSize="10" FontWeight="Bold"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
                                 </Border>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="MainBorder" Property="Background" Value="#222222"/>
+                                        <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

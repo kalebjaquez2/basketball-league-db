@@ -25,18 +25,14 @@ namespace Frontend
 
         private void LoadTeams()
         {
-            try
-            {
-                var executor = new SqlCommandExecutor(_connectionString);
-                var repo = new SqlTeamRepository(executor);
-                var teams = repo.RetrieveTeamsBySeason(_season.SeasonID);
+            var executor = new SqlCommandExecutor(_connectionString);
+            var repo = new SqlTeamRepository(executor);
 
-                TeamsList.ItemsSource = teams;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading teams: " + ex.Message);
-            }
+            // Retrieve teams for this specific season
+            var teams = repo.RetrieveTeamsBySeason(_season.SeasonID);
+
+            // Crucial: Assign the collection to the Container, not the ItemsControl
+            TeamsDataContainer.Collection = teams;
         }
 
         private void AddTeam_Click(object sender, RoutedEventArgs e)

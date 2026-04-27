@@ -10,71 +10,17 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="0,0,0,40">
-            <Button Content="← BACK TO LEAGUES" Click="Back_Click" 
-                    Background="Transparent" BorderThickness="0" Foreground="#555555" 
+            <Button Content="← BACK TO LEAGUES" Click="Back_Click"
+                    Background="Transparent" BorderThickness="0" Foreground="#555555"
                     FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
-
-            <TextBlock Text="VIEWING SEASONS FOR" FontSize="14" Foreground="#999999" Margin="0,0,0,4"/>
+            <TextBlock Text="VIEWING SEASONS FOR" FontSize="12" Foreground="#999999" Margin="0,0,0,4" FontWeight="SemiBold"/>
             <TextBlock x:Name="LeagueHeader" FontSize="36" FontWeight="Bold" Foreground="White" Text="League Name"/>
             <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <TextBlock Text="MANAGE SEASONS" FontSize="12" Foreground="#999999" Margin="0,0,0,16"/>
-
-                <WrapPanel>
-                    <Button Width="260" Height="160" Margin="0,0,16,16" Cursor="Hand" Click="AddSeason_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="#1A1A1A" BorderBrush="#444444" BorderThickness="1" CornerRadius="8" x:Name="MainBorder">
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="+" FontSize="40" Foreground="#F05A28" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                        <TextBlock Text="Add Season" FontSize="16" Foreground="#999999" HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="MainBorder" Property="Background" Value="#242424"/>
-                                        <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <ItemsControl x:Name="SeasonsList">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Cursor="Hand" Click="SeasonTile_Click">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Width="260" Height="160" Margin="0,0,16,16" CornerRadius="8" 
-                                                Background="#242424" BorderBrush="#2E2E2E" BorderThickness="1" x:Name="SBorder">
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="🏀" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
-                                                    <TextBlock Text="{Binding StartDate, StringFormat=yyyy}" FontSize="18" 
-                                                    FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                                </StackPanel>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="SBorder" Property="BorderBrush" Value="#F05A28"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </WrapPanel>
-            </StackPanel>
+            <WrapPanel x:Name="TilesPanel" Orientation="Horizontal"
+                       Width="{Binding RelativeSource={RelativeSource AncestorType=ScrollViewer}, Path=ActualWidth}"/>
         </ScrollViewer>
     </Grid>
 </Page>

@@ -23,60 +23,65 @@
             <StackPanel>
                 <TextBlock Text="TEAM ROSTER" FontSize="12" Foreground="#999999" Margin="0,0,0,16"/>
 
-                <WrapPanel>
-                    <Button Width="260" Height="160" Margin="0,0,16,16" Cursor="Hand" Click="AddTeam_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="#1A1A1A" BorderBrush="#444444" BorderThickness="1" CornerRadius="8" x:Name="MainBorder">
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="+" FontSize="40" Foreground="#F05A28" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                        <TextBlock Text="Add Team" FontSize="16" Foreground="#999999" HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="MainBorder" Property="Background" Value="#242424"/>
-                                        <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                <ItemsControl x:Name="TeamsList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
 
-                    <ItemsControl x:Name="TeamsList">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Cursor="Hand" Click="TeamTile_Click" Background="Transparent" BorderThickness="0">
+                    <ItemsControl.ItemsSource>
+                        <CompositeCollection>
+                            <ContentControl>
+                                <Button Width="260" Height="160" Margin="0,0,16,16" Cursor="Hand" Click="AddTeam_Click">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Width="260" Height="160" Margin="0,0,16,16" CornerRadius="8" 
-                        Background="#242424" BorderBrush="#2E2E2E" BorderThickness="1" x:Name="TBorder">
+                                            <Border Background="#1A1A1A" BorderBrush="#444444" BorderThickness="1" CornerRadius="8" x:Name="MainBorder">
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="🛡️" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
-                                                    <TextBlock Text="{Binding TeamName}" FontSize="18" FontWeight="Bold" 
-                                   Foreground="White" HorizontalAlignment="Center"/>
-                                                    <TextBlock Text="VIEW SCHEDULE" Foreground="#F05A28" FontSize="10" 
-                                   FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                                    <TextBlock Text="+" FontSize="40" Foreground="#F05A28" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                                    <TextBlock Text="Add Team" FontSize="16" Foreground="#999999" HorizontalAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="TBorder" Property="BorderBrush" Value="#F05A28"/>
-                                                    <Setter TargetName="TBorder" Property="Background" Value="#2E2E2E"/>
+                                                    <Setter TargetName="MainBorder" Property="Background" Value="#242424"/>
+                                                    <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </WrapPanel>
+                            </ContentControl>
+
+                            <CollectionContainer x:Name="TeamsDataContainer" />
+                        </CompositeCollection>
+                    </ItemsControl.ItemsSource>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Cursor="Hand" Click="TeamTile_Click" Background="Transparent" BorderThickness="0" Margin="0,0,16,16">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Width="260" Height="160" CornerRadius="8" 
+                                        Background="#242424" BorderBrush="#2E2E2E" BorderThickness="1" x:Name="TBorder">
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="🛡️" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                                <TextBlock Text="{Binding TeamName}" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="VIEW SCHEDULE" Foreground="#F05A28" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="TBorder" Property="BorderBrush" Value="#F05A28"/>
+                                                <Setter TargetName="TBorder" Property="Background" Value="#2E2E2E"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
