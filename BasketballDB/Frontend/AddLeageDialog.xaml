@@ -169,11 +169,11 @@
             </StackPanel>
 
             <!-- Location Field -->
-            <StackPanel Grid.Row="2">
+           <!-- <StackPanel Grid.Row="2">
                 <TextBlock Text="LOCATION" Style="{StaticResource FieldLabel}"/>
                 <TextBox x:Name="LocationBox" Style="{StaticResource InputBox}"
                          MaxLength="64" TextChanged="Input_TextChanged"/>
-            </StackPanel>
+            </StackPanel>-->
 
             <!-- Error Message -->
             <TextBlock x:Name="ErrorMessage" Grid.Row="4"

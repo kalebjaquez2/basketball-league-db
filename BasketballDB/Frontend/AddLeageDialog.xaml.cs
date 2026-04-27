@@ -21,8 +21,8 @@ namespace Frontend
         private void Input_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (SaveButton == null) return;
-            SaveButton.IsEnabled = !string.IsNullOrWhiteSpace(LeagueNameBox.Text)
-                                && !string.IsNullOrWhiteSpace(LocationBox.Text);
+            SaveButton.IsEnabled = !string.IsNullOrWhiteSpace(LeagueNameBox.Text);
+                                //&& !string.IsNullOrWhiteSpace(LocationBox.Text);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

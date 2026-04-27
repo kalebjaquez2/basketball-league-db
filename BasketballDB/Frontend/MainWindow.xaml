@@ -114,18 +114,23 @@
 						</ItemsControl.ItemsPanel>
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
-								<Button Style="{StaticResource LeagueTileStyle}"
+                                <Button Style="{StaticResource LeagueTileStyle}"
                                         Tag="{Binding LeagueID}"
-                                        Click="LeagueTile_Click">
-									<StackPanel HorizontalAlignment="Center">
-										<TextBlock Text="🏀" FontSize="32"
-                                                   HorizontalAlignment="Center" Margin="0,0,0,12"/>
-										<TextBlock Text="{Binding LeagueName}" FontSize="18"
+                                        Click="LeagueTile_Click"
+										HorizontalContentAlignment="Center"
+										VerticalContentAlignment="Center">			
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="🏀" FontSize="32"
+                                                   HorizontalAlignment="Center" Margin="0,0,0,12" />
+                                        <TextBlock Text="{Binding LeagueName}" FontSize="18"
+                                                   Padding="12"
+                                                   TextWrapping="Wrap"
                                                    FontWeight="Bold" Foreground="White"
+                                                   TextAlignment="Center"
                                                    HorizontalAlignment="Center"/>
-										<TextBlock Text="{Binding Location}" FontSize="12"
+										<!--<TextBlock Text="{Binding Location}" FontSize="12"
                                                    Foreground="#999999"
-                                                   HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                                   HorizontalAlignment="Center" Margin="0,4,0,0"/>-->
 									</StackPanel>
 								</Button>
 							</DataTemplate>
