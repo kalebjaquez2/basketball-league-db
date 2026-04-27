@@ -509,7 +509,7 @@ SELECT G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
     AT.TeamName AS AwayTeamName
 FROM Basketball.Games G
     INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
-    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeomID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeamID
 WHERE G.GameID = @GameID;
 GO
 
@@ -526,4 +526,130 @@ CREATE OR ALTER PROCEDURE Basketball.CreatePlayer
     @Weight INT = NULL,
     @PlayerID INT OUTPUT
 AS
-INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, L
+INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight)
+VALUES(@TeamID, @JerseyNumber, @FirstName, @LastName, @Age, @Height, @Weight);
+SET @PlayerID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchPlayer
+    @PlayerID INT
+AS
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+FROM Basketball.Players
+WHERE PlayerID = @PlayerID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrievePlayersByTeam
+    @TeamID INT
+AS
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+FROM Basketball.Players
+WHERE TeamID = @TeamID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdatePlayer
+    @PlayerID INT,
+    @JerseyNumber INT,
+    @Age INT = NULL,
+    @Height NVARCHAR(16) = NULL,
+    @Weight INT = NULL
+AS
+UPDATE Basketball.Players
+SET JerseyNumber = @JerseyNumber,
+    Age = @Age,
+    Height = @Height,
+    Weight = @Weight
+WHERE PlayerID = @PlayerID;
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+FROM Basketball.Players
+WHERE PlayerID = @PlayerID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.DeletePlayer
+    @PlayerID INT
+AS
+DELETE FROM Basketball.Players
+WHERE PlayerID = @PlayerID;
+GO
+
+/****************************
+ * PlayerGameStats Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreatePlayerGameStats
+    @PlayerID INT,
+    @GameID INT,
+    @TeamID INT,
+    @Points INT = 0,
+    @PlayingTime INT = 0,
+    @Turnovers INT = 0,
+    @Rebounds INT = 0,
+    @Assists INT = 0
+AS
+INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, Points,
+    PlayingTime, Turnovers, Rebounds, Assists)
+VALUES(@PlayerID, @GameID, @TeamID, @Points,
+    @PlayingTime, @Turnovers, @Rebounds, @Assists);
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchPlayerGameStats
+    @PlayerID INT,
+    @GameID INT
+AS
+SELECT PlayerID, GameID, TeamID, Points, PlayingTime,
+    Turnovers, Rebounds, Assists
+FROM Basketball.PlayerGameStats
+WHERE PlayerID = @PlayerID AND GameID = @GameID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByGame
+    @GameID INT
+AS
+SELECT PlayerID, GameID, TeamID, Points, PlayingTime,
+    Turnovers, Rebounds, Assists
+FROM Basketball.PlayerGameStats
+WHERE GameID = @GameID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByPlayer
+    @PlayerID INT
+AS
+SELECT PlayerID, GameID, TeamID, Points, PlayingTime,
+    Turnovers, Rebounds, Assists
+FROM Basketball.PlayerGameStats
+WHERE PlayerID = @PlayerID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
+    @PlayerID INT,
+    @GameID INT,
+    @Points INT,
+    @PlayingTime INT,
+    @Turnovers INT,
+    @Rebounds INT,
+    @Assists INT
+AS
+UPDATE Basketball.PlayerGameStats
+SET Points = @Points,
+    PlayingTime = @PlayingTime,
+    Turnovers = @Turnovers,
+    Rebounds = @Rebounds,
+    Assists = @Assists
+WHERE PlayerID = @PlayerID AND GameID = @GameID;
+SELECT PlayerID, GameID, TeamID, Points, PlayingTime,
+    Turnovers, Rebounds, Assists
+FROM Basketball.PlayerGameStats
+WHERE PlayerID = @PlayerID AND GameID = @GameID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.DeletePlayerGameStats
+    @PlayerID INT,
+    @GameID INT
+AS
+DELETE FROM Basketball.PlayerGameStats
+WHERE PlayerID = @PlayerID AND GameID = @GameID;
+GO
+
+PRINT 'Setup_KSU.sql complete.';
+PRINT 'Tables: Location, League, Seasons, Teams, Games, Players, PlayerGameStats';
+PRINT 'All stored procedures created.';
+GO
