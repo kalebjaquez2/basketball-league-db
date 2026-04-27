@@ -7,14 +7,11 @@
 USE master;
 GO
 
-/****************************
- * Create Database
- ****************************/
 IF DB_ID(N'BasketballLeague560') IS NULL
     CREATE DATABASE BasketballLeague560;
 GO
 
-USE kalebjaquez;
+USE BasketballLeague560;
 GO
 
 /****************************
