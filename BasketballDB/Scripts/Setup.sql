@@ -14,7 +14,7 @@ IF DB_ID(N'BasketballLeague560') IS NULL
     CREATE DATABASE BasketballLeague560;
 GO
 
-USE BasketballLeague560;
+USE kalebjaquez;
 GO
 
 /****************************
