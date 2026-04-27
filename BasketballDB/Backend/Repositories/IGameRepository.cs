@@ -40,5 +40,13 @@ namespace Backend.Repositories
         /// </summary>
         Game UpdateGame(int gameID, int homeTeamScore,
             int awayTeamScore, int overtimeCount);
+
+
+        /// <summary>
+        /// Retrieves all games for a given season.
+        /// </summary>
+        IReadOnlyList<Game> RetrieveGamesBySeason(int seasonID);
+
+
     }
 }
