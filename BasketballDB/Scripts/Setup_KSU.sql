@@ -1,0 +1,529 @@
+/*******************************************************
+ * Setup_KSU.sql
+ * Run this file on the KSU server (mssql.cs.ksu.edu)
+ * Change 'kalebjaquez' to YOUR username if different
+ *******************************************************/
+
+USE kalebjaquez;
+GO
+
+/****************************
+ * Create Schema
+ ****************************/
+IF SCHEMA_ID(N'Basketball') IS NULL
+    EXEC(N'CREATE SCHEMA [Basketball];');
+GO
+
+/****************************
+ * 1. Location
+ ****************************/
+IF OBJECT_ID(N'Basketball.Location') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Location
+    (
+        LocationID INT NOT NULL IDENTITY(1,1),
+        City NVARCHAR(64) NOT NULL,
+        State NVARCHAR(64) NOT NULL,
+        Country NVARCHAR(64) NOT NULL,
+        CONSTRAINT PK_Basketball_Location_LocationID PRIMARY KEY CLUSTERED
+        (
+            LocationID ASC
+        )
+    );
+END;
+
+IF NOT EXISTS
+    (
+        SELECT * FROM sys.key_constraints kc
+        WHERE kc.parent_object_id = OBJECT_ID(N'Basketball.Location')
+          AND kc.[name] = N'UK_Basketball_Location_City_State_Country'
+    )
+BEGIN
+    ALTER TABLE Basketball.Location
+    ADD CONSTRAINT [UK_Basketball_Location_City_State_Country] UNIQUE NONCLUSTERED
+    (
+        City ASC, State ASC, Country ASC
+    );
+END;
+GO
+
+/****************************
+ * 2. League
+ ****************************/
+IF OBJECT_ID(N'Basketball.League') IS NULL
+BEGIN
+    CREATE TABLE Basketball.League
+    (
+        LeagueID INT NOT NULL IDENTITY(1,1),
+        LeagueName NVARCHAR(64) NOT NULL,
+        LocationID INT NOT NULL,
+        CONSTRAINT PK_Basketball_League_LeagueID PRIMARY KEY CLUSTERED
+        (
+            LeagueID ASC
+        ),
+        CONSTRAINT FK_Basketball_League_LocationID_Basketball_Location
+            FOREIGN KEY (LocationID)
+            REFERENCES Basketball.Location(LocationID)
+    );
+END;
+
+IF NOT EXISTS
+    (
+        SELECT * FROM sys.key_constraints kc
+        WHERE kc.parent_object_id = OBJECT_ID(N'Basketball.League')
+          AND kc.[name] = N'UK_Basketball_League_LeagueName'
+    )
+BEGIN
+    ALTER TABLE Basketball.League
+    ADD CONSTRAINT [UK_Basketball_League_LeagueName] UNIQUE NONCLUSTERED
+    (
+        LeagueName ASC
+    );
+END;
+GO
+
+/****************************
+ * 3. Seasons
+ ****************************/
+IF OBJECT_ID(N'Basketball.Seasons') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Seasons
+    (
+        SeasonID INT NOT NULL IDENTITY(1,1),
+        LeagueID INT NOT NULL,
+        StartDate DATE NOT NULL,
+        EndDate DATE NOT NULL,
+        CONSTRAINT PK_Basketball_Seasons_SeasonID PRIMARY KEY CLUSTERED
+        (
+            SeasonID ASC
+        ),
+        CONSTRAINT FK_Basketball_Seasons_LeagueID_Basketball_League
+            FOREIGN KEY (LeagueID)
+            REFERENCES Basketball.League(LeagueID)
+    );
+END;
+
+IF NOT EXISTS
+    (
+        SELECT * FROM sys.key_constraints kc
+        WHERE kc.parent_object_id = OBJECT_ID(N'Basketball.Seasons')
+          AND kc.[name] = N'UK_Basketball_Seasons_StartDate'
+    )
+BEGIN
+    ALTER TABLE Basketball.Seasons
+    ADD CONSTRAINT [UK_Basketball_Seasons_StartDate] UNIQUE NONCLUSTERED (StartDate ASC);
+END;
+
+IF NOT EXISTS
+    (
+        SELECT * FROM sys.key_constraints kc
+        WHERE kc.parent_object_id = OBJECT_ID(N'Basketball.Seasons')
+          AND kc.[name] = N'UK_Basketball_Seasons_EndDate'
+    )
+BEGIN
+    ALTER TABLE Basketball.Seasons
+    ADD CONSTRAINT [UK_Basketball_Seasons_EndDate] UNIQUE NONCLUSTERED (EndDate ASC);
+END;
+GO
+
+/****************************
+ * 4. Teams
+ ****************************/
+IF OBJECT_ID(N'Basketball.Teams') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Teams
+    (
+        TeamID INT NOT NULL IDENTITY(1,1),
+        SeasonID INT NOT NULL,
+        TeamName NVARCHAR(64) NOT NULL,
+        CONSTRAINT PK_Basketball_Teams_TeamID PRIMARY KEY CLUSTERED
+        (
+            TeamID ASC
+        ),
+        CONSTRAINT FK_Basketball_Teams_SeasonID_Basketball_Seasons
+            FOREIGN KEY (SeasonID)
+            REFERENCES Basketball.Seasons(SeasonID)
+    );
+END;
+
+IF NOT EXISTS
+    (
+        SELECT * FROM sys.key_constraints kc
+        WHERE kc.parent_object_id = OBJECT_ID(N'Basketball.Teams')
+          AND kc.[name] = N'UK_Basketball_Teams_TeamName'
+    )
+BEGIN
+    ALTER TABLE Basketball.Teams
+    ADD CONSTRAINT [UK_Basketball_Teams_TeamName] UNIQUE NONCLUSTERED (TeamName ASC);
+END;
+GO
+
+/****************************
+ * 5. Games
+ ****************************/
+IF OBJECT_ID(N'Basketball.Games') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Games
+    (
+        GameID INT NOT NULL IDENTITY(1,1),
+        HomeTeamID INT NOT NULL,
+        AwayTeamID INT NOT NULL,
+        HomeTeamScore INT NOT NULL,
+        AwayTeamScore INT NOT NULL,
+        CourtNumber INT NOT NULL,
+        OvertimeCount INT NOT NULL CONSTRAINT DF_Basketball_Games_OvertimeCount DEFAULT(0),
+        Date DATE NOT NULL,
+        CONSTRAINT PK_Basketball_Games_GameID PRIMARY KEY CLUSTERED
+        (
+            GameID ASC
+        ),
+        CONSTRAINT FK_Basketball_Games_HomeTeamID_Basketball_Teams
+            FOREIGN KEY (HomeTeamID) REFERENCES Basketball.Teams(TeamID),
+        CONSTRAINT FK_Basketball_Games_AwayTeamID_Basketball_Teams
+            FOREIGN KEY (AwayTeamID) REFERENCES Basketball.Teams(TeamID)
+    );
+END;
+GO
+
+/****************************
+ * 6. Players
+ ****************************/
+IF OBJECT_ID(N'Basketball.Players') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Players
+    (
+        PlayerID INT NOT NULL IDENTITY(1,1),
+        TeamID INT NOT NULL,
+        JerseyNumber INT NOT NULL,
+        FirstName NVARCHAR(32) NOT NULL,
+        LastName NVARCHAR(32) NOT NULL,
+        Age INT NULL,
+        Height NVARCHAR(16) NULL,
+        Weight INT NULL,
+        CONSTRAINT PK_Basketball_Players_PlayerID PRIMARY KEY CLUSTERED
+        (
+            PlayerID ASC
+        ),
+        CONSTRAINT FK_Basketball_Players_TeamID_Basketball_Teams
+            FOREIGN KEY (TeamID) REFERENCES Basketball.Teams(TeamID)
+    );
+END;
+GO
+
+/****************************
+ * 7. PlayerGameStats
+ ****************************/
+IF OBJECT_ID(N'Basketball.PlayerGameStats') IS NULL
+BEGIN
+    CREATE TABLE Basketball.PlayerGameStats
+    (
+        PlayerID INT NOT NULL,
+        GameID INT NOT NULL,
+        TeamID INT NOT NULL,
+        Points INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Points DEFAULT(0),
+        PlayingTime INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_PlayingTime DEFAULT(0),
+        Turnovers INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Turnovers DEFAULT(0),
+        Rebounds INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Rebounds DEFAULT(0),
+        Assists INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Assists DEFAULT(0),
+        CONSTRAINT PK_Basketball_PlayerGameStats PRIMARY KEY CLUSTERED
+        (
+            PlayerID ASC, GameID ASC
+        ),
+        CONSTRAINT FK_Basketball_PlayerGameStats_PlayerID_Basketball_Players
+            FOREIGN KEY (PlayerID) REFERENCES Basketball.Players(PlayerID),
+        CONSTRAINT FK_Basketball_PlayerGameStats_GameID_Basketball_Games
+            FOREIGN KEY (GameID) REFERENCES Basketball.Games(GameID),
+        CONSTRAINT FK_Basketball_PlayerGameStats_TeamID_Basketball_Teams
+            FOREIGN KEY (TeamID) REFERENCES Basketball.Teams(TeamID)
+    );
+END;
+GO
+
+/*******************************************************
+ * STORED PROCEDURES
+ *******************************************************/
+
+/****************************
+ * Location Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateLocation
+    @City NVARCHAR(64),
+    @State NVARCHAR(64),
+    @Country NVARCHAR(64),
+    @LocationID INT OUTPUT
+AS
+INSERT Basketball.Location(City, State, Country)
+VALUES(@City, @State, @Country);
+SET @LocationID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchLocation
+    @LocationID INT
+AS
+SELECT LocationID, City, State, Country
+FROM Basketball.Location
+WHERE LocationID = @LocationID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveLocations
+AS
+SELECT LocationID, City, State, Country
+FROM Basketball.Location;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateLocation
+    @LocationID INT,
+    @City NVARCHAR(64),
+    @State NVARCHAR(64),
+    @Country NVARCHAR(64)
+AS
+UPDATE Basketball.Location
+SET City = @City,
+    State = @State,
+    Country = @Country
+WHERE LocationID = @LocationID;
+SELECT LocationID, City, State, Country
+FROM Basketball.Location
+WHERE LocationID = @LocationID;
+GO
+
+/****************************
+ * League Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateLeague
+    @LeagueName NVARCHAR(64),
+    @LocationID INT,
+    @LeagueID INT OUTPUT
+AS
+BEGIN
+    INSERT Basketball.League(LeagueName, LocationID)
+    VALUES(@LeagueName, @LocationID);
+    SET @LeagueID = SCOPE_IDENTITY();
+END
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveLeagues
+AS
+BEGIN
+    SELECT L.LeagueID, L.LeagueName,
+           (Loc.City + N', ' + Loc.State) AS [Location],
+           L.LocationID
+    FROM Basketball.League L
+    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchLeague
+    @LeagueID INT
+AS
+BEGIN
+    SELECT L.LeagueID, L.LeagueName,
+           (Loc.City + N', ' + Loc.State) AS [Location],
+           L.LocationID
+    FROM Basketball.League L
+    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID
+    WHERE L.LeagueID = @LeagueID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateLeague
+    @LeagueID INT,
+    @LeagueName NVARCHAR(64),
+    @LocationID INT
+AS
+BEGIN
+    UPDATE Basketball.League
+    SET LeagueName = @LeagueName,
+        LocationID = @LocationID
+    WHERE LeagueID = @LeagueID;
+    EXEC Basketball.FetchLeague @LeagueID;
+END
+GO
+
+/****************************
+ * Season Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateSeason
+    @LeagueID INT,
+    @StartDate DATE,
+    @EndDate DATE,
+    @SeasonID INT OUTPUT
+AS
+INSERT Basketball.Seasons(LeagueID, StartDate, EndDate)
+VALUES(@LeagueID, @StartDate, @EndDate);
+SET @SeasonID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchSeason
+    @SeasonID INT
+AS
+SELECT SeasonID, LeagueID, StartDate, EndDate
+FROM Basketball.Seasons
+WHERE SeasonID = @SeasonID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveSeasonsByLeague
+    @LeagueID INT
+AS
+SELECT SeasonID, LeagueID, StartDate, EndDate
+FROM Basketball.Seasons
+WHERE LeagueID = @LeagueID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateSeason
+    @SeasonID INT,
+    @StartDate DATE,
+    @EndDate DATE
+AS
+UPDATE Basketball.Seasons
+SET StartDate = @StartDate,
+    EndDate = @EndDate
+WHERE SeasonID = @SeasonID;
+SELECT SeasonID, LeagueID, StartDate, EndDate
+FROM Basketball.Seasons
+WHERE SeasonID = @SeasonID;
+GO
+
+/****************************
+ * Team Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateTeam
+    @SeasonID INT,
+    @TeamName NVARCHAR(64),
+    @TeamID INT OUTPUT
+AS
+INSERT Basketball.Teams(SeasonID, TeamName)
+VALUES(@SeasonID, @TeamName);
+SET @TeamID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchTeam
+    @TeamID INT
+AS
+SELECT TeamID, SeasonID, TeamName
+FROM Basketball.Teams
+WHERE TeamID = @TeamID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveTeamsBySeason
+    @SeasonID INT
+AS
+SELECT TeamID, SeasonID, TeamName
+FROM Basketball.Teams
+WHERE SeasonID = @SeasonID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateTeam
+    @TeamID INT,
+    @TeamName NVARCHAR(64)
+AS
+UPDATE Basketball.Teams
+SET TeamName = @TeamName
+WHERE TeamID = @TeamID;
+SELECT TeamID, SeasonID, TeamName
+FROM Basketball.Teams
+WHERE TeamID = @TeamID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.DeleteTeam
+    @TeamID INT
+AS
+DELETE FROM Basketball.Teams
+WHERE TeamID = @TeamID;
+GO
+
+/****************************
+ * Game Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateGame
+    @HomeTeamID INT,
+    @AwayTeamID INT,
+    @HomeTeamScore INT,
+    @AwayTeamScore INT,
+    @CourtNumber INT,
+    @OvertimeCount INT,
+    @Date DATE,
+    @GameID INT OUTPUT
+AS
+INSERT Basketball.Games(HomeTeamID, AwayTeamID, HomeTeamScore,
+    AwayTeamScore, CourtNumber, OvertimeCount, Date)
+VALUES(@HomeTeamID, @AwayTeamID, @HomeTeamScore,
+    @AwayTeamScore, @CourtNumber, @OvertimeCount, @Date);
+SET @GameID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchGame
+    @GameID INT
+AS
+SELECT G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
+    G.AwayTeamScore, G.CourtNumber, G.OvertimeCount, G.Date,
+    HT.TeamName AS HomeTeamName,
+    AT.TeamName AS AwayTeamName
+FROM Basketball.Games G
+    INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeamID
+WHERE G.GameID = @GameID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveGamesByTeam
+    @TeamID INT
+AS
+SELECT G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
+    G.AwayTeamScore, G.CourtNumber, G.OvertimeCount, G.Date,
+    HT.TeamName AS HomeTeamName,
+    AT.TeamName AS AwayTeamName
+FROM Basketball.Games G
+    INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeamID
+WHERE G.HomeTeamID = @TeamID OR G.AwayTeamID = @TeamID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveGamesBySeason
+    @SeasonID INT
+AS
+SELECT G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
+    G.AwayTeamScore, G.CourtNumber, G.OvertimeCount, G.Date,
+    HT.TeamName AS HomeTeamName,
+    AT.TeamName AS AwayTeamName
+FROM Basketball.Games G
+    INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeamID
+WHERE HT.SeasonID = @SeasonID
+ORDER BY G.Date ASC;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateGame
+    @GameID INT,
+    @HomeTeamScore INT,
+    @AwayTeamScore INT,
+    @OvertimeCount INT
+AS
+UPDATE Basketball.Games
+SET HomeTeamScore = @HomeTeamScore,
+    AwayTeamScore = @AwayTeamScore,
+    OvertimeCount = @OvertimeCount
+WHERE GameID = @GameID;
+SELECT G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
+    G.AwayTeamScore, G.CourtNumber, G.OvertimeCount, G.Date,
+    HT.TeamName AS HomeTeamName,
+    AT.TeamName AS AwayTeamName
+FROM Basketball.Games G
+    INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeomID
+WHERE G.GameID = @GameID;
+GO
+
+/****************************
+ * Player Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreatePlayer
+    @TeamID INT,
+    @JerseyNumber INT,
+    @FirstName NVARCHAR(32),
+    @LastName NVARCHAR(32),
+    @Age INT = NULL,
+    @Height NVARCHAR(16) = NULL,
+    @Weight INT = NULL,
+    @PlayerID INT OUTPUT
+AS
+INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, L
