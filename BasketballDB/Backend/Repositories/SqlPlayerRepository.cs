@@ -15,14 +15,14 @@ namespace Backend.Repositories
     {
         private readonly SqlCommandExecutor executor = executor;
 
-        public Player CreatePlayer(int gameID, int jerseyNumber, string firstName,
+        public Player CreatePlayer(int teamID, int jerseyNumber, string firstName,
             string lastName, int? age, string? height, int? weight)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
             ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
 
             return executor.ExecuteNonQuery(
-                new CreatePlayerDelegate(gameID, jerseyNumber, firstName,
+                new CreatePlayerDelegate(teamID, jerseyNumber, firstName,
                     lastName, age, height, weight));
         }
 
@@ -33,10 +33,10 @@ namespace Backend.Repositories
                 ?? throw new RecordNotFoundException(playerID.ToString());
         }
 
-        public IReadOnlyList<Player> RetrievePlayersByGame(int gameID)
+        public IReadOnlyList<Player> RetrievePlayersByTeam(int teamID)
         {
             return executor.ExecuteReader(
-                new RetrievePlayersByGameDelegate(gameID));
+                new RetrievePlayersByTeamDelegate(teamID));
         }
 
         public Player UpdatePlayer(int playerID, int jerseyNumber,
@@ -55,14 +55,14 @@ namespace Backend.Repositories
 
         // ── Delegates ──────────────────────────────────────────
 
-        private class CreatePlayerDelegate(int gameID, int jerseyNumber,
+        private class CreatePlayerDelegate(int teamID, int jerseyNumber,
             string firstName, string lastName, int? age,
             string? height, int? weight)
             : NonQueryDataDelegate<Player>("Basketball.CreatePlayer")
         {
             public override void PrepareCommand(Command command)
             {
-                command.Parameters.AddWithValue("GameID", gameID);
+                command.Parameters.AddWithValue("TeamID", teamID);
                 command.Parameters.AddWithValue("JerseyNumber", jerseyNumber);
                 command.Parameters.AddWithValue("FirstName", firstName);
                 command.Parameters.AddWithValue("LastName", lastName);
@@ -79,7 +79,7 @@ namespace Backend.Repositories
             public override Player Translate(Command command)
             {
                 var playerID = command.GetParameterValue<int>("PlayerID");
-                return new Player(playerID, gameID, jerseyNumber,
+                return new Player(playerID, teamID, jerseyNumber,
                     firstName, lastName, age, height, weight);
             }
         }
@@ -100,13 +100,13 @@ namespace Backend.Repositories
             }
         }
 
-        private class RetrievePlayersByGameDelegate(int gameID)
+        private class RetrievePlayersByTeamDelegate(int teamID)
             : DataReaderDelegate<IReadOnlyList<Player>>(
-                "Basketball.RetrievePlayersByGame")
+                "Basketball.RetrievePlayersByTeam")
         {
             public override void PrepareCommand(Command command)
             {
-                command.Parameters.AddWithValue("GameID", gameID);
+                command.Parameters.AddWithValue("TeamID", teamID);
             }
 
             public override IReadOnlyList<Player> Translate(
@@ -158,7 +158,7 @@ namespace Backend.Repositories
         {
             return new Player(
                 reader.GetInt32("PlayerID"),
-                reader.GetInt32("GameID"),
+                reader.GetInt32("TeamID"),
                 reader.GetInt32("JerseyNumber"),
                 reader.GetString("FirstName"),
                 reader.GetString("LastName"),

@@ -13,7 +13,7 @@ namespace Backend.Repositories
         /// <summary>
         /// Creates a new player in the database.
         /// </summary>
-        Player CreatePlayer(int gameID, int jerseyNumber, string firstName,
+        Player CreatePlayer(int teamID, int jerseyNumber, string firstName,
             string lastName, int? age, string? height, int? weight);
 
         /// <summary>
@@ -22,9 +22,9 @@ namespace Backend.Repositories
         Player FetchPlayer(int playerID);
 
         /// <summary>
-        /// Retrieves all players for a given game.
+        /// Retrieves all players for a given team.
         /// </summary>
-        IReadOnlyList<Player> RetrievePlayersByGame(int gameID);
+        IReadOnlyList<Player> RetrievePlayersByTeam(int teamID);
 
         /// <summary>
         /// Updates an existing player.

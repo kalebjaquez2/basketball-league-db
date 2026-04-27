@@ -9,7 +9,7 @@ namespace Backend.Models
     public class Player
     {
         public int PlayerID { get; }
-        public int GameID { get; }
+        public int TeamID { get; }
         public int JerseyNumber { get; }
         public string FirstName { get; }
         public string LastName { get; }
@@ -17,11 +17,11 @@ namespace Backend.Models
         public string? Height { get; }
         public int? Weight { get; }
 
-        public Player(int playerID, int gameID, int jerseyNumber, string firstName,
+        public Player(int playerID, int teamID, int jerseyNumber, string firstName,
             string lastName, int? age, string? height, int? weight)
         {
             PlayerID = playerID;
-            GameID = gameID;
+            TeamID = teamID;
             JerseyNumber = jerseyNumber;
             FirstName = firstName;
             LastName = lastName;
