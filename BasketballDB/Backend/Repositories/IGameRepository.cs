@@ -13,8 +13,17 @@ namespace Backend.Repositories
         /// <summary>
         /// Creates a new game in the database.
         /// </summary>
-        Game CreateGame(int homeTeamID, int awayTeamID, int homeTeamScore,
-            int awayTeamScore, int courtNumber, int overtimeCount, DateOnly date);
+        Game CreateGame(
+                int homeTeamID,
+                int awayTeamID,
+                string homeTeamName, 
+                string awayTeamName, 
+                int homeTeamScore,
+                int awayTeamScore,
+                int courtNumber,
+                int overtimeCount,
+                DateOnly date
+        );
 
         /// <summary>
         /// Fetches a game by ID. Throws RecordNotFoundException if not found.

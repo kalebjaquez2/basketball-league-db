@@ -62,10 +62,22 @@ namespace Frontend
 
         private void LeagueTile_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is int leagueId)
+            // 1. Get the League object from the clicked button's DataContext
+            // This is much more reliable than checking for a Tag
+            if (sender is FrameworkElement element && element.DataContext is Backend.Models.League selectedLeague)
             {
+                // 2. Show the Frame (hides the league list)
                 ShowFrame();
-                // TODO: MainFrame.Navigate(new SeasonsView(leagueId));
+
+                // 3. Create the SeasonsPage and navigate to it
+                // We pass the whole league object and the connection string
+                var seasonsPage = new SeasonsPage(selectedLeague, ConnectionString);
+                MainFrame.Navigate(seasonsPage);
+            }
+            else
+            {
+                // If this hits, the XAML isn't passing the DataContext correctly
+                MessageBox.Show("Error: League data not found on the clicked tile.");
             }
         }
     }

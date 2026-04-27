@@ -36,6 +36,22 @@ FROM Basketball.Games
 WHERE HomeTeamID = @TeamID OR AwayTeamID = @TeamID;
 GO
 
+-- Retrieve Games by Season
+CREATE OR ALTER PROCEDURE Basketball.RetrieveGamesBySeason
+    @SeasonID INT
+AS
+SELECT 
+    G.GameID, G.HomeTeamID, G.AwayTeamID, G.HomeTeamScore,
+    G.AwayTeamScore, G.CourtNumber, G.OvertimeCount, G.Date,
+    HT.TeamName AS HomeTeamName, 
+    AT.TeamName AS AwayTeamName
+FROM Basketball.Games G
+JOIN Basketball.Teams HT ON G.HomeTeamID = HT.TeamID
+JOIN Basketball.Teams AT ON G.AwayTeamID = AT.TeamID
+WHERE HT.SeasonID = @SeasonID 
+ORDER BY G.Date ASC;
+GO
+
 -- Update Game
 CREATE OR ALTER PROCEDURE Basketball.UpdateGame
     @GameID INT,

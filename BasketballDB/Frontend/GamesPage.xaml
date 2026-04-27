@@ -1,0 +1,102 @@
+﻿<Page x:Class="Frontend.GamesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="Schedule" Background="#0D0D0D">
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <Button Content="← BACK TO TEAMS" Click="Back_Click" 
+                    Background="Transparent" BorderThickness="0" Foreground="#555555" 
+                    FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+
+            <TextBlock x:Name="PageTitle" Text="TEAM SCHEDULE" FontSize="36" FontWeight="Bold" Foreground="White"/>
+            <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+        </StackPanel>
+
+        <ListView Grid.Row="1" x:Name="GamesList" Background="Transparent" BorderThickness="0" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" d:ItemsSource="{d:SampleData ItemCount=3}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="0,0,0,12"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <ContentPresenter />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#1A1A1A" Padding="24,20" CornerRadius="8" BorderBrush="#2E2E2E" BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
+                                <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                                    <TextBlock Text="{Binding HomeTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
+                                    <TextBlock Text=" - " Foreground="White" FontSize="14" Opacity="0.8"/>
+                                    <TextBlock Text="{Binding AwayTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" Foreground="#999" FontSize="14" HorizontalAlignment="Right"/>
+                                <Border Background="#242424" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding CourtNumber, StringFormat='COURT {0}'}" Foreground="#F05A28" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Margin="0,0,10,10" Width="64" Height="64" 
+                Background="#F05A28" BorderThickness="0" Cursor="Hand"
+                Click="AddGame_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Ellipse Fill="{TemplateBinding Background}">
+                            <Ellipse.Effect>
+                                <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.4" ShadowDepth="4"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <TextBlock Text="+" Foreground="White" FontSize="36" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,4"/>
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </Grid>
+</Page>

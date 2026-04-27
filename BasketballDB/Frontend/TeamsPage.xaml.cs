@@ -46,7 +46,8 @@ namespace Frontend
 
             if (dialog.ShowDialog() == true)
             {
-                LoadTeams(); // Refresh the list after adding
+                // Refresh list after adding
+                LoadTeams();
             }
         }
 
@@ -55,6 +56,30 @@ namespace Frontend
             if (NavigationService.CanGoBack)
             {
                 NavigationService.GoBack();
+            }
+        }
+
+        private void AddGame_Click(object sender, RoutedEventArgs e)
+        {
+            // Pass SeasonID and connection string to the dialog
+            var dialog = new AddGameDialog(_season.SeasonID, _connectionString);
+            dialog.Owner = Window.GetWindow(this);
+
+
+            if (dialog.ShowDialog() == true)
+            {
+                MessageBox.Show("Game scheduled successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void TeamTile_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the team data from the clicked button's context
+            if (sender is Button btn && btn.DataContext is Team selectedTeam)
+            {
+                // Navigate to the GamesPage, passing the team and connection string
+                var gamesPage = new GamesPage(selectedTeam, _connectionString);
+                this.NavigationService.Navigate(gamesPage);
             }
         }
     }
