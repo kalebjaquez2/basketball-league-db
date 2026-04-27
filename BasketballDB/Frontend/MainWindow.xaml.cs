@@ -1,16 +1,14 @@
-﻿using Backend.Models;
-using Backend.Repositories;
+﻿using Backend.Repositories;
 using DataAccess;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Frontend
 {
     public partial class MainWindow : Window
     {
-        private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDb;Initial Catalog=BasketballLeague560;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Application Name=""SQL Server Management Studio"";Command Timeout=0";
-
+        // Example connection string - adjust to match your SSMS setup
+        private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BasketballLeague560;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False;Application Name=""SQL Server Management Studio"";Command Timeout=0";
         public MainWindow()
         {
             InitializeComponent();
@@ -47,7 +45,7 @@ namespace Frontend
 
         private void AddLeague_Click(object sender, RoutedEventArgs e)
         {
-            // Create backend infrastructure
+            // 1. Create the backend infrastructure
             var executor = new SqlCommandExecutor(ConnectionString);
             var repo = new SqlLeagueRepository(executor);
 
@@ -64,20 +62,11 @@ namespace Frontend
 
         private void LeagueTile_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement element && element.DataContext is League selectedLeague)
+            if (sender is Button btn && btn.Tag is int leagueId)
             {
-                // Create the page
-                var seasonsPage = new SeasonsPage(selectedLeague, ConnectionString);
-
-                // Hide the Home Screen (
-                HomeScreen.Visibility = Visibility.Collapsed;
-
-                // Show the Frame and Navigate
-                MainFrame.Visibility = Visibility.Visible;
-                MainFrame.Navigate(seasonsPage);
+                ShowFrame();
+                // TODO: MainFrame.Navigate(new SeasonsView(leagueId));
             }
         }
-
-
     }
 }
