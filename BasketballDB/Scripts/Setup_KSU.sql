@@ -14,6 +14,14 @@ IF SCHEMA_ID(N'Basketball') IS NULL
     EXEC(N'CREATE SCHEMA [Basketball];');
 GO
 
+DROP TABLE IF EXISTS Basketball.PlayerGameStats;
+DROP TABLE IF EXISTS Basketball.Players;
+DROP TABLE IF EXISTS Basketball.Games;
+DROP TABLE IF EXISTS Basketball.Teams;
+DROP TABLE IF EXISTS Basketball.Seasons;
+DROP TABLE IF EXISTS Basketball.League;
+DROP TABLE IF EXISTS Basketball.Location;
+
 /****************************
  * 1. Location
  ****************************/
