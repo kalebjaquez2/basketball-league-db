@@ -17,6 +17,8 @@ namespace Backend.Models
         public string? Height { get; }
         public int? Weight { get; }
 
+        public string PlayerName => $"{FirstName} {LastName}";
+        public string Position => $"#{JerseyNumber}";
         public Player(int playerID, int teamID, int jerseyNumber, string firstName,
             string lastName, int? age, string? height, int? weight)
         {

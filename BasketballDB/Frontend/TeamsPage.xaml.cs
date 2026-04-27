@@ -78,5 +78,13 @@ namespace Frontend
                 this.NavigationService.Navigate(gamesPage);
             }
         }
+        private void Roster_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is Team selectedTeam)
+            {
+                var rosterPage = new RosterPage(selectedTeam, _connectionString);
+                this.NavigationService.Navigate(rosterPage);
+            }
+        }
     }
 }
