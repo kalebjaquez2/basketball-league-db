@@ -4,7 +4,7 @@
  * Run AFTER Setup.sql
  *******************************************************/
 
-USE kalebjaquez;
+USE BasketballLeague560;
 GO
 
 /****************************
