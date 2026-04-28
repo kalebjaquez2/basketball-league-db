@@ -8,9 +8,12 @@ namespace Frontend
     public partial class MainWindow : Window
     {
         // Example connection string - adjust to match your SSMS setup
-        private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BasketballLeague560;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False;Application Name=""SQL Server Management Studio"";Command Timeout=0";
-        public MainWindow()
-        {
+         private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BasketballLeague560;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False;Application Name=""SQL Server Management Studio"";Command Timeout=0";
+
+        //for ksu server
+       // private const string ConnectionString = @"Data Source=mssql.cs.ksu.edu;Initial Catalog=kalebjaquez;User ID=kalebjaquez;Password=;TrustServerCertificate=True;";        
+
+        public MainWindow() { 
             InitializeComponent();
             LoadLeagues();
         }
