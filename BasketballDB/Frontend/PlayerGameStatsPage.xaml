@@ -4,76 +4,70 @@
       Title="Box Score"
       Background="#0D0D0D">
 
-	<Page.Resources>
-		<Style TargetType="DataGrid">
+    <Page.Resources>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="RowBackground" Value="#1A1A1A"/>
+            <Setter Property="AlternatingRowBackground" Value="#1E1E1E"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#2E2E2E"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowHeight" Value="36"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
 
-			<Setter Property="Background" Value="#1A1A1A"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="RowBackground" Value="#1A1A1A"/>
-			<Setter Property="AlternatingRowBackground" Value="#1E1E1E"/>
-			<Setter Property="BorderBrush" Value="#2E2E2E"/>
-			<Setter Property="HorizontalGridLinesBrush" Value="#2E2E2E"/>
-			<Setter Property="GridLinesVisibility" Value="Horizontal"/>
-			<Setter Property="HeadersVisibility" Value="Column"/>
-			<Setter Property="CanUserAddRows" Value="False"/>
-			<Setter Property="AutoGenerateColumns" Value="False"/>
-			<Setter Property="IsReadOnly" Value="True"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="RowHeight" Value="36"/>
-			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		</Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="#999999"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="10,12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-		<!-- COLUMN HEADER -->
-		<Style TargetType="DataGridColumnHeader">
-			<Setter Property="Background" Value="#1A1A1A"/>
-			<Setter Property="Foreground" Value="#999999"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="FontSize" Value="11"/>
-			<Setter Property="Padding" Value="10,12"/>
-			<Setter Property="BorderThickness" Value="0,0,0,1"/>
-			<Setter Property="BorderBrush" Value="#2E2E2E"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
-
-		<Style TargetType="DataGridCell">
-			<Setter Property="Padding" Value="10"/>
-			<Setter Property="BorderThickness" Value="0"/>
-
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="DataGridCell">
-						<Border Background="{TemplateBinding Background}"
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}"
                                 Padding="{TemplateBinding Padding}">
-							<ContentPresenter
+                            <ContentPresenter
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
-	</Page.Resources>
-	
-	<Grid Margin="30">
+    <Grid Margin="30">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
 
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="3*"/>
-			<ColumnDefinition Width="2*"/>
-		</Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-
-		<!-- header -->
-		<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,20">
-
-			<Button Content="← BACK TO SCHEDULE"
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,20">
+            <Button Content="← BACK TO SCHEDULE"
                     Click="Back_Click"
                     Background="Transparent"
                     Foreground="#555555"
@@ -83,119 +77,157 @@
                     FontWeight="Bold"
                     Cursor="Hand"
                     Margin="0,0,0,10"/>
-
-			<TextBlock x:Name="GameHeader"
+            <TextBlock x:Name="GameHeader"
                        FontSize="28"
                        FontWeight="Bold"
                        Foreground="White"/>
-
-			<Rectangle Height="1"
+            <Rectangle Height="1"
                        Fill="#2E2E2E"
                        Margin="0,15,0,0"/>
+        </StackPanel>
 
-		</StackPanel>
-
-		<!-- ===================== -->
-		<!-- HOME TEAM BOX SCORES  -->
-		<!-- ===================== -->
-		<ScrollViewer Grid.Row="1"
+        <!-- Home + Away Box Scores -->
+        <ScrollViewer Grid.Row="1"
                       Grid.Column="0"
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
 
-			<StackPanel>
-
-				<!-- HOME TEAM -->
-				<TextBlock x:Name="HomeTeamLabel"
+                <!-- Home Team -->
+                <TextBlock x:Name="HomeTeamLabel"
                            Foreground="#6E6E6E"
                            FontSize="16"
                            FontWeight="Bold"
                            Margin="0,0,0,10"/>
 
-				<DataGrid x:Name="HomeStatsGrid"
-                          Margin="0,0,0,25">
-
-					<DataGrid.Columns>
-
-						<DataGridTemplateColumn Header="PLAYER" Width="180">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-									<StackPanel Orientation="Horizontal"
+                <DataGrid x:Name="HomeStatsGrid" Margin="0,0,0,25">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="PLAYER" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
                                                 VerticalAlignment="Center">
-
-										<TextBlock Text="{Binding JerseyNumber}"
-                                                   Width="25"
-                                                   Foreground="#555"/>
-
-										<TextBlock Text="{Binding PlayerName}"
+                                        <TextBlock Text="{Binding JerseyNumber}"
+                                                   Width="25" Foreground="#555"/>
+                                        <TextBlock Text="{Binding PlayerName}"
                                                    Foreground="White"
                                                    FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
+                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
+                        <DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
+                        <DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
+                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
+                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
+                        <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
+                    </DataGrid.Columns>
+                </DataGrid>
 
-									</StackPanel>
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
-
-						<DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
-						<DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
-						<DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
-						<DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
-						<DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
-						<DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
-						<DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
-
-					</DataGrid.Columns>
-				</DataGrid>
-
-				<!-- AWAY TEAM -->
-				<TextBlock x:Name="AwayTeamLabel"
+                <!-- Away Team -->
+                <TextBlock x:Name="AwayTeamLabel"
                            Foreground="#6E6E6E"
                            FontSize="16"
                            FontWeight="Bold"
                            Margin="10,10,0,10"/>
 
-				<DataGrid x:Name="AwayStatsGrid">
-
-					<DataGrid.Columns>
-
-						<DataGridTemplateColumn Header="PLAYER" Width="180">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-									<StackPanel Orientation="Horizontal"
+                <DataGrid x:Name="AwayStatsGrid">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="PLAYER" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
                                                 VerticalAlignment="Center">
-
-										<TextBlock Text="{Binding JerseyNumber}"
-                                                   Width="25"
-                                                   Foreground="#555"/>
-
-										<TextBlock Text="{Binding PlayerName}"
+                                        <TextBlock Text="{Binding JerseyNumber}"
+                                                   Width="25" Foreground="#555"/>
+                                        <TextBlock Text="{Binding PlayerName}"
                                                    Foreground="White"
                                                    FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
+                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
+                        <DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
+                        <DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
+                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
+                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
+                        <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </ScrollViewer>
 
-									</StackPanel>
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
+        <!-- Right Side: Game Stats Summary -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="#1A1A1A" BorderBrush="#2E2E2E"
+                BorderThickness="1" CornerRadius="8"
+                Padding="20" VerticalAlignment="Top"
+                Margin="20,0,0,0">
+            <StackPanel>
+                <TextBlock Text="GAME STATS SUMMARY" FontSize="12" FontWeight="Bold"
+                           Foreground="#F05A28" Margin="0,0,0,4"/>
+                <TextBlock Text="Averages per player this game"
+                           FontSize="10" Foreground="#555555" Margin="0,0,0,16"/>
 
-						<DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
-						<DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
-						<DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
-						<DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
-						<DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
-						<DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
-						<DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
+                <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,16"/>
 
-					</DataGrid.Columns>
-				</DataGrid>
+                <!-- Points -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="AVG Points" FontSize="13"
+                               Foreground="#999999"/>
+                    <TextBlock Grid.Column="1" x:Name="AvgPointsText"
+                               FontSize="13" Foreground="White" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
 
-			</StackPanel>
-		</ScrollViewer>
+                <!-- Rebounds -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="AVG Rebounds" FontSize="13"
+                               Foreground="#999999"/>
+                    <TextBlock Grid.Column="1" x:Name="AvgReboundsText"
+                               FontSize="13" Foreground="White" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
 
-		<!-- ===================== -->
-		<!-- RIGHT SIDE (AGGREGATED QUERIES)    -->
-		<!-- ===================== -->
-		<Grid Grid.Row="1"
-              Grid.Column="1"/>
+                <!-- Assists -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="AVG Assists" FontSize="13"
+                               Foreground="#999999"/>
+                    <TextBlock Grid.Column="1" x:Name="AvgAssistsText"
+                               FontSize="13" Foreground="White" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
 
-	</Grid>
+                <!-- Turnovers -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="AVG Turnovers" FontSize="13"
+                               Foreground="#999999"/>
+                    <TextBlock Grid.Column="1" x:Name="AvgTurnoversText"
+                               FontSize="13" Foreground="White" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+    </Grid>
 </Page>
