@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +20,7 @@ namespace Frontend
             _connectionString = connectionString;
             SeasonHeader.Text = $"{_season.StartDate:yyyy} Season";
             LoadTeams();
+            LoadStandings();
             LoadMostActivePlayers();
         }
 
@@ -31,20 +31,32 @@ namespace Frontend
                 var executor = new SqlCommandExecutor(_connectionString);
                 var teamRepo = new SqlTeamRepository(executor);
                 var statsRepo = new SqlStatsRepository(executor);
-
                 var teams = teamRepo.RetrieveTeamsBySeason(_season.SeasonID);
                 var performance = statsRepo.RetrieveTeamPerformance(_season.SeasonID);
-
                 var combined = teams.Select(t =>
                     new TeamWithPerformance(t,
                         performance.FirstOrDefault(p => p.TeamID == t.TeamID)))
                     .ToList();
-
                 TeamsDataContainer.Collection = combined;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading teams: " + ex.Message);
+            }
+        }
+
+        private void LoadStandings()
+        {
+            try
+            {
+                var executor = new SqlCommandExecutor(_connectionString);
+                var repo = new SqlStatsRepository(executor);
+                StandingsList.ItemsSource =
+                    repo.RetrieveTeamPerformance(_season.SeasonID);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading standings: " + ex.Message);
             }
         }
 
@@ -70,6 +82,7 @@ namespace Frontend
             if (dialog.ShowDialog() == true)
             {
                 LoadTeams();
+                LoadStandings();
                 LoadMostActivePlayers();
             }
         }

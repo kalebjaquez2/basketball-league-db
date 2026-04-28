@@ -29,6 +29,7 @@
                        HorizontalAlignment="Left" Margin="0,12,0,0"/>
         </StackPanel>
 
+        <!-- Left: Team Tiles -->
         <ScrollViewer Grid.Row="1" Grid.Column="0"
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,0,20,0">
@@ -81,12 +82,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Width="260" Height="210"
-                                    CornerRadius="8"
-                                    Background="#242424"
-                                    BorderBrush="#2E2E2E"
-                                    BorderThickness="1"
-                                    Margin="0,0,16,16"
-                                    ClipToBounds="True">
+                                    CornerRadius="8" Background="#242424"
+                                    BorderBrush="#2E2E2E" BorderThickness="1"
+                                    Margin="0,0,16,16" ClipToBounds="True">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
@@ -95,7 +93,6 @@
                                         <RowDefinition Height="30"/>
                                     </Grid.RowDefinitions>
 
-                                    <!-- Team Name -->
                                     <StackPanel Grid.Row="0" VerticalAlignment="Center">
                                         <TextBlock Text="🛡️" FontSize="28"
                                                    HorizontalAlignment="Center"
@@ -106,7 +103,6 @@
                                                    Margin="12,0,12,0"/>
                                     </StackPanel>
 
-                                    <!-- W/L + AVG -->
                                     <StackPanel Grid.Row="1" Margin="0,4,0,6">
                                         <StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Center"
@@ -137,15 +133,13 @@
                                                    HorizontalAlignment="Center"/>
                                     </StackPanel>
 
-                                    <!-- Buttons -->
                                     <Grid Grid.Row="3">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Button Grid.Column="0" Content="SCHEDULE"
-                                                Click="TeamTile_Click"
-                                                Tag="{Binding TeamID}"
+                                                Click="TeamTile_Click" Tag="{Binding TeamID}"
                                                 Background="#F05A28" Foreground="White"
                                                 BorderThickness="0" FontWeight="SemiBold"
                                                 FontSize="11" Cursor="Hand">
@@ -156,8 +150,7 @@
                                             </Button.Resources>
                                         </Button>
                                         <Button Grid.Column="1" Content="ROSTER"
-                                                Click="Roster_Click"
-                                                Tag="{Binding TeamID}"
+                                                Click="Roster_Click" Tag="{Binding TeamID}"
                                                 Background="#3A3A3A" Foreground="White"
                                                 BorderThickness="0" FontWeight="SemiBold"
                                                 FontSize="11" Cursor="Hand">
@@ -176,70 +169,139 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Right: Most Active Players Panel -->
-        <Border Grid.Row="1" Grid.Column="1"
-                Background="#1A1A1A" BorderBrush="#2E2E2E"
-                BorderThickness="1" CornerRadius="8"
-                Padding="20" VerticalAlignment="Top">
+        <!-- Right: Panels -->
+        <ScrollViewer Grid.Row="1" Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <TextBlock Text="MOST ACTIVE PLAYERS" FontSize="12" FontWeight="Bold"
-                           Foreground="#F05A28" Margin="0,0,0,16"/>
 
-                <Grid Margin="0,0,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="40"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="PLAYER" FontSize="10"
-                               Foreground="#555555" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="1" Text="GP" FontSize="10"
-                               Foreground="#555555" FontWeight="Bold"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="2" Text="PTS" FontSize="10"
-                               Foreground="#555555" FontWeight="Bold"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="3" Text="PPG" FontSize="10"
-                               Foreground="#555555" FontWeight="Bold"
-                               HorizontalAlignment="Center"/>
-                </Grid>
+                <!-- Standings -->
+                <Border Background="#1A1A1A" BorderBrush="#2E2E2E"
+                        BorderThickness="1" CornerRadius="8"
+                        Padding="20" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="STANDINGS" FontSize="12" FontWeight="Bold"
+                                   Foreground="#F05A28" Margin="0,0,0,16"/>
 
-                <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,8"/>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="TEAM" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="W" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="L" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="AVG" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
 
-                <ItemsControl x:Name="MostActivePlayersList">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="40"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <TextBlock Text="{Binding SeasonRank}"
-                                               FontSize="10" Foreground="#F05A28"
-                                               FontWeight="Bold" Margin="0,0,6,0"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding PlayerName}"
-                                               FontSize="12" Foreground="White"
-                                               TextTrimming="CharacterEllipsis"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="1" Text="{Binding GamesPlayed}"
-                                           FontSize="12" Foreground="#999999"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="2" Text="{Binding TotalPoints}"
-                                           FontSize="12" Foreground="White"
-                                           FontWeight="Bold" HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="3" Text="{Binding PointsPerGame}"
-                                           FontSize="12" Foreground="#F05A28"
-                                           HorizontalAlignment="Center"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                        <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,8"/>
+
+                        <ItemsControl x:Name="StandingsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="35"/>
+                                            <ColumnDefinition Width="35"/>
+                                            <ColumnDefinition Width="50"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding TeamName}"
+                                                   FontSize="12" Foreground="White"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Wins}"
+                                                   FontSize="12" Foreground="#4CAF50"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Losses}"
+                                                   FontSize="12" Foreground="#FF4444"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3"
+                                                   Text="{Binding AverageScorePerGame}"
+                                                   FontSize="12" Foreground="#999999"
+                                                   HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Most Active Players -->
+                <Border Background="#1A1A1A" BorderBrush="#2E2E2E"
+                        BorderThickness="1" CornerRadius="8"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="MOST ACTIVE PLAYERS" FontSize="12" FontWeight="Bold"
+                                   Foreground="#F05A28" Margin="0,0,0,16"/>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="PLAYER" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="GP" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="PTS" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="PPG" FontSize="10"
+                                       Foreground="#555555" FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,8"/>
+
+                        <ItemsControl x:Name="MostActivePlayersList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <TextBlock Text="{Binding SeasonRank}"
+                                                       FontSize="10" Foreground="#F05A28"
+                                                       FontWeight="Bold" Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding PlayerName}"
+                                                       FontSize="12" Foreground="White"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding GamesPlayed}"
+                                                   FontSize="12" Foreground="#999999"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TotalPoints}"
+                                                   FontSize="12" Foreground="White"
+                                                   FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding PointsPerGame}"
+                                                   FontSize="12" Foreground="#F05A28"
+                                                   HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
-        </Border>
+        </ScrollViewer>
     </Grid>
 </Page>
