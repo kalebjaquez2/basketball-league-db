@@ -129,10 +129,10 @@ namespace Backend.Repositories
                 reader.GetInt32("PlayerID"),
                 reader.GetString("PlayerName"),
                 reader.GetInt32("TeamID"),
-                reader.GetInt32("GamesPlayed"),
-                reader.GetInt32("TotalPoints"),
+                Convert.ToInt32(reader.GetValue<object>("GamesPlayed")),
+                Convert.ToInt32(reader.GetValue<object>("TotalPoints")),
                 reader.GetValue<decimal>("PointsPerGame"),
-                reader.GetInt32("SeasonRank")
+                Convert.ToInt32(reader.GetValue<object>("SeasonRank"))
             );
         }
 
@@ -142,10 +142,10 @@ namespace Backend.Repositories
                 reader.GetInt32("TeamID"),
                 reader.GetInt32("PlayerID"),
                 reader.GetString("PlayerName"),
-                reader.GetInt32("GamesPlayed"),
-                reader.GetInt32("TotalPoints"),
+                Convert.ToInt32(reader.GetValue<object>("GamesPlayed")),
+                Convert.ToInt32(reader.GetValue<object>("TotalPoints")),
                 reader.GetValue<decimal>("AveragePointsPerGame"),
-                reader.GetInt32("TeamRank")
+                Convert.ToInt32(reader.GetValue<object>("TeamRank"))
             );
         }
 
@@ -154,8 +154,8 @@ namespace Backend.Repositories
             return new TeamPerformance(
                 reader.GetInt32("TeamID"),
                 reader.GetString("TeamName"),
-                reader.GetInt32("Wins"),
-                reader.GetInt32("Losses"),
+                Convert.ToInt32(reader.GetValue<object>("Wins")),
+                Convert.ToInt32(reader.GetValue<object>("Losses")),
                 reader.GetValue<decimal>("AverageScorePerGame")
             );
         }

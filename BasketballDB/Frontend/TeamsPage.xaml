@@ -8,106 +8,99 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="320"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,40">
-            <Button Content="← BACK TO SEASONS" Click="Back_Click" 
-                    Background="Transparent" BorderThickness="0" Foreground="#555555" 
-                    FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
-
-            <TextBlock Text="MANAGING TEAMS FOR" FontSize="14" Foreground="#999999" Margin="0,0,0,4"/>
-            <TextBlock x:Name="SeasonHeader" FontSize="36" FontWeight="Bold" Foreground="White" Text="Season Name"/>
-            <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+        <!-- Header spans both columns -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,40">
+            <Button Content="← BACK TO SEASONS" Click="Back_Click"
+                    Background="Transparent" BorderThickness="0" Foreground="#555555"
+                    FontSize="11" FontWeight="Bold" Cursor="Hand"
+                    HorizontalAlignment="Left" Margin="0,0,0,20"/>
+            <TextBlock Text="MANAGING TEAMS FOR" FontSize="14"
+                       Foreground="#999999" Margin="0,0,0,4"/>
+            <TextBlock x:Name="SeasonHeader" FontSize="36" FontWeight="Bold"
+                       Foreground="White" Text="Season Name"/>
+            <Rectangle Height="3" Width="80" Fill="#F05A28"
+                       HorizontalAlignment="Left" Margin="0,12,0,0"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <!-- Left: Team Tiles -->
+        <ScrollViewer Grid.Row="1" Grid.Column="0"
+                      VerticalScrollBarVisibility="Auto"
+                      Margin="0,0,20,0">
             <StackPanel>
-                <TextBlock Text="TEAM ROSTER" FontSize="12" Foreground="#999999" Margin="0,0,0,16"/>
+                <TextBlock Text="TEAM ROSTER" FontSize="12"
+                           Foreground="#999999" Margin="0,0,0,16"/>
 
                 <ItemsControl x:Name="TeamsList">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" />
+                            <WrapPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-
                     <ItemsControl.ItemsSource>
                         <CompositeCollection>
                             <ContentControl>
-                                <Button Width="260" Height="160" Margin="0,0,16,16" Cursor="Hand" Click="AddTeam_Click">
+                                <Button Width="260" Height="160" Margin="0,0,16,16"
+                                        Cursor="Hand" Click="AddTeam_Click">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Background="#1A1A1A" BorderBrush="#444444" BorderThickness="1" CornerRadius="8" x:Name="MainBorder">
+                                            <Border Background="#1A1A1A" BorderBrush="#444444"
+                                                    BorderThickness="1" CornerRadius="8"
+                                                    x:Name="MainBorder">
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="+" FontSize="40" Foreground="#F05A28" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                                    <TextBlock Text="Add Team" FontSize="16" Foreground="#999999" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="+" FontSize="40"
+                                                               Foreground="#F05A28"
+                                                               HorizontalAlignment="Center"
+                                                               Margin="0,0,0,8"/>
+                                                    <TextBlock Text="Add Team" FontSize="16"
+                                                               Foreground="#999999"
+                                                               HorizontalAlignment="Center"/>
                                                 </StackPanel>
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="MainBorder" Property="Background" Value="#242424"/>
-                                                    <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
+                                                    <Setter TargetName="MainBorder"
+                                                            Property="Background" Value="#242424"/>
+                                                    <Setter TargetName="MainBorder"
+                                                            Property="BorderBrush" Value="#F05A28"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
                             </ContentControl>
-
-                            <CollectionContainer x:Name="TeamsDataContainer" />
+                            <CollectionContainer x:Name="TeamsDataContainer"/>
                         </CompositeCollection>
                     </ItemsControl.ItemsSource>
-
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Width="260" Height="160"
-                                CornerRadius="8"
-                                Background="#242424"
-                                BorderBrush="#2E2E2E"
-                                BorderThickness="1"
-                                Margin="0,0,16,16">     
-
+                            <Border Width="260" Height="160" CornerRadius="8"
+                                    Background="#242424" BorderBrush="#2E2E2E"
+                                    BorderThickness="1" Margin="0,0,16,16">
                                 <StackPanel VerticalAlignment="Center">
-
-                                    <!-- Icon -->
-                                    <TextBlock Text="🛡️"
-                                       FontSize="32"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,12"/>  
-
-                                    <!-- Team Name -->
-                                    <TextBlock Text="{Binding TeamName}"
-                                       FontSize="18"
-                                       FontWeight="Bold"
-                                       Foreground="White"
-                                       TextWrapping="Wrap"
-                                       TextAlignment="Center"
-                                       Margin="8,0,8,0"/>   
-
-                                    <!-- Buttons Row -->
+                                    <TextBlock Text="🛡️" FontSize="32"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,12"/>
+                                    <TextBlock Text="{Binding TeamName}" FontSize="18"
+                                               FontWeight="Bold" Foreground="White"
+                                               TextWrapping="Wrap" TextAlignment="Center"
+                                               Margin="8,0,8,0"/>
                                     <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,10,0,0">
-
-                                        <!-- Schedule Button -->
-                                        <Button Content="SCHEDULE"
-                                            Click="TeamTile_Click"
-                                            Tag="{Binding TeamID}"
-                                            Margin="0,0,8,0"
-                                            Padding="6,2"
-                                            Background="#F05A28"
-                                            Foreground="White"
-                                            BorderThickness="0"
-                                            Cursor="Hand"/>
-
-                                        <!-- Roster Button -->
-                                        <Button Content="ROSTER"
-                                            Click="Roster_Click"
-                                            Tag="{Binding TeamID}"
-                                            Padding="6,2"
-                                            Background="#3A3A3A"
-                                            Foreground="White"
-                                            BorderThickness="0"
-                                            Cursor="Hand"/>
+                                                HorizontalAlignment="Center"
+                                                Margin="0,10,0,0">
+                                        <Button Content="SCHEDULE" Click="TeamTile_Click"
+                                                Tag="{Binding TeamID}" Margin="0,0,8,0"
+                                                Padding="6,2" Background="#F05A28"
+                                                Foreground="White" BorderThickness="0"
+                                                Cursor="Hand"/>
+                                        <Button Content="ROSTER" Click="Roster_Click"
+                                                Tag="{Binding TeamID}" Padding="6,2"
+                                                Background="#3A3A3A" Foreground="White"
+                                                BorderThickness="0" Cursor="Hand"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -116,5 +109,73 @@
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Right: Most Active Players Panel -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="#1A1A1A" BorderBrush="#2E2E2E"
+                BorderThickness="1" CornerRadius="8"
+                Padding="20" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Text="MOST ACTIVE PLAYERS" FontSize="12" FontWeight="Bold"
+                           Foreground="#F05A28" Margin="0,0,0,16"/>
+
+                <!-- Column Headers -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="PLAYER" FontSize="10"
+                               Foreground="#555555" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Text="GP" FontSize="10"
+                               Foreground="#555555" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="PTS" FontSize="10"
+                               Foreground="#555555" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Text="PPG" FontSize="10"
+                               Foreground="#555555" FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+
+                <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,8"/>
+
+                <!-- Player Rows -->
+                <ItemsControl x:Name="MostActivePlayersList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SeasonRank}"
+                                               FontSize="10" Foreground="#F05A28"
+                                               FontWeight="Bold" Margin="0,0,6,0"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding PlayerName}"
+                                               FontSize="12" Foreground="White"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{Binding GamesPlayed}"
+                                           FontSize="12" Foreground="#999999"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TotalPoints}"
+                                           FontSize="12" Foreground="White"
+                                           FontWeight="Bold" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="{Binding PointsPerGame}"
+                                           FontSize="12" Foreground="#F05A28"
+                                           HorizontalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>
