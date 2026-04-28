@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\BasketballDB",
+    "\\BasketballDB\\Backend",
+    "\\BasketballDB\\DataAccess",
+    "\\BasketballDB\\Frontend"
   ],
+  "SelectedNode": "\\BasketballDB\\Frontend\\MainWindow.xaml.cs",
   "PreviewInSolutionExplorer": false
 }
