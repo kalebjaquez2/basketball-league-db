@@ -1,10 +1,11 @@
-﻿using System;
+﻿
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
-
 
 namespace Frontend
 {
@@ -28,9 +29,18 @@ namespace Frontend
             try
             {
                 var executor = new SqlCommandExecutor(_connectionString);
-                var repo = new SqlTeamRepository(executor);
-                var teams = repo.RetrieveTeamsBySeason(_season.SeasonID);
-                TeamsDataContainer.Collection = teams;
+                var teamRepo = new SqlTeamRepository(executor);
+                var statsRepo = new SqlStatsRepository(executor);
+
+                var teams = teamRepo.RetrieveTeamsBySeason(_season.SeasonID);
+                var performance = statsRepo.RetrieveTeamPerformance(_season.SeasonID);
+
+                var combined = teams.Select(t =>
+                    new TeamWithPerformance(t,
+                        performance.FirstOrDefault(p => p.TeamID == t.TeamID)))
+                    .ToList();
+
+                TeamsDataContainer.Collection = combined;
             }
             catch (Exception ex)
             {
@@ -83,18 +93,22 @@ namespace Frontend
 
         private void TeamTile_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is Team selectedTeam)
+            if (sender is Button btn && btn.DataContext is TeamWithPerformance selectedTeam)
             {
-                var gamesPage = new GamesPage(selectedTeam, _connectionString);
+                var team = new Team(selectedTeam.TeamID, selectedTeam.SeasonID,
+                    selectedTeam.TeamName);
+                var gamesPage = new GamesPage(team, _connectionString);
                 this.NavigationService.Navigate(gamesPage);
             }
         }
 
         private void Roster_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is Team selectedTeam)
+            if (sender is Button btn && btn.DataContext is TeamWithPerformance selectedTeam)
             {
-                var rosterPage = new RosterPage(selectedTeam, _connectionString);
+                var team = new Team(selectedTeam.TeamID, selectedTeam.SeasonID,
+                    selectedTeam.TeamName);
+                var rosterPage = new RosterPage(team, _connectionString);
                 this.NavigationService.Navigate(rosterPage);
             }
         }
