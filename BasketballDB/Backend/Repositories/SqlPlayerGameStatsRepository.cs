@@ -17,13 +17,13 @@ namespace Backend.Repositories
         private readonly SqlCommandExecutor executor = executor;
 
         public void CreatePlayerGameStats(int playerID, int gameID, int teamID,
-            int points, int playingTime, int turnovers, int rebounds, int assists,
+            int playingTime, int turnovers, int rebounds, int assists,
             int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
             int threePointersMade, int threePointersTaken, int personalFouls)
         {
             executor.ExecuteNonQuery(
                 new CreatePlayerGameStatsDelegate(playerID, gameID, teamID,
-                    points, playingTime, turnovers, rebounds, assists, steals, blocks,
+                    playingTime, turnovers, rebounds, assists, steals, blocks,
                     fieldGoalsMade, fieldGoalsTaken, threePointersMade, threePointersTaken, personalFouls));
         }
 
@@ -47,13 +47,13 @@ namespace Backend.Repositories
         }
 
         public PlayerGameStats UpdatePlayerGameStats(int playerID, int gameID, int teamID,
-            int points, int playingTime, int turnovers, int rebounds, int assists,
+            int playingTime, int turnovers, int rebounds, int assists,
             int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
             int threePointersMade, int threePointersTaken, int personalFouls)
         {
             return executor.ExecuteReader(
                 new UpdatePlayerGameStatsDelegate(playerID, gameID,
-                    points, playingTime, turnovers, rebounds, assists, steals, blocks,
+                    playingTime, turnovers, rebounds, assists, steals, blocks,
                     fieldGoalsMade, fieldGoalsTaken, threePointersMade, threePointersTaken, personalFouls))
                 ?? throw new RecordNotFoundException($"{playerID},{gameID}");
         }
@@ -68,7 +68,7 @@ namespace Backend.Repositories
 
         // UPDATED: Primary Constructor now includes all 15 parameters
         private class CreatePlayerGameStatsDelegate(int playerID, int gameID,
-            int teamID, int points, int playingTime, int turnovers,
+            int teamID, int playingTime, int turnovers,
             int rebounds, int assists, int steals, int blocks,
             int fieldGoalsMade, int fieldGoalsTaken, int threePointersMade,
             int threePointersTaken, int personalFouls)
@@ -79,7 +79,6 @@ namespace Backend.Repositories
                 command.Parameters.AddWithValue("PlayerID", playerID);
                 command.Parameters.AddWithValue("GameID", gameID);
                 command.Parameters.AddWithValue("TeamID", teamID);
-                command.Parameters.AddWithValue("Points", points);
                 command.Parameters.AddWithValue("PlayingTime", playingTime);
                 command.Parameters.AddWithValue("Turnovers", turnovers);
                 command.Parameters.AddWithValue("Rebounds", rebounds);
@@ -144,7 +143,7 @@ namespace Backend.Repositories
 
         // UPDATED: Constructor and PrepareCommand now include all parameters
         private class UpdatePlayerGameStatsDelegate(int playerID, int gameID,
-            int points, int playingTime, int turnovers, int rebounds, int assists,
+            int playingTime, int turnovers, int rebounds, int assists,
             int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
             int threePointersMade, int threePointersTaken, int personalFouls)
             : DataReaderDelegate<PlayerGameStats?>("Basketball.UpdatePlayerGameStats")
@@ -153,7 +152,6 @@ namespace Backend.Repositories
             {
                 command.Parameters.AddWithValue("PlayerID", playerID);
                 command.Parameters.AddWithValue("GameID", gameID);
-                command.Parameters.AddWithValue("Points", points);
                 command.Parameters.AddWithValue("PlayingTime", playingTime);
                 command.Parameters.AddWithValue("Turnovers", turnovers);
                 command.Parameters.AddWithValue("Rebounds", rebounds);
@@ -190,7 +188,6 @@ namespace Backend.Repositories
                 reader.GetInt32("PlayerID"),
                 reader.GetInt32("GameID"),
                 reader.GetInt32("TeamID"),
-                reader.GetInt32("Points"),
                 reader.GetInt32("PlayingTime"),
                 reader.GetInt32("Turnovers"),
                 reader.GetInt32("Rebounds"),

@@ -257,68 +257,114 @@ GO
  * GameID matches actual games their team played
  ****************************/
 
-DECLARE @GameID INT;
+INSERT INTO Basketball.PlayerGameStats
+(PlayerID, GameID, TeamID, PlayingTime, Turnovers, Rebounds, Assists,
+ FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
 
-DECLARE game_cursor CURSOR FOR
-SELECT GameID FROM Basketball.Games;
+-- =========================
+-- HOME TEAM
+-- =========================
+SELECT
+    p.PlayerID,
+    g.GameID,
+    p.TeamID,
 
-OPEN game_cursor;
-FETCH NEXT FROM game_cursor INTO @GameID;
+    stats.playingTime,
+    stats.turnovers,
+    stats.rebounds,
+    stats.assists,
 
-WHILE @@FETCH_STATUS = 0
-BEGIN
+    fg.fgMade,
+    fg.fgTaken,
+    tp.tpMade,
+    tp.tpTaken,
 
-    -- HOME team players
-    INSERT INTO Basketball.PlayerGameStats
-    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists,
-     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+    stats.fouls
+
+FROM Basketball.Games g
+JOIN Basketball.Players p
+    ON p.TeamID = g.HomeTeamID
+
+CROSS APPLY (
     SELECT
-        p.PlayerID,
-        g.GameID,
-        p.TeamID,
-        ABS(CHECKSUM(NEWID())) % 30 + 5,
-        10 + (ABS(CHECKSUM(NEWID())) % 30),
-        ABS(CHECKSUM(NEWID())) % 6,
-        ABS(CHECKSUM(NEWID())) % 12,
-        ABS(CHECKSUM(NEWID())) % 8,
-        ABS(CHECKSUM(NEWID())) % 12,
-        ABS(CHECKSUM(NEWID())) % 20,
-        ABS(CHECKSUM(NEWID())) % 5,
-        ABS(CHECKSUM(NEWID())) % 10,
-        ABS(CHECKSUM(NEWID())) % 5
-    FROM Basketball.Players p
-    CROSS JOIN Basketball.Games g
-    WHERE g.GameID = @GameID
-      AND p.TeamID = g.HomeTeamID;
+        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
+        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
+        ABS(CHECKSUM(NEWID())) % 8 AS assists,
+        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+) stats
 
-    -- AWAY team players
-    INSERT INTO Basketball.PlayerGameStats
-    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists,
-     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+-- FG chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+) fgTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+           fgTakenCalc.fgTaken AS fgTaken
+) fg
+
+-- 3PT chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+) tpTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+           tpTakenCalc.tpTaken AS tpTaken
+) tp
+
+
+UNION ALL
+
+-- =========================
+-- AWAY TEAM
+-- =========================
+SELECT
+    p.PlayerID,
+    g.GameID,
+    p.TeamID,
+
+    stats.playingTime,
+    stats.turnovers,
+    stats.rebounds,
+    stats.assists,
+
+    fg.fgMade,
+    fg.fgTaken,
+    tp.tpMade,
+    tp.tpTaken,
+
+    stats.fouls
+
+FROM Basketball.Games g
+JOIN Basketball.Players p
+    ON p.TeamID = g.AwayTeamID
+
+CROSS APPLY (
     SELECT
-        p.PlayerID,
-        g.GameID,
-        p.TeamID,
-        ABS(CHECKSUM(NEWID())) % 30 + 5,
-        10 + (ABS(CHECKSUM(NEWID())) % 30),
-        ABS(CHECKSUM(NEWID())) % 6,
-        ABS(CHECKSUM(NEWID())) % 12,
-        ABS(CHECKSUM(NEWID())) % 8,
-        ABS(CHECKSUM(NEWID())) % 12,
-        ABS(CHECKSUM(NEWID())) % 20,
-        ABS(CHECKSUM(NEWID())) % 5,
-        ABS(CHECKSUM(NEWID())) % 10,
-        ABS(CHECKSUM(NEWID())) % 5
-    FROM Basketball.Players p
-    CROSS JOIN Basketball.Games g
-    WHERE g.GameID = @GameID
-      AND p.TeamID = g.AwayTeamID;
+        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
+        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
+        ABS(CHECKSUM(NEWID())) % 8 AS assists,
+        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+) stats
 
-    FETCH NEXT FROM game_cursor INTO @GameID;
-END;
+-- FG chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+) fgTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+           fgTakenCalc.fgTaken AS fgTaken
+) fg
 
-CLOSE game_cursor;
-DEALLOCATE game_cursor;
+-- 3PT chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+) tpTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+           tpTakenCalc.tpTaken AS tpTaken
+) tp;
 
 PRINT 'Populate.sql complete.';
 PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 160 PlayerGameStats rows.';

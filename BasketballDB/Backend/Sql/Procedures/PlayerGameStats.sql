@@ -1,12 +1,12 @@
 -- Create PlayerGameStats
 CREATE OR ALTER PROCEDURE Basketball.CreatePlayerGameStats
     @PlayerID INT, @GameID INT, @TeamID INT,
-    @Points INT = 0, @PlayingTime INT = 0, @Turnovers INT = 0,
+    @PlayingTime INT = 0, @Turnovers INT = 0,
     @Rebounds INT = 0, @Assists INT = 0, @Steals INT = 0, @Blocks INT = 0
 AS
-INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, Points, 
+INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, 
     PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks)
-VALUES(@PlayerID, @GameID, @TeamID, @Points, 
+VALUES(@PlayerID, @GameID, @TeamID, 
     @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks);
 GO
 
@@ -20,7 +20,6 @@ BEGIN
         S.PlayerID, 
         S.GameID, 
         S.TeamID, 
-        S.Points, 
         S.PlayingTime, 
         S.Turnovers, 
         S.Rebounds, 
@@ -44,7 +43,7 @@ CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByGame
 AS
 BEGIN
     SELECT 
-        S.PlayerID, S.GameID, S.TeamID, S.Points, S.PlayingTime, 
+        S.PlayerID, S.GameID, S.TeamID, S.PlayingTime, 
         S.Rebounds, S.Assists, S.Steals, S.Blocks, S.Turnovers,
         S.FieldGoalsMade, S.FieldGoalsTaken, 
         S.ThreePointersMade, S.ThreePointersTaken,
@@ -62,7 +61,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByPlayer
     @PlayerID INT
 AS
-SELECT S.PlayerID, S.GameID, S.TeamID, S.Points, S.PlayingTime,
+SELECT S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
        S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
        (P.FirstName + ' ' + P.LastName) AS PlayerName
 FROM Basketball.PlayerGameStats S
@@ -73,11 +72,11 @@ GO
 -- Update PlayerGameStats
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
     @PlayerID INT, @GameID INT,
-    @Points INT, @PlayingTime INT, @Turnovers INT,
+    @PlayingTime INT, @Turnovers INT,
     @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT
 AS
 UPDATE Basketball.PlayerGameStats
-SET Points = @Points,
+SET 
     PlayingTime = @PlayingTime,
     Turnovers = @Turnovers,
     Rebounds = @Rebounds,

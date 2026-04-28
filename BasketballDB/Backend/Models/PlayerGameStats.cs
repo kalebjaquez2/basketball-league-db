@@ -11,8 +11,8 @@ namespace Backend.Models
         public int PlayerID { get; set; }
         public int GameID { get; set; }
         public int TeamID { get; set; }
-        public string? PlayerName { get; set; } 
-        public int Points { get; set; }
+        public string? PlayerName { get; set; }
+        public int Points => ((FieldGoalsMade - ThreePointersMade) * 2) + (ThreePointersMade * 3);
         public int PlayingTime { get; set; }
         public int Turnovers { get; set; }
         public int Rebounds { get; set; }
@@ -25,11 +25,14 @@ namespace Backend.Models
         public int ThreePointersMade { get; set; }
         public int PersonalFouls { get; set; }
 
+        private string _homeTeamName;
+        private string _awayTeamName;
+
         public string FieldGoalsDisplay => $"{FieldGoalsMade}-{FieldGoalsTaken}";
         public string ThreePointersDisplay => $"{ThreePointersMade}-{ThreePointersTaken}";
 
         public PlayerGameStats(int playerID, int gameID, int teamID,
-            int points, int playingTime, int turnovers, int rebounds, 
+            int playingTime, int turnovers, int rebounds, 
             int assists, int steals, int blocks, int fieldGoalsTaken, 
             int fieldGoalsMade, int threePointersTaken, int threePointersMade, 
             int personalFouls)
@@ -37,7 +40,6 @@ namespace Backend.Models
             PlayerID = playerID;
             GameID = gameID;
             TeamID = teamID;
-            Points = points;
             PlayingTime = playingTime;
             Turnovers = turnovers;
             Rebounds = rebounds;

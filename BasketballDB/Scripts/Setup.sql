@@ -225,32 +225,75 @@ BEGIN
         PlayerID INT NOT NULL,
         GameID INT NOT NULL,
         TeamID INT NOT NULL,
-        Points INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Points DEFAULT(0),
-        PlayingTime INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_PlayingTime DEFAULT(0),
-        Turnovers INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Turnovers DEFAULT(0),
-        Rebounds INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Rebounds DEFAULT(0),
-        Assists INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Assists DEFAULT(0),
-        Steals INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Steals DEFAULT(0),
-        Blocks INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Blocks DEFAULT(0),
-        FieldGoalsMade INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsMade DEFAULT(0),
-        FieldGoalsTaken INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsTaken DEFAULT(0),
-        ThreePointersMade INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersMade DEFAULT 0,
-        ThreePointersTaken INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersTaken DEFAULT 0,
-        PersonalFouls INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_PersonalFouls DEFAULT 0,
 
-        CONSTRAINT PK_Basketball_PlayerGameStats PRIMARY KEY CLUSTERED
-        (
-            PlayerID ASC, GameID ASC
-        ),
+        PlayingTime INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_PlayingTime DEFAULT(0),
+
+        Turnovers INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_Turnovers DEFAULT(0),
+
+        Rebounds INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_Rebounds DEFAULT(0),
+
+        Assists INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_Assists DEFAULT(0),
+
+        Steals INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_Steals DEFAULT(0),
+
+        Blocks INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_Blocks DEFAULT(0),
+
+        FieldGoalsMade INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsMade DEFAULT(0),
+
+        FieldGoalsTaken INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsTaken DEFAULT(0),
+
+        ThreePointersMade INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersMade DEFAULT(0),
+
+        ThreePointersTaken INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersTaken DEFAULT(0),
+
+        PersonalFouls INT NOT NULL 
+            CONSTRAINT DF_Basketball_PlayerGameStats_PersonalFouls DEFAULT(0),
+
+        CONSTRAINT PK_Basketball_PlayerGameStats 
+            PRIMARY KEY CLUSTERED (PlayerID ASC, GameID ASC),
+
         CONSTRAINT FK_Basketball_PlayerGameStats_PlayerID_Basketball_Players
             FOREIGN KEY (PlayerID)
             REFERENCES Basketball.Players(PlayerID),
+
         CONSTRAINT FK_Basketball_PlayerGameStats_GameID_Basketball_Games
             FOREIGN KEY (GameID)
             REFERENCES Basketball.Games(GameID),
+
         CONSTRAINT FK_Basketball_PlayerGameStats_TeamID_Basketball_Teams
             FOREIGN KEY (TeamID)
-            REFERENCES Basketball.Teams(TeamID)
+            REFERENCES Basketball.Teams(TeamID),
+
+        CONSTRAINT CK_PlayerGameStats_FieldGoals_Valid
+            CHECK (FieldGoalsMade <= FieldGoalsTaken),
+
+        CONSTRAINT CK_PlayerGameStats_ThreePointers_Valid
+            CHECK (ThreePointersMade <= ThreePointersTaken),
+
+        CONSTRAINT CK_PlayerGameStats_NonNegative
+            CHECK (
+                PlayingTime >= 0 AND
+                Turnovers >= 0 AND
+                Rebounds >= 0 AND
+                Assists >= 0 AND
+                Steals >= 0 AND
+                Blocks >= 0 AND
+                FieldGoalsMade >= 0 AND
+                FieldGoalsTaken >= 0 AND
+                ThreePointersMade >= 0 AND
+                ThreePointersTaken >= 0 AND
+                PersonalFouls >= 0
+            )
     );
 END;
 GO
@@ -599,12 +642,12 @@ GO
 -- Create PlayerGameStats
 CREATE OR ALTER PROCEDURE Basketball.CreatePlayerGameStats
     @PlayerID INT, @GameID INT, @TeamID INT,
-    @Points INT = 0, @PlayingTime INT = 0, @Turnovers INT = 0,
+    @PlayingTime INT = 0, @Turnovers INT = 0,
     @Rebounds INT = 0, @Assists INT = 0, @Steals INT = 0, @Blocks INT = 0
 AS
-INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, Points, 
+INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, 
     PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks)
-VALUES(@PlayerID, @GameID, @TeamID, @Points, 
+VALUES(@PlayerID, @GameID, @TeamID, 
     @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks);
 GO
 
@@ -618,7 +661,6 @@ BEGIN
         S.PlayerID, 
         S.GameID, 
         S.TeamID, 
-        S.Points, 
         S.PlayingTime, 
         S.Turnovers, 
         S.Rebounds, 
@@ -636,14 +678,13 @@ BEGIN
     WHERE S.PlayerID = @PlayerID AND S.GameID = @GameID;
 END;
 GO
-
 -- Get the player stats by game
 CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByGame
     @GameID INT
 AS
 BEGIN
     SELECT 
-        S.PlayerID, S.GameID, S.TeamID, S.Points, S.PlayingTime, 
+        S.PlayerID, S.GameID, S.TeamID, S.PlayingTime, 
         S.Rebounds, S.Assists, S.Steals, S.Blocks, S.Turnovers,
         S.FieldGoalsMade, S.FieldGoalsTaken, 
         S.ThreePointersMade, S.ThreePointersTaken,
@@ -661,7 +702,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByPlayer
     @PlayerID INT
 AS
-SELECT S.PlayerID, S.GameID, S.TeamID, S.Points, S.PlayingTime,
+SELECT S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
        S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
        (P.FirstName + ' ' + P.LastName) AS PlayerName
 FROM Basketball.PlayerGameStats S
@@ -672,11 +713,11 @@ GO
 -- Update PlayerGameStats
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
     @PlayerID INT, @GameID INT,
-    @Points INT, @PlayingTime INT, @Turnovers INT,
+    @PlayingTime INT, @Turnovers INT,
     @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT
 AS
 UPDATE Basketball.PlayerGameStats
-SET Points = @Points,
+SET 
     PlayingTime = @PlayingTime,
     Turnovers = @Turnovers,
     Rebounds = @Rebounds,
@@ -694,7 +735,6 @@ AS
 DELETE FROM Basketball.PlayerGameStats
 WHERE PlayerID = @PlayerID AND GameID = @GameID;
 GO
-
 PRINT 'BasketballLeague560 setup complete.';
 PRINT 'Tables: Location, League, Seasons, Teams, Games, Players, PlayerGameStats';
 PRINT 'Procedures: Location(4), League(4), Seasons(4), Teams(5), Games(5), Players(5), PlayerGameStats(6) = 33 total';

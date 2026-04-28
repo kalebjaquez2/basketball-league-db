@@ -1,10 +1,10 @@
 ﻿using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Frontend
 {
@@ -12,47 +12,58 @@ namespace Frontend
     {
         private readonly Game _game;
         private readonly string _connectionString;
-        private List<PlayerGameStats>? _allStats;
 
+        private List<PlayerGameStats>? _allStats;
 
         public PlayerGameStatsPage(Game game, string connectionString)
         {
             InitializeComponent();
+
             _game = game;
             _connectionString = connectionString;
+
             LoadBoxScore();
+            LoadTeamNames();
         }
 
         private void LoadBoxScore()
         {
             var executor = new SqlCommandExecutor(_connectionString);
             var repo = new SqlPlayerGameStatsRepository(executor);
+
             _allStats = repo.RetrieveStatsByGame(_game.GameID).ToList();
 
-            // Default to showing Home Team
-            ShowTeam(true);
+            // Split into teams
+            var homeStats = _allStats
+                .Where(s => s.TeamID == _game.HomeTeamID)
+                .ToList();
+
+            var awayStats = _allStats
+                .Where(s => s.TeamID == _game.AwayTeamID)
+                .ToList();
+
+            HomeStatsGrid.ItemsSource = homeStats;
+            AwayStatsGrid.ItemsSource = awayStats;
         }
 
-        private void ToggleTeam_Click(object sender, RoutedEventArgs e)
+        private void LoadTeamNames()
         {
-            bool isHome = (sender == HomeBtn);
-            ShowTeam(isHome);
-        }
+            var executor = new SqlCommandExecutor(_connectionString);
+            var repo = new SqlTeamRepository(executor);
 
-        private void ShowTeam(bool isHome)
-        {
-            int teamId = isHome ? _game.HomeTeamID : _game.AwayTeamID;
-            StatsGrid.ItemsSource = _allStats?.Where(s => s.TeamID == teamId).ToList();
+            var homeTeam = repo.FetchTeam(_game.HomeTeamID);
+            var awayTeam = repo.FetchTeam(_game.AwayTeamID);
 
-            // Update button colors to show which is active
-            HomeBtn.Background = isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
-            AwayBtn.Background = !isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
+            HomeTeamLabel.Text = homeTeam.TeamName;
+            AwayTeamLabel.Text = awayTeam.TeamName;
 
+            GameHeader.Text = $"{homeTeam.TeamName} vs {awayTeam.TeamName}";
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.GoBack();
+            if (NavigationService != null && NavigationService.CanGoBack)
+                NavigationService.GoBack();
         }
     }
 }
