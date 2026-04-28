@@ -4,13 +4,15 @@ CREATE OR ALTER PROCEDURE Basketball.CreatePlayer
     @JerseyNumber INT,
     @FirstName NVARCHAR(32),
     @LastName NVARCHAR(32),
+    @Position NVARCHAR(16), -- Added Parameter
     @Age INT = NULL,
     @Height NVARCHAR(16) = NULL,
     @Weight INT = NULL,
     @PlayerID INT OUTPUT
 AS
-INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight)
-VALUES(@TeamID, @JerseyNumber, @FirstName, @LastName, @Age, @Height, @Weight);
+INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, LastName, [Position], Age, Height, Weight)
+VALUES(@TeamID, @JerseyNumber, @FirstName, @LastName, @Position, @Age, @Height, @Weight);
+
 SET @PlayerID = SCOPE_IDENTITY();
 GO
 
@@ -18,7 +20,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.FetchPlayer
     @PlayerID INT
 AS
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE PlayerID = @PlayerID;
 GO
@@ -27,7 +29,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.RetrievePlayersByTeam
     @TeamID INT
 AS
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE TeamID = @TeamID;
 GO
@@ -36,18 +38,21 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayer
     @PlayerID INT,
     @JerseyNumber INT,
+    @Position NVARCHAR(16), -- Added Parameter
     @Age INT = NULL,
     @Height NVARCHAR(16) = NULL,
     @Weight INT = NULL
 AS
 UPDATE Basketball.Players
 SET JerseyNumber = @JerseyNumber,
+    [Position] = @Position, -- Updated Column
     Age = @Age,
     Height = @Height,
     Weight = @Weight
 WHERE PlayerID = @PlayerID;
 
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, Age, Height, Weight
+-- Returning the updated record so C# can refresh the object
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE PlayerID = @PlayerID;
 GO

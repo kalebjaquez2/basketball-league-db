@@ -7,10 +7,10 @@ BEGIN
         JerseyNumber INT NOT NULL,
         FirstName NVARCHAR(32) NOT NULL,
         LastName NVARCHAR(32) NOT NULL,
-        Position NVARCHAR(2) NULL,
         Age INT NULL,
         Height NVARCHAR(16) NULL,
         Weight INT NULL,
+        Position NVARCHAR(2) NULL,
 
         CONSTRAINT PK_Basketball_Players_PlayerID PRIMARY KEY CLUSTERED (PlayerID ASC),
 
