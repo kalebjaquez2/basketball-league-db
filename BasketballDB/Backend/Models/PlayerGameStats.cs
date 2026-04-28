@@ -8,17 +8,31 @@ namespace Backend.Models
 {
     public class PlayerGameStats
     {
-        public int PlayerID { get; }
-        public int GameID { get; }
-        public int TeamID { get; }
-        public int Points { get; }
-        public int PlayingTime { get; }
-        public int Turnovers { get; }
-        public int Rebounds { get; }
-        public int Assists { get; }
+        public int PlayerID { get; set; }
+        public int GameID { get; set; }
+        public int TeamID { get; set; }
+        public string? PlayerName { get; set; } 
+        public int Points { get; set; }
+        public int PlayingTime { get; set; }
+        public int Turnovers { get; set; }
+        public int Rebounds { get; set; }
+        public int Assists { get; set; }
+        public int Steals { get; set; }
+        public int Blocks { get; set; }
+        public int FieldGoalsTaken { get; set; }
+        public int FieldGoalsMade { get; set; }
+        public int ThreePointersTaken { get; set; }
+        public int ThreePointersMade { get; set; }
+        public int PersonalFouls { get; set; }
+
+        public string FieldGoalsDisplay => $"{FieldGoalsMade}-{FieldGoalsTaken}";
+        public string ThreePointersDisplay => $"{ThreePointersMade}-{ThreePointersTaken}";
 
         public PlayerGameStats(int playerID, int gameID, int teamID,
-            int points, int playingTime, int turnovers, int rebounds, int assists)
+            int points, int playingTime, int turnovers, int rebounds, 
+            int assists, int steals, int blocks, int fieldGoalsTaken, 
+            int fieldGoalsMade, int threePointersTaken, int threePointersMade, 
+            int personalFouls)
         {
             PlayerID = playerID;
             GameID = gameID;
@@ -28,6 +42,13 @@ namespace Backend.Models
             Turnovers = turnovers;
             Rebounds = rebounds;
             Assists = assists;
+            Steals = steals;
+            Blocks = blocks;
+            FieldGoalsTaken = fieldGoalsTaken;
+            FieldGoalsMade = fieldGoalsMade;
+            ThreePointersTaken = threePointersTaken;
+            ThreePointersMade = threePointersMade;
+            PersonalFouls = personalFouls;
         }
     }
 }

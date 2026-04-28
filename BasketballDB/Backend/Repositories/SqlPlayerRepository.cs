@@ -16,14 +16,14 @@ namespace Backend.Repositories
         private readonly SqlCommandExecutor executor = executor;
 
         public Player CreatePlayer(int teamID, int jerseyNumber, string firstName,
-            string lastName, int? age, string? height, int? weight)
+            string lastName, string? position, int? age, string? height, int? weight)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
             ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
 
             return executor.ExecuteNonQuery(
                 new CreatePlayerDelegate(teamID, jerseyNumber, firstName,
-                    lastName, age, height, weight));
+                    lastName, position, age, height, weight));
         }
 
         public Player FetchPlayer(int playerID)
@@ -39,11 +39,12 @@ namespace Backend.Repositories
                 new RetrievePlayersByTeamDelegate(teamID));
         }
 
-        public Player UpdatePlayer(int playerID, int jerseyNumber,
+        // Added position to UpdatePlayer as well, assuming you might want to edit it
+        public Player UpdatePlayer(int playerID, int jerseyNumber, string? position,
             int? age, string? height, int? weight)
         {
             return executor.ExecuteReader(
-                new UpdatePlayerDelegate(playerID, jerseyNumber, age, height, weight))
+                new UpdatePlayerDelegate(playerID, jerseyNumber, position, age, height, weight))
                 ?? throw new RecordNotFoundException(playerID.ToString());
         }
 
@@ -56,7 +57,7 @@ namespace Backend.Repositories
         // ── Delegates ──────────────────────────────────────────
 
         private class CreatePlayerDelegate(int teamID, int jerseyNumber,
-            string firstName, string lastName, int? age,
+            string firstName, string lastName, string? position, int? age,
             string? height, int? weight)
             : NonQueryDataDelegate<Player>("Basketball.CreatePlayer")
         {
@@ -66,6 +67,8 @@ namespace Backend.Repositories
                 command.Parameters.AddWithValue("JerseyNumber", jerseyNumber);
                 command.Parameters.AddWithValue("FirstName", firstName);
                 command.Parameters.AddWithValue("LastName", lastName);
+                command.Parameters.AddWithValue("Position",
+                    position as object ?? DBNull.Value);
                 command.Parameters.AddWithValue("Age",
                     age as object ?? DBNull.Value);
                 command.Parameters.AddWithValue("Height",
@@ -80,7 +83,7 @@ namespace Backend.Repositories
             {
                 var playerID = command.GetParameterValue<int>("PlayerID");
                 return new Player(playerID, teamID, jerseyNumber,
-                    firstName, lastName, age, height, weight);
+                    firstName, lastName, position, age, height, weight);
             }
         }
 
@@ -119,7 +122,7 @@ namespace Backend.Repositories
             }
         }
 
-        private class UpdatePlayerDelegate(int playerID, int jerseyNumber,
+        private class UpdatePlayerDelegate(int playerID, int jerseyNumber, string? position,
             int? age, string? height, int? weight)
             : DataReaderDelegate<Player?>("Basketball.UpdatePlayer")
         {
@@ -127,6 +130,8 @@ namespace Backend.Repositories
             {
                 command.Parameters.AddWithValue("PlayerID", playerID);
                 command.Parameters.AddWithValue("JerseyNumber", jerseyNumber);
+                command.Parameters.AddWithValue("Position", 
+                    position as object ?? DBNull.Value);
                 command.Parameters.AddWithValue("Age",
                     age as object ?? DBNull.Value);
                 command.Parameters.AddWithValue("Height",
@@ -162,6 +167,7 @@ namespace Backend.Repositories
                 reader.GetInt32("JerseyNumber"),
                 reader.GetString("FirstName"),
                 reader.GetString("LastName"),
+                reader.GetString("Position"), 
                 reader.GetValue<int?>("Age", null),
                 reader.GetValue<string?>("Height", null),
                 reader.GetValue<int?>("Weight", null)

@@ -10,6 +10,14 @@ BEGIN
         Turnovers INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Turnovers DEFAULT(0),
         Rebounds INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Rebounds DEFAULT(0),
         Assists INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Assists DEFAULT(0),
+        Steals INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Steals DEFAULT(0),
+        Blocks INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_Blocks DEFAULT(0),
+        FieldGoalsMade INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsMade DEFAULT(0),
+        FieldGoalsTaken INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsTaken DEFAULT(0),
+        ThreePointersMade INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersMade DEFAULT(0),
+        ThreePointersTaken INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersTaken DEFAULT(0),
+        PersonalFouls INT NOT NULL CONSTRAINT DF_Basketball_PlayerGameStats_PersonalFouls DEFAULT(0),
+
         CONSTRAINT PK_Basketball_PlayerGameStats PRIMARY KEY CLUSTERED
         (
             PlayerID ASC, GameID ASC

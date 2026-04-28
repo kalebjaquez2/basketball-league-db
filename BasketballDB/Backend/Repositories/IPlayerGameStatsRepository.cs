@@ -14,7 +14,9 @@ namespace Backend.Repositories
         /// Creates a new player game stats entry in the database.
         /// </summary>
         void CreatePlayerGameStats(int playerID, int gameID, int teamID,
-            int points, int playingTime, int turnovers, int rebounds, int assists);
+                int points, int playingTime, int turnovers, int rebounds, int assists,
+                int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
+                int threePointersMade, int threePointersTaken, int personalFouls);
 
         /// <summary>
         /// Fetches stats for a specific player in a specific game.
@@ -35,8 +37,10 @@ namespace Backend.Repositories
         /// <summary>
         /// Updates an existing player game stats entry.
         /// </summary>
-        PlayerGameStats UpdatePlayerGameStats(int playerID, int gameID,
-            int points, int playingTime, int turnovers, int rebounds, int assists);
+        PlayerGameStats UpdatePlayerGameStats(int playerID, int gameID, int teamID,
+                int points, int playingTime, int turnovers, int rebounds, int assists,
+                int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
+                int threePointersMade, int threePointersTaken, int personalFouls);
 
         /// <summary>
         /// Deletes a player game stats entry.

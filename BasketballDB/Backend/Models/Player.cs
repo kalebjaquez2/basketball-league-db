@@ -13,20 +13,21 @@ namespace Backend.Models
         public int JerseyNumber { get; }
         public string FirstName { get; }
         public string LastName { get; }
+        public string? Position { get; }
         public int? Age { get; }
         public string? Height { get; }
         public int? Weight { get; }
 
         public string PlayerName => $"{FirstName} {LastName}";
-        public string Position => $"#{JerseyNumber}";
         public Player(int playerID, int teamID, int jerseyNumber, string firstName,
-            string lastName, int? age, string? height, int? weight)
+            string lastName, string? position, int? age, string? height, int? weight)
         {
             PlayerID = playerID;
             TeamID = teamID;
             JerseyNumber = jerseyNumber;
             FirstName = firstName;
             LastName = lastName;
+            Position = position;
             Age = age;
             Height = height;
             Weight = weight;

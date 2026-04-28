@@ -14,7 +14,7 @@ namespace Backend.Repositories
         /// Creates a new player in the database.
         /// </summary>
         Player CreatePlayer(int teamID, int jerseyNumber, string firstName,
-            string lastName, int? age, string? height, int? weight);
+                string lastName, string? position, int? age, string? height, int? weight);
 
         /// <summary>
         /// Fetches a player by ID. Throws RecordNotFoundException if not found.
@@ -29,8 +29,8 @@ namespace Backend.Repositories
         /// <summary>
         /// Updates an existing player.
         /// </summary>
-        Player UpdatePlayer(int playerID, int jerseyNumber,
-            int? age, string? height, int? weight);
+        Player UpdatePlayer(int playerID, int jerseyNumber, string? position,
+                int? age, string? height, int? weight);
 
         /// <summary>
         /// Deletes a player from the database.

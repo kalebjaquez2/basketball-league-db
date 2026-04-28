@@ -4,42 +4,49 @@ using DataAccess;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Frontend
 {
-    public partial class BoxScorePage : Page
+    public partial class PlayerGameStatsPage : Page
     {
         private readonly Game _game;
         private readonly string _connectionString;
+        private List<PlayerGameStats>? _allStats;
 
-        public BoxScorePage(Game game, string connectionString)
+
+        public PlayerGameStatsPage(Game game, string connectionString)
         {
             InitializeComponent();
             _game = game;
             _connectionString = connectionString;
-
             LoadBoxScore();
         }
 
         private void LoadBoxScore()
         {
-            // Set the Team Names at the top
-            HomeTeamHeader.Text = _game.HomeTeamName;
-            AwayTeamHeader.Text = _game.AwayTeamName;
-            HomeLabel.Text = $"{_game.HomeTeamName} ROSTER";
-            AwayLabel.Text = $"{_game.AwayTeamName} ROSTER";
-
             var executor = new SqlCommandExecutor(_connectionString);
             var repo = new SqlPlayerGameStatsRepository(executor);
+            _allStats = repo.RetrieveStatsByGame(_game.GameID).ToList();
 
-            // Fetch the stats
-            // IMPORTANT: Ensure your Repository query joins the Players table 
-            // so the 'PlayerName' property isn't null!
-            var allStats = repo.RetrieveStatsByGame(_game.GameID);
+            // Default to showing Home Team
+            ShowTeam(true);
+        }
 
-            // 3. Filter and Bind
-            HomeStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.HomeTeamID).ToList();
-            AwayStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.AwayTeamID).ToList();
+        private void ToggleTeam_Click(object sender, RoutedEventArgs e)
+        {
+            bool isHome = (sender == HomeBtn);
+            ShowTeam(isHome);
+        }
+
+        private void ShowTeam(bool isHome)
+        {
+            int teamId = isHome ? _game.HomeTeamID : _game.AwayTeamID;
+            StatsGrid.ItemsSource = _allStats?.Where(s => s.TeamID == teamId).ToList();
+
+            // Update button colors to show which is active
+            HomeBtn.Background = isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
+            AwayBtn.Background = !isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
