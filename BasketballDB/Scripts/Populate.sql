@@ -366,6 +366,26 @@ CROSS APPLY (
            tpTakenCalc.tpTaken AS tpTaken
 ) tp;
 
+/****************************
+ * Fix game scores to match actual player point totals
+ * Points = FieldGoalsMade * 2 + ThreePointersMade * 3
+ ****************************/
+UPDATE Basketball.Games
+SET
+    HomeTeamScore = (
+        SELECT ISNULL(SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3), 0)
+        FROM Basketball.PlayerGameStats PGS
+        WHERE PGS.GameID = Basketball.Games.GameID
+          AND PGS.TeamID = Basketball.Games.HomeTeamID
+    ),
+    AwayTeamScore = (
+        SELECT ISNULL(SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3), 0)
+        FROM Basketball.PlayerGameStats PGS
+        WHERE PGS.GameID = Basketball.Games.GameID
+          AND PGS.TeamID = Basketball.Games.AwayTeamID
+    );
+GO
+
 PRINT 'Populate.sql complete.';
-PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 160 PlayerGameStats rows.';
+PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 520 PlayerGameStats rows (5 players x 2 teams x 52 games).';
 GO
