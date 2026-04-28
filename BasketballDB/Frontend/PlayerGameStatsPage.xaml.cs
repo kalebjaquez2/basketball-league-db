@@ -47,6 +47,7 @@ namespace Frontend
             // Update button colors to show which is active
             HomeBtn.Background = isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
             AwayBtn.Background = !isHome ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#242424"));
+
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)

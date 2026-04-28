@@ -257,248 +257,68 @@ GO
  * GameID matches actual games their team played
  ****************************/
 
--- Team 1 players (PlayerIDs 1-5) in Game 1 (Team1 vs Team2)
-INSERT INTO Basketball.PlayerGameStats 
-    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
-     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-    (1, 1, 1, 14, 28, 2, 5, 3, 5, 10, 2, 4, 2),
-    (2, 1, 1, 18, 32, 3, 4, 6, 7, 15, 1, 3, 3),
-    (3, 1, 1, 22, 35, 1, 8, 2, 9, 14, 0, 1, 1),
-    (4, 1, 1, 8, 20, 4, 3, 1, 3,  7, 2, 5, 4),
-    (5, 1, 1, 10, 18, 2, 2, 4, 4,  8, 1, 2, 2);
+DECLARE @GameID INT;
 
--- Team 2 players (PlayerIDs 6-10) in Game 1
-INSERT INTO Basketball.PlayerGameStats 
-    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
-     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-    (6,  1, 2, 16, 30, 2, 6, 5, 6, 12, 2, 5, 3),
-    (7,  1, 2, 20, 34, 1, 7, 3, 8, 16, 1, 4, 2),
-    (8,  1, 2, 12, 22, 3, 4, 2, 5, 10, 0, 2, 4),
-    (9,  1, 2, 6, 15, 4, 2, 1,  2, 6,  1, 3, 5),
-    (10, 1, 2, 24, 38, 0, 9, 4, 10, 18, 2, 6, 1);
+DECLARE game_cursor CURSOR FOR
+SELECT GameID FROM Basketball.Games;
 
--- Team 3 players (PlayerIDs 11-15) in Game 2 (Team3 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(11, 2, 3, 18, 31, 2, 5, 6, 7, 14, 2, 5, 2),
-(12, 2, 3, 10, 21, 3, 3, 2, 4,  9, 1, 3, 3),
-(13, 2, 3, 26, 40, 1, 10, 3, 10, 18, 2, 4, 1),
-(14, 2, 3, 8,  17, 4, 2, 1, 3,  7, 1, 3, 4),
-(15, 2, 3, 14, 27, 2, 4, 5, 6, 12, 1, 3, 2);
+OPEN game_cursor;
+FETCH NEXT FROM game_cursor INTO @GameID;
 
--- Team 4 players (PlayerIDs 16-20) in Game 2 (Team3 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(16, 2, 4, 20, 33, 1, 7, 4, 8, 15, 2, 5, 2),
-(17, 2, 4, 16, 29, 2, 6, 3, 6, 13, 1, 4, 3),
-(18, 2, 4, 12, 23, 3, 3, 2, 5, 11, 1, 3, 3),
-(19, 2, 4, 4,  12, 5, 1, 0, 2,  6, 0, 2, 5),
-(20, 2, 4, 22, 36, 1, 8, 5, 9, 17, 2, 6, 1);
+WHILE @@FETCH_STATUS = 0
+BEGIN
 
--- Team 1 players in Game 3 (Team1 vs Team3)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(1, 3, 1, 10, 25, 3, 4, 2, 4, 10, 1, 3, 3),
-(2, 3, 1, 14, 28, 2, 5, 4, 6, 12, 1, 4, 2),
-(3, 3, 1, 18, 32, 1, 7, 3, 7, 14, 2, 5, 1),
-(4, 3, 1, 6,  18, 4, 2, 1, 2,  6, 1, 3, 4),
-(5, 3, 1, 12, 22, 2, 3, 5, 5, 10, 1, 3, 2);
+    -- HOME team players
+    INSERT INTO Basketball.PlayerGameStats
+    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists,
+     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+    SELECT
+        p.PlayerID,
+        g.GameID,
+        p.TeamID,
+        ABS(CHECKSUM(NEWID())) % 30 + 5,
+        10 + (ABS(CHECKSUM(NEWID())) % 30),
+        ABS(CHECKSUM(NEWID())) % 6,
+        ABS(CHECKSUM(NEWID())) % 12,
+        ABS(CHECKSUM(NEWID())) % 8,
+        ABS(CHECKSUM(NEWID())) % 12,
+        ABS(CHECKSUM(NEWID())) % 20,
+        ABS(CHECKSUM(NEWID())) % 5,
+        ABS(CHECKSUM(NEWID())) % 10,
+        ABS(CHECKSUM(NEWID())) % 5
+    FROM Basketball.Players p
+    CROSS JOIN Basketball.Games g
+    WHERE g.GameID = @GameID
+      AND p.TeamID = g.HomeTeamID;
 
--- Team 3 players in Game 3 (Team1 vs Team3)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(11, 3, 3, 22, 36, 1, 8, 4, 8, 15, 2, 5, 2),
-(12, 3, 3, 14, 26, 3, 4, 3, 6, 12, 1, 3, 3),
-(13, 3, 3, 28, 40, 0, 11, 6, 11, 19, 2, 5, 1),
-(14, 3, 3, 8,  16, 4, 3, 1, 3,  7, 1, 2, 4),
-(15, 3, 3, 16, 29, 2, 6, 3, 7, 13, 1, 4, 2);
+    -- AWAY team players
+    INSERT INTO Basketball.PlayerGameStats
+    (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists,
+     FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+    SELECT
+        p.PlayerID,
+        g.GameID,
+        p.TeamID,
+        ABS(CHECKSUM(NEWID())) % 30 + 5,
+        10 + (ABS(CHECKSUM(NEWID())) % 30),
+        ABS(CHECKSUM(NEWID())) % 6,
+        ABS(CHECKSUM(NEWID())) % 12,
+        ABS(CHECKSUM(NEWID())) % 8,
+        ABS(CHECKSUM(NEWID())) % 12,
+        ABS(CHECKSUM(NEWID())) % 20,
+        ABS(CHECKSUM(NEWID())) % 5,
+        ABS(CHECKSUM(NEWID())) % 10,
+        ABS(CHECKSUM(NEWID())) % 5
+    FROM Basketball.Players p
+    CROSS JOIN Basketball.Games g
+    WHERE g.GameID = @GameID
+      AND p.TeamID = g.AwayTeamID;
 
--- Team 2 players in Game 4 (Team2 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(6,  4, 2, 20, 33, 1, 7, 5, 8, 15, 2, 5, 2),
-(7,  4, 2, 16, 29, 2, 6, 3, 7, 14, 1, 4, 3),
-(8,  4, 2, 12, 22, 3, 4, 2, 5, 11, 1, 3, 2),
-(9,  4, 2, 6,  14, 5, 1, 1, 2,  6, 0, 2, 4),
-(10, 4, 2, 18, 31, 2, 5, 4, 7, 14, 2, 5, 2);
+    FETCH NEXT FROM game_cursor INTO @GameID;
+END;
 
--- Team 4 players in Game 4 (Team2 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(16, 4, 4, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(17, 4, 4, 10, 19, 4, 3, 2, 4, 10, 1, 3, 4),
-(18, 4, 4, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(19, 4, 4, 28, 40, 0, 12, 6, 11, 19, 2, 5, 1),
-(20, 4, 4, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4);
-
--- Team 1 players in Game 5 (Team1 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(1, 5, 1, 16, 30, 2, 6, 3, 6, 12, 2, 5, 2),
-(2, 5, 1, 20, 34, 1, 7, 5, 8, 16, 2, 5, 2),
-(3, 5, 1, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(4, 5, 1, 8,  16, 4, 2, 1, 3,  7, 1, 3, 4),
-(5, 5, 1, 18, 31, 2, 5, 4, 7, 14, 2, 5, 2);
-
--- Team 4 players in Game 5 (Team1 vs Team4)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(16, 5, 4, 22, 36, 1, 8, 3, 8, 15, 2, 5, 2),
-(17, 5, 4, 10, 19, 4, 3, 2, 4,  9, 1, 3, 3),
-(18, 5, 4, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(19, 5, 4, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(20, 5, 4, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4);
-
--- Team 5 players (PlayerIDs 21-25) in Game 14 (Team5 vs Team6)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(21, 14, 5, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(22, 14, 5, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(23, 14, 5, 10, 20, 4, 2, 2, 4, 10, 1, 3, 3),
-(24, 14, 5, 28, 40, 0, 11, 6, 11, 19, 2, 5, 1),
-(25, 14, 5, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4);
-
--- Team 6 players (PlayerIDs 26-30) in Game 14 (Team5 vs Team6)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(26, 14, 6, 16, 29, 2, 6, 3, 6, 13, 2, 5, 2),
-(27, 14, 6, 20, 34, 1, 7, 5, 8, 16, 2, 5, 2),
-(28, 14, 6, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(29, 14, 6, 6,  14, 5, 1, 1, 2,  6, 0, 2, 4),
-(30, 14, 6, 18, 31, 2, 5, 4, 7, 14, 2, 5, 2);
-
--- Team 7 players (PlayerIDs 31-35) in Game 15 (Team7 vs Team8)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(31, 15, 7, 22, 36, 1, 8, 3, 8, 15, 2, 5, 2),
-(32, 15, 7, 10, 19, 4, 3, 2, 4,  9, 1, 3, 3),
-(33, 15, 7, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(34, 15, 7, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(35, 15, 7, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4);
-
--- Team 8 players (PlayerIDs 36-40) in Game 15 (Team7 vs Team8)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(36, 15, 8, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(37, 15, 8, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(38, 15, 8, 12, 21, 3, 3, 2, 5, 10, 1, 3, 3),
-(39, 15, 8, 4,  11, 6, 1, 0, 2,  5, 0, 2, 5),
-(40, 15, 8, 26, 40, 0, 10, 6, 10, 19, 2, 6, 1);
-
--- Team 9 players (PlayerIDs 41-45) in Game 27 (Team9 vs Team10)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(41, 27, 9, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(42, 27, 9, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(43, 27, 9, 10, 19, 4, 2, 2, 4, 10, 1, 3, 3),
-(44, 27, 9, 22, 35, 1, 8, 5, 9, 17, 2, 6, 2),
-(45, 27, 9, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4);
-
--- Team 10 players (PlayerIDs 46-50) in Game 27 (Team9 vs Team10)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(46, 27, 10, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(47, 27, 10, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(48, 27, 10, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(49, 27, 10, 6,  13, 5, 1, 1, 2,  6, 0, 2, 5),
-(50, 27, 10, 18, 31, 2, 5, 4, 7, 15, 2, 5, 2);
-
--- Team 11 players (PlayerIDs 51-55) in Game 28 (Team11 vs Team12)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(51, 28, 11, 24, 38, 0, 9, 5, 9, 17, 3, 7, 2),
-(52, 28, 11, 10, 19, 4, 3, 2, 4, 10, 1, 3, 3),
-(53, 28, 11, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(54, 28, 11, 28, 40, 0, 12, 6, 11, 20, 3, 6, 1),
-(55, 28, 11, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4);
-
--- Team 12 players (PlayerIDs 56-60) in Game 28 (Team11 vs Team12)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(56, 28, 12, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(57, 28, 12, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(58, 28, 12, 12, 21, 3, 3, 2, 5, 11, 1, 3, 3),
-(59, 28, 12, 4,  10, 6, 1, 0, 2,  6, 0, 2, 5),
-(60, 28, 12, 22, 36, 1, 8, 5, 9, 17, 2, 5, 2);
-
--- Team 13 players (PlayerIDs 61-65) in Game 40 (Team13 vs Team14)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(61, 40, 13, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(62, 40, 13, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(63, 40, 13, 10, 19, 4, 2, 2, 4, 10, 1, 3, 3),
-(64, 40, 13, 26, 40, 0, 10, 6, 10, 18, 3, 6, 1),
-(65, 40, 13, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4);
-
--- Team 14 players (PlayerIDs 66-70) in Game 40 (Team13 vs Team14)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(66, 40, 14, 16, 29, 2, 6, 3, 6, 13, 2, 5, 2),
-(67, 40, 14, 20, 34, 1, 7, 5, 8, 16, 2, 5, 2),
-(68, 40, 14, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(69, 40, 14, 6,  14, 5, 1, 1, 2,  6, 0, 2, 5),
-(70, 40, 14, 18, 31, 2, 5, 4, 7, 15, 2, 5, 2);
-
--- Team 15 players (PlayerIDs 71-75) in Game 41 (Team15 vs Team16)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(71, 41, 15, 22, 36, 1, 8, 3, 8, 15, 2, 5, 2),
-(72, 41, 15, 10, 19, 4, 3, 2, 4, 10, 1, 3, 3),
-(73, 41, 15, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(74, 41, 15, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(75, 41, 15, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4);
-
--- Team 16 players (PlayerIDs 76-80) in Game 41 (Team15 vs Team16)
-INSERT INTO Basketball.PlayerGameStats 
-(PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists, 
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) 
-VALUES
-(76, 41, 16, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(77, 41, 16, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(78, 41, 16, 12, 21, 3, 3, 2, 5, 11, 1, 3, 3),
-(79, 41, 16, 4,  11, 6, 1, 0, 2,  5, 0, 2, 5),
-(80, 41, 16, 28, 40, 0, 11, 6, 11, 20, 3, 7, 1);
-GO
+CLOSE game_cursor;
+DEALLOCATE game_cursor;
 
 PRINT 'Populate.sql complete.';
 PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 160 PlayerGameStats rows.';
