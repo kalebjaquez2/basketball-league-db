@@ -1,7 +1,7 @@
 /*******************************************************
- * Populate_KSU.sql
- * Seed data for KSU server
- * Change 'kalebjaquez' to YOUR username if different
+ * Populate.sql
+ * Seed data for BasketballLeague560
+ * Run AFTER Setup.sql
  *******************************************************/
 
 USE kalebjaquez;
@@ -40,6 +40,10 @@ GO
 
 /****************************
  * Basketball.Teams
+ * SeasonID 1: TeamIDs 1-4
+ * SeasonID 2: TeamIDs 5-8
+ * SeasonID 3: TeamIDs 9-12
+ * SeasonID 4: TeamIDs 13-16
  ****************************/
 INSERT INTO Basketball.Teams (SeasonID, TeamName)
 VALUES
@@ -63,9 +67,11 @@ GO
 
 /****************************
  * Basketball.Games
+ * GameIDs 1-52
  ****************************/
 INSERT INTO Basketball.Games (HomeTeamID, AwayTeamID, HomeTeamScore, AwayTeamScore, CourtNumber, OvertimeCount, Date)
 VALUES
+    -- Midwest Season 1 (TeamIDs 1-4)
     (1, 2,  68, 74,  1, 0, '2022-09-10'),
     (3, 4,  81, 79,  2, 0, '2022-09-10'),
     (1, 3,  55, 60,  1, 0, '2022-09-17'),
@@ -79,6 +85,7 @@ VALUES
     (1, 2,  83, 79,  1, 0, '2022-10-15'),
     (3, 4,  70, 68,  2, 0, '2022-10-15'),
     (2, 1,  76, 90,  1, 2, '2022-10-22'),
+    -- Midwest Season 2 (TeamIDs 5-8)
     (5, 6,  64, 71,  1, 0, '2023-09-09'),
     (7, 8,  88, 82,  2, 0, '2023-09-09'),
     (5, 7,  77, 73,  1, 0, '2023-09-16'),
@@ -92,6 +99,7 @@ VALUES
     (5, 6,  78, 82,  1, 0, '2023-10-14'),
     (7, 8,  69, 65,  2, 0, '2023-10-14'),
     (6, 5,  73, 77,  1, 0, '2023-10-21'),
+    -- West Coast Season 1 (TeamIDs 9-12)
     (9,  10, 84, 76,  3, 0, '2022-10-08'),
     (11, 12, 70, 74,  4, 0, '2022-10-08'),
     (9,  11, 66, 61,  3, 0, '2022-10-15'),
@@ -105,6 +113,7 @@ VALUES
     (9,  10, 77, 73,  3, 0, '2022-11-12'),
     (11, 12, 83, 79,  4, 0, '2022-11-12'),
     (10, 9,  86, 91,  3, 0, '2022-11-19'),
+    -- West Coast Season 2 (TeamIDs 13-16)
     (13, 14, 75, 82,  3, 0, '2023-10-07'),
     (15, 16, 68, 65,  4, 0, '2023-10-07'),
     (13, 15, 90, 88,  3, 1, '2023-10-14'),
@@ -122,6 +131,9 @@ GO
 
 /****************************
  * Basketball.Players
+ * TeamID used instead of GameID
+ * 5 players per team = 80 players total
+ * Teams 1-16, PlayerIDs 1-80
  ****************************/
 INSERT INTO Basketball.Players (TeamID, JerseyNumber, FirstName, LastName, Position, Age, Height, Weight)
 VALUES
@@ -240,142 +252,120 @@ GO
 
 /****************************
  * Basketball.PlayerGameStats
+ * One row per player per game
+ * Each player (1-80) plays in multiple games
+ * GameID matches actual games their team played
  ****************************/
-INSERT INTO Basketball.PlayerGameStats (PlayerID, GameID, TeamID, Points, PlayingTime, Turnovers, Rebounds, Assists,
-        FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls) VALUES
-(1, 1, 1, 14, 28, 2, 5, 3, 5, 11, 2, 5, 2),
-(2, 1, 1, 18, 32, 3, 4, 6, 7, 15, 1, 4, 3),
-(3, 1, 1, 22, 35, 1, 8, 2, 9, 17, 1, 3, 1),
-(4, 1, 1, 8, 20, 4, 3, 1, 3, 9, 2, 6, 4),
-(5, 1, 1, 10, 18, 2, 2, 4, 4, 8, 1, 3, 2),
 
-(6, 1, 2, 16, 30, 2, 6, 5, 6, 13, 2, 6, 3),
-(7, 1, 2, 20, 34, 1, 7, 3, 8, 16, 1, 4, 2),
-(8, 1, 2, 12, 22, 3, 4, 2, 5, 11, 0, 3, 4),
-(9, 1, 2, 6, 15, 4, 2, 1, 2, 6, 1, 3, 5),
-(10, 1, 2, 24, 38, 0, 9, 4, 10, 18, 2, 5, 1),
+INSERT INTO Basketball.PlayerGameStats
+(PlayerID, GameID, TeamID, PlayingTime, Turnovers, Rebounds, Assists,
+ FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
 
-(11, 2, 3, 18, 31, 2, 5, 6, 7, 14, 2, 6, 2),
-(12, 2, 3, 10, 21, 3, 3, 2, 4, 10, 1, 3, 3),
-(13, 2, 3, 26, 40, 1, 10, 3, 11, 21, 3, 7, 1),
-(14, 2, 3, 8, 17, 4, 2, 1, 3, 9, 1, 4, 4),
-(15, 2, 3, 14, 27, 2, 4, 5, 5, 12, 1, 4, 2),
+-- =========================
+-- HOME TEAM
+-- =========================
+SELECT
+    p.PlayerID,
+    g.GameID,
+    p.TeamID,
 
-(16, 2, 4, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(17, 2, 4, 16, 29, 2, 6, 3, 6, 14, 2, 5, 3),
-(18, 2, 4, 12, 23, 3, 3, 2, 5, 11, 1, 3, 4),
-(19, 2, 4, 4, 12, 5, 1, 0, 2, 6, 0, 2, 5),
-(20, 2, 4, 22, 36, 1, 8, 5, 9, 18, 2, 6, 1),
+    stats.playingTime,
+    stats.turnovers,
+    stats.rebounds,
+    stats.assists,
 
-(1, 3, 1, 10, 25, 3, 4, 2, 4, 10, 1, 4, 3),
-(2, 3, 1, 14, 28, 2, 5, 4, 6, 12, 2, 5, 2),
-(3, 3, 1, 18, 32, 1, 7, 3, 7, 15, 2, 6, 1),
-(4, 3, 1, 6, 18, 4, 2, 1, 2, 7, 0, 3, 4),
-(5, 3, 1, 12, 22, 2, 3, 5, 5, 11, 1, 4, 2),
+    fg.fgMade,
+    fg.fgTaken,
+    tp.tpMade,
+    tp.tpTaken,
 
-(11, 3, 3, 22, 36, 1, 8, 4, 9, 18, 3, 7, 2),
-(12, 3, 3, 14, 26, 3, 4, 3, 6, 13, 2, 5, 3),
-(13, 3, 3, 28, 40, 0, 11, 6, 12, 22, 4, 8, 1),
-(14, 3, 3, 8, 16, 4, 3, 1, 3, 8, 1, 3, 4),
-(15, 3, 3, 16, 29, 2, 6, 3, 6, 14, 2, 5, 2),
+    stats.fouls
 
-(6, 4, 2, 20, 33, 1, 7, 5, 8, 16, 2, 5, 2),
-(7, 4, 2, 16, 29, 2, 6, 3, 6, 14, 2, 5, 3),
-(8, 4, 2, 12, 22, 3, 4, 2, 5, 11, 1, 4, 4),
-(9, 4, 2, 6, 14, 5, 1, 1, 2, 7, 0, 3, 5),
-(10, 4, 2, 18, 31, 2, 5, 4, 7, 15, 2, 6, 2),
+FROM Basketball.Games g
+JOIN Basketball.Players p
+    ON p.TeamID = g.HomeTeamID
 
-(16, 4, 4, 24, 38, 0, 9, 5, 10, 19, 3, 7, 1),
-(17, 4, 4, 10, 19, 4, 3, 2, 4, 10, 1, 4, 4),
-(18, 4, 4, 14, 25, 3, 4, 4, 6, 13, 2, 5, 3),
-(19, 4, 4, 28, 40, 0, 12, 6, 12, 23, 4, 9, 1),
-(20, 4, 4, 8, 15, 5, 2, 1, 3, 9, 1, 4, 5),
+CROSS APPLY (
+    SELECT
+        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
+        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
+        ABS(CHECKSUM(NEWID())) % 8 AS assists,
+        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+) stats
 
-(1, 5, 1, 16, 30, 2, 6, 3, 6, 13, 2, 5, 2),
-(2, 5, 1, 20, 34, 1, 7, 5, 8, 16, 3, 6, 1),
-(3, 5, 1, 12, 22, 3, 4, 2, 5, 12, 1, 4, 3),
-(4, 5, 1, 8, 16, 4, 2, 1, 3, 8, 1, 3, 4),
-(5, 5, 1, 18, 31, 2, 5, 4, 7, 15, 2, 6, 2),
+-- FG chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+) fgTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+           fgTakenCalc.fgTaken AS fgTaken
+) fg
 
-(16, 5, 4, 22, 36, 1, 8, 3, 9, 18, 3, 7, 2),
-(17, 5, 4, 10, 19, 4, 3, 2, 4, 10, 1, 4, 4),
-(18, 5, 4, 14, 25, 3, 4, 4, 6, 13, 2, 5, 3),
-(19, 5, 4, 24, 38, 0, 9, 5, 10, 20, 3, 8, 1),
-(20, 5, 4, 8, 15, 5, 2, 1, 3, 9, 1, 4, 5),
+-- 3PT chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+) tpTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+           tpTakenCalc.tpTaken AS tpTaken
+) tp
 
-(21, 14, 5, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(22, 14, 5, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(23, 14, 5, 10, 20, 4, 2, 2, 4, 10, 1, 3, 3),
-(24, 14, 5, 28, 40, 0, 11, 6, 11, 19, 2, 5, 1),
-(25, 14, 5, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4),
 
-(26, 14, 6, 16, 29, 2, 6, 3, 6, 13, 2, 5, 2),
-(27, 14, 6, 20, 34, 1, 7, 5, 8, 16, 2, 5, 2),
-(28, 14, 6, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(29, 14, 6, 6,  14, 5, 1, 1, 2,  6, 0, 2, 4),
-(30, 14, 6, 18, 31, 2, 5, 4, 7, 14, 2, 5, 2),
+UNION ALL
 
-(31, 15, 7, 22, 36, 1, 8, 3, 8, 15, 2, 5, 2),
-(32, 15, 7, 10, 19, 4, 3, 2, 4,  9, 1, 3, 3),
-(33, 15, 7, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(34, 15, 7, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(35, 15, 7, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4),
+-- =========================
+-- AWAY TEAM
+-- =========================
+SELECT
+    p.PlayerID,
+    g.GameID,
+    p.TeamID,
 
-(36, 15, 8, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(37, 15, 8, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(38, 15, 8, 12, 21, 3, 3, 2, 5, 10, 1, 3, 3),
-(39, 15, 8, 4,  11, 6, 1, 0, 2,  5, 0, 2, 5),
-(40, 15, 8, 26, 40, 0, 10, 6, 10, 19, 2, 6, 1),
+    stats.playingTime,
+    stats.turnovers,
+    stats.rebounds,
+    stats.assists,
 
-(41, 27, 9, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(42, 27, 9, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(43, 27, 9, 10, 19, 4, 2, 2, 4, 10, 1, 3, 3),
-(44, 27, 9, 22, 35, 1, 8, 5, 9, 17, 2, 6, 2),
-(45, 27, 9, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4),
+    fg.fgMade,
+    fg.fgTaken,
+    tp.tpMade,
+    tp.tpTaken,
 
-(46, 27, 10, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(47, 27, 10, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(48, 27, 10, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(49, 27, 10, 6,  13, 5, 1, 1, 2,  6, 0, 2, 5),
-(50, 27, 10, 18, 31, 2, 5, 4, 7, 15, 2, 5, 2),
+    stats.fouls
 
-(51, 28, 11, 24, 38, 0, 9, 5, 9, 17, 3, 7, 2),
-(52, 28, 11, 10, 19, 4, 3, 2, 4, 10, 1, 3, 3),
-(53, 28, 11, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(54, 28, 11, 28, 40, 0, 12, 6, 11, 20, 3, 6, 1),
-(55, 28, 11, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4),
+FROM Basketball.Games g
+JOIN Basketball.Players p
+    ON p.TeamID = g.AwayTeamID
 
-(56, 28, 12, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(57, 28, 12, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(58, 28, 12, 12, 21, 3, 3, 2, 5, 11, 1, 3, 3),
-(59, 28, 12, 4,  10, 6, 1, 0, 2,  6, 0, 2, 5),
-(60, 28, 12, 22, 36, 1, 8, 5, 9, 17, 2, 5, 2),
+CROSS APPLY (
+    SELECT
+        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
+        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
+        ABS(CHECKSUM(NEWID())) % 8 AS assists,
+        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+) stats
 
-(61, 40, 13, 18, 30, 2, 5, 4, 7, 14, 2, 5, 2),
-(62, 40, 13, 14, 26, 3, 4, 3, 6, 12, 1, 4, 3),
-(63, 40, 13, 10, 19, 4, 2, 2, 4, 10, 1, 3, 3),
-(64, 40, 13, 26, 40, 0, 10, 6, 10, 18, 3, 6, 1),
-(65, 40, 13, 8,  16, 4, 3, 1, 3,  8, 1, 3, 4),
+-- FG chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+) fgTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+           fgTakenCalc.fgTaken AS fgTaken
+) fg
 
-(66, 40, 14, 16, 29, 2, 6, 3, 6, 13, 2, 5, 2),
-(67, 40, 14, 20, 34, 1, 7, 5, 8, 16, 2, 5, 2),
-(68, 40, 14, 12, 22, 3, 4, 2, 5, 11, 1, 3, 3),
-(69, 40, 14, 6,  14, 5, 1, 1, 2,  6, 0, 2, 5),
-(70, 40, 14, 18, 31, 2, 5, 4, 7, 15, 2, 5, 2),
+-- 3PT chain (FIXED)
+CROSS APPLY (
+    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+) tpTakenCalc
+CROSS APPLY (
+    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+           tpTakenCalc.tpTaken AS tpTaken
+) tp;
 
-(71, 41, 15, 22, 36, 1, 8, 3, 8, 15, 2, 5, 2),
-(72, 41, 15, 10, 19, 4, 3, 2, 4, 10, 1, 3, 3),
-(73, 41, 15, 14, 25, 3, 4, 4, 6, 12, 1, 4, 3),
-(74, 41, 15, 24, 38, 0, 9, 5, 9, 17, 2, 5, 1),
-(75, 41, 15, 8,  15, 5, 2, 1, 3,  8, 1, 3, 4),
-
-(76, 41, 16, 16, 28, 2, 6, 3, 6, 13, 2, 5, 2),
-(77, 41, 16, 20, 33, 1, 7, 4, 8, 16, 2, 5, 2),
-(78, 41, 16, 12, 21, 3, 3, 2, 5, 11, 1, 3, 3),
-(79, 41, 16, 4,  11, 6, 1, 0, 2,  5, 0, 2, 5),
-(80, 41, 16, 28, 40, 0, 11, 6, 11, 20, 3, 7, 1);
-GO
-
-PRINT 'Populate_KSU.sql complete.';
-PRINT 'Totals: 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 160 PlayerGameStats rows.';
+PRINT 'Populate.sql complete.';
+PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 160 PlayerGameStats rows.';
 GO
