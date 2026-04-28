@@ -7,11 +7,13 @@ SELECT
     P.FirstName + N' ' + P.LastName AS PlayerName,
     P.TeamID,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.Points) AS TotalPoints,
-    CAST(AVG(CAST(PGS.Points AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS PointsPerGame,
+    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS PointsPerGame,
     RANK() OVER(
         ORDER BY COUNT(PGS.GameID) DESC,
-        AVG(CAST(PGS.Points AS DECIMAL(10,2))) DESC
+        AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+            AS DECIMAL(10,2))) DESC
     ) AS SeasonRank
 FROM Basketball.Players P
     INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
@@ -30,11 +32,12 @@ SELECT
     P.PlayerID,
     P.FirstName + N' ' + P.LastName AS PlayerName,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.Points) AS TotalPoints,
-    CAST(AVG(CAST(PGS.Points AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePointsPerGame,
+    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePointsPerGame,
     RANK() OVER(
         PARTITION BY P.TeamID
-        ORDER BY SUM(PGS.Points) DESC
+        ORDER BY SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) DESC
     ) AS TeamRank
 FROM Basketball.Players P
     INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
@@ -87,7 +90,8 @@ SELECT
     G.Date AS GameDate,
     HT.TeamName AS HomeTeam,
     AT.TeamName AS AwayTeam,
-    CAST(AVG(CAST(PGS.Points AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePoints,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePoints,
     CAST(AVG(CAST(PGS.Rebounds AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageRebounds,
     CAST(AVG(CAST(PGS.Assists AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageAssists,
     CAST(AVG(CAST(PGS.Turnovers AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageTurnovers
