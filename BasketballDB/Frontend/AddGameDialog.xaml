@@ -11,12 +11,6 @@
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Margin" Value="0,15,0,6"/>
         </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Background" Value="#1A1A1A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#2E2E2E"/>
-            <Setter Property="Padding" Value="8,5"/>
-        </Style>
     </Window.Resources>
 
     <Grid>
