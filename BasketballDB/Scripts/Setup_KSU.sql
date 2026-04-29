@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS Basketball.Teams;
 DROP TABLE IF EXISTS Basketball.Seasons;
 DROP TABLE IF EXISTS Basketball.League;
 DROP TABLE IF EXISTS Basketball.Location;
+DROP TABLE IF EXISTS Basketball.Users;
 
 /****************************
  * 1. Location
@@ -262,6 +263,23 @@ BEGIN
                 ThreePointersMade >= 0 AND ThreePointersTaken >= 0 AND
                 PersonalFouls >= 0
             )
+    );
+END;
+GO
+ /****************************
+ 8. Users
+ ****************************/
+IF OBJECT_ID(N'Basketball.Users') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Users
+    (
+        UserID       INT          NOT NULL IDENTITY(1,1),
+        Username     NVARCHAR(64) NOT NULL,
+        PasswordHash NVARCHAR(64) NOT NULL,
+        IsAdmin      BIT          NOT NULL
+            CONSTRAINT DF_Basketball_Users_IsAdmin DEFAULT(0),
+        CONSTRAINT PK_Basketball_Users PRIMARY KEY CLUSTERED (UserID ASC),
+        CONSTRAINT UK_Basketball_Users_Username UNIQUE (Username)
     );
 END;
 GO
@@ -689,6 +707,58 @@ CREATE OR ALTER PROCEDURE Basketball.DeletePlayerGameStats
 AS
 DELETE FROM Basketball.PlayerGameStats
 WHERE PlayerID = @PlayerID AND GameID = @GameID;
+GO
+
+
+/****************************
+ * User Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateUser
+    @Username     NVARCHAR(64),
+    @PasswordHash NVARCHAR(64),
+    @IsAdmin      BIT,
+    @UserID       INT OUTPUT
+AS
+INSERT Basketball.Users(Username, PasswordHash, IsAdmin)
+VALUES(@Username, @PasswordHash, @IsAdmin);
+SET @UserID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchUserByUsername
+    @Username NVARCHAR(64)
+AS
+SELECT UserID, Username, PasswordHash, IsAdmin
+FROM Basketball.Users
+WHERE Username = @Username;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveUsers
+AS
+SELECT UserID, Username, IsAdmin
+FROM Basketball.Users
+ORDER BY Username;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateUserAdminStatus
+    @UserID  INT,
+    @IsAdmin BIT
+AS
+UPDATE Basketball.Users
+SET IsAdmin = @IsAdmin
+WHERE UserID = @UserID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateUserCredentials
+    @UserID       INT,
+    @Username     NVARCHAR(64),
+    @PasswordHash NVARCHAR(64) = NULL
+AS
+UPDATE Basketball.Users
+SET Username     = @Username,
+    PasswordHash = CASE WHEN @PasswordHash IS NOT NULL
+                        THEN @PasswordHash
+                        ELSE PasswordHash END
+WHERE UserID = @UserID;
 GO
 
 PRINT 'Setup_KSU.sql complete.';
