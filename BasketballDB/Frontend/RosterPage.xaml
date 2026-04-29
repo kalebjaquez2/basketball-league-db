@@ -117,7 +117,6 @@
                                 <Button.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Edit" Click="EditPlayer_Click"/>
-                                        <Separator/>
                                         <MenuItem Header="Delete" Style="{StaticResource DeleteMenuItemStyle}" Click="DeletePlayer_Click"/>
                                     </ContextMenu>
                                 </Button.ContextMenu>

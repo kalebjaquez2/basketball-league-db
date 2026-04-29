@@ -188,7 +188,6 @@ namespace Frontend
                 };
                 var contextMenu = new ContextMenu();
                 contextMenu.Items.Add(editMenuItem);
-                contextMenu.Items.Add(new Separator());
                 contextMenu.Items.Add(deleteMenuItem);
                 optionsBtn.ContextMenu = contextMenu;
 
