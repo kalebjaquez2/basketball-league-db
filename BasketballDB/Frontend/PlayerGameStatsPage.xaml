@@ -69,13 +69,10 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,20">
             <Button Content="← BACK TO SCHEDULE"
                     Click="Back_Click"
-                    Background="Transparent"
-                    Foreground="#555555"
-                    BorderThickness="0"
+                    Style="{StaticResource GhostButton}"
                     HorizontalAlignment="Left"
                     FontSize="11"
                     FontWeight="Bold"
-                    Cursor="Hand"
                     Margin="0,0,0,10"/>
             <TextBlock x:Name="GameHeader"
                        FontSize="28"
@@ -105,24 +102,154 @@
                         <DataGridTemplateColumn Header="PLAYER" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding JerseyNumber}"
-                                                   Width="25" Foreground="#555"/>
-                                        <TextBlock Text="{Binding PlayerName}"
-                                                   Foreground="White"
-                                                   FontWeight="SemiBold"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding PlayerName}" Foreground="White" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
-                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
-                        <DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
-                        <DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
-                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
-                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
-                        <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
+
+                        <DataGridTemplateColumn Header="MIN" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding PlayingTime}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditMinutes, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="PTS" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Points}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="FG" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding FieldGoalsDisplay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <TextBox Text="{Binding EditFGMade, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                            <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding EditFGTaken, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="3PT" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ThreePointersDisplay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <TextBox Text="{Binding EditThreeMade, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                            <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding EditThreeTaken, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="REB" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Rebounds}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditRebounds, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="AST" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Assists}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditAssists, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="TO" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Turnovers}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditTurnovers, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Button Content="⋮" Width="28" Height="24"
+                                                Style="{StaticResource GhostButton}"
+                                                FontSize="14"
+                                                Tag="{Binding}"
+                                                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
+                                                Click="StatsOptions_Click">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Edit" Click="EditStats_Click"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <Button Content="✓" Width="22" Height="22" Margin="0,0,2,0"
+                                                    Background="#2E7D32" Foreground="White" BorderThickness="0"
+                                                    FontSize="11" Cursor="Hand" Tag="{Binding}"
+                                                    Click="SaveStats_Click"/>
+                                            <Button Content="✗" Width="22" Height="22"
+                                                    Background="#5A2A2A" Foreground="White" BorderThickness="0"
+                                                    FontSize="11" Cursor="Hand" Tag="{Binding}"
+                                                    Click="CancelStatsEdit_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -138,24 +265,154 @@
                         <DataGridTemplateColumn Header="PLAYER" Width="180">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding JerseyNumber}"
-                                                   Width="25" Foreground="#555"/>
-                                        <TextBlock Text="{Binding PlayerName}"
-                                                   Foreground="White"
-                                                   FontWeight="SemiBold"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding PlayerName}" Foreground="White" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="MIN" Binding="{Binding PlayingTime}" Width="55"/>
-                        <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="55"/>
-                        <DataGridTextColumn Header="FG" Binding="{Binding FieldGoalsDisplay}" Width="70"/>
-                        <DataGridTextColumn Header="3PT" Binding="{Binding ThreePointersDisplay}" Width="70"/>
-                        <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="55"/>
-                        <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="55"/>
-                        <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="55"/>
+
+                        <DataGridTemplateColumn Header="MIN" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding PlayingTime}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditMinutes, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="PTS" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Points}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="FG" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding FieldGoalsDisplay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <TextBox Text="{Binding EditFGMade, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                            <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding EditFGTaken, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="3PT" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ThreePointersDisplay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <TextBox Text="{Binding EditThreeMade, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                            <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding EditThreeTaken, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="REB" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Rebounds}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditRebounds, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="AST" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Assists}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditAssists, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="TO" Width="55">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding Turnovers}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                        <TextBox Text="{Binding EditTurnovers, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#2A2A2A" Foreground="White" BorderBrush="#F05A28" BorderThickness="1"
+                                                 TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
+                                                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Button Content="⋮" Width="28" Height="24"
+                                                Style="{StaticResource GhostButton}"
+                                                FontSize="14"
+                                                Tag="{Binding}"
+                                                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
+                                                Click="StatsOptions_Click">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Edit" Click="EditStats_Click"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <Button Content="✓" Width="22" Height="22" Margin="0,0,2,0"
+                                                    Background="#2E7D32" Foreground="White" BorderThickness="0"
+                                                    FontSize="11" Cursor="Hand" Tag="{Binding}"
+                                                    Click="SaveStats_Click"/>
+                                            <Button Content="✗" Width="22" Height="22"
+                                                    Background="#5A2A2A" Foreground="White" BorderThickness="0"
+                                                    FontSize="11" Cursor="Hand" Tag="{Binding}"
+                                                    Click="CancelStatsEdit_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

@@ -1,5 +1,3 @@
-﻿
-
 using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
@@ -15,7 +13,6 @@ namespace Frontend
     {
         private readonly Game _game;
         private readonly string _connectionString;
-        private List<PlayerGameStats>? _allStats;
 
         public PlayerGameStatsPage(Game game, string connectionString)
         {
@@ -31,17 +28,12 @@ namespace Frontend
         {
             var executor = new SqlCommandExecutor(_connectionString);
             var repo = new SqlPlayerGameStatsRepository(executor);
-            _allStats = repo.RetrieveStatsByGame(_game.GameID).ToList();
-
-            var homeStats = _allStats
-                .Where(s => s.TeamID == _game.HomeTeamID)
-                .ToList();
-            var awayStats = _allStats
-                .Where(s => s.TeamID == _game.AwayTeamID)
+            var allStats = repo.RetrieveStatsByGame(_game.GameID)
+                .Select(s => new EditablePlayerGameStats(s))
                 .ToList();
 
-            HomeStatsGrid.ItemsSource = homeStats;
-            AwayStatsGrid.ItemsSource = awayStats;
+            HomeStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.HomeTeamID).ToList();
+            AwayStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.AwayTeamID).ToList();
         }
 
         private void LoadTeamNames()
@@ -61,9 +53,6 @@ namespace Frontend
             {
                 var executor = new SqlCommandExecutor(_connectionString);
                 var repo = new SqlStatsRepository(executor);
-
-                // Use the game date as both start and end date
-                // to get stats just for this specific game
                 var gameDate = DateOnly.FromDateTime(_game.Date.ToDateTime(TimeOnly.MinValue));
                 var summary = repo.RetrieveGameStatsSummary(gameDate, gameDate)
                     .FirstOrDefault(s => s.GameID == _game.GameID);
@@ -94,5 +83,72 @@ namespace Frontend
             if (NavigationService != null && NavigationService.CanGoBack)
                 NavigationService.GoBack();
         }
+
+        private void StatsOptions_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.IsOpen = true;
+                e.Handled = true;
+            }
+        }
+
+        private void EditStats_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditablePlayerGameStats stats)
+            {
+                stats.IsEditing = true;
+            }
+        }
+
+        private void SaveStats_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is EditablePlayerGameStats stats)
+            {
+                try
+                {
+                    int minutes  = Parse(stats.EditMinutes);
+                    int rebounds = Parse(stats.EditRebounds);
+                    int assists  = Parse(stats.EditAssists);
+                    int turnovers= Parse(stats.EditTurnovers);
+                    int steals   = Parse(stats.EditSteals);
+                    int blocks   = Parse(stats.EditBlocks);
+                    int fgMade   = Parse(stats.EditFGMade);
+                    int fgTaken  = Parse(stats.EditFGTaken);
+                    int threeMade= Parse(stats.EditThreeMade);
+                    int threeTaken=Parse(stats.EditThreeTaken);
+                    int fouls    = Parse(stats.EditFouls);
+
+                    var executor = new SqlCommandExecutor(_connectionString);
+                    var repo = new SqlPlayerGameStatsRepository(executor);
+                    repo.UpdatePlayerGameStats(
+                        stats.PlayerID, stats.GameID, stats.TeamID,
+                        minutes, turnovers, rebounds, assists, steals, blocks,
+                        fgMade, fgTaken, threeMade, threeTaken, fouls
+                    );
+
+                    LoadBoxScore();
+                    LoadGameStatsSummary();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error saving stats: " + ex.Message);
+                    stats.IsEditing = false;
+                }
+            }
+        }
+
+        private void CancelStatsEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is EditablePlayerGameStats stats)
+                stats.IsEditing = false;
+        }
+
+        private static int Parse(string s) =>
+            string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s);
     }
 }

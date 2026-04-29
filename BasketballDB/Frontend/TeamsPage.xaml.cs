@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,9 +35,9 @@ namespace Frontend
                 var statsRepo = new SqlStatsRepository(executor);
                 var teams = teamRepo.RetrieveTeamsBySeason(_season.SeasonID);
                 var performance = statsRepo.RetrieveTeamPerformance(_season.SeasonID);
-                var combined = teams.Select(t =>
-                    new TeamWithPerformance(t,
-                        performance.FirstOrDefault(p => p.TeamID == t.TeamID)))
+                var combined = teams
+                    .Select(t => new TeamWithPerformance(t, performance.FirstOrDefault(p => p.TeamID == t.TeamID)))
+                    .Select(t => new EditableTeam(t))
                     .ToList();
                 TeamsDataContainer.Collection = combined;
             }
@@ -53,8 +53,7 @@ namespace Frontend
             {
                 var executor = new SqlCommandExecutor(_connectionString);
                 var repo = new SqlStatsRepository(executor);
-                StandingsList.ItemsSource =
-                    repo.RetrieveTeamPerformance(_season.SeasonID);
+                StandingsList.ItemsSource = repo.RetrieveTeamPerformance(_season.SeasonID);
             }
             catch (Exception ex)
             {
@@ -68,8 +67,7 @@ namespace Frontend
             {
                 var executor = new SqlCommandExecutor(_connectionString);
                 var repo = new SqlStatsRepository(executor);
-                MostActivePlayersList.ItemsSource =
-                    repo.RetrieveMostActivePlayers(_season.SeasonID);
+                MostActivePlayersList.ItemsSource = repo.RetrieveMostActivePlayers(_season.SeasonID);
             }
             catch (Exception ex)
             {
@@ -100,32 +98,73 @@ namespace Frontend
             var dialog = new AddGameDialog(_season.SeasonID, _connectionString);
             dialog.Owner = Window.GetWindow(this);
             if (dialog.ShowDialog() == true)
-            {
                 MessageBox.Show("Game scheduled successfully!", "Success",
                     MessageBoxButton.OK, MessageBoxImage.Information);
-            }
         }
 
         private void TeamTile_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is TeamWithPerformance selectedTeam)
+            if (sender is Button btn && btn.Tag is EditableTeam et)
             {
-                var team = new Team(selectedTeam.TeamID, selectedTeam.SeasonID,
-                    selectedTeam.TeamName);
-                var gamesPage = new GamesPage(team, _connectionString);
-                this.NavigationService.Navigate(gamesPage);
+                var team = new Team(et.TeamID, et.SeasonID, et.TeamName);
+                this.NavigationService.Navigate(new GamesPage(team, _connectionString));
             }
         }
 
         private void Roster_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is TeamWithPerformance selectedTeam)
+            if (sender is Button btn && btn.Tag is EditableTeam et)
             {
-                var team = new Team(selectedTeam.TeamID, selectedTeam.SeasonID,
-                    selectedTeam.TeamName);
-                var rosterPage = new RosterPage(team, _connectionString);
-                this.NavigationService.Navigate(rosterPage);
+                var team = new Team(et.TeamID, et.SeasonID, et.TeamName);
+                this.NavigationService.Navigate(new RosterPage(team, _connectionString));
             }
+        }
+
+        private void TeamOptions_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
+                btn.ContextMenu.IsOpen = true;
+                e.Handled = true;
+            }
+        }
+
+        private void EditTeam_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditableTeam team)
+            {
+                team.IsEditing = true;
+            }
+        }
+
+        private void SaveTeam_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is EditableTeam team)
+            {
+                try
+                {
+                    var executor = new SqlCommandExecutor(_connectionString);
+                    var repo = new SqlTeamRepository(executor);
+                    repo.UpdateTeam(team.TeamID, team.EditName.Trim());
+                    LoadTeams();
+                    LoadStandings();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error saving team: " + ex.Message);
+                    team.IsEditing = false;
+                }
+            }
+        }
+
+        private void CancelTeamEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is EditableTeam team)
+                team.IsEditing = false;
         }
     }
 }

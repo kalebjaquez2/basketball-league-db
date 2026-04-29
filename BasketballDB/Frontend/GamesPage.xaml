@@ -12,14 +12,35 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <Button Content="← BACK TO TEAMS" Click="Back_Click" 
-                    Background="Transparent" BorderThickness="0" Foreground="#555555" 
-                    FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+        <Grid Grid.Row="0" Margin="0,0,0,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <TextBlock x:Name="PageTitle" Text="TEAM SCHEDULE" FontSize="36" FontWeight="Bold" Foreground="White"/>
-            <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
-        </StackPanel>
+            <StackPanel Grid.Column="0">
+                <Button Content="← BACK TO TEAMS" Click="Back_Click"
+                        Style="{StaticResource GhostButton}"
+                        FontSize="11" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+                <TextBlock x:Name="PageTitle" Text="TEAM SCHEDULE" FontSize="36" FontWeight="Bold" Foreground="White"/>
+                <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+            </StackPanel>
+
+            <Button x:Name="AddGameButton" Grid.Column="1" Content="+ ADD GAME" Click="AddGame_Click"
+                    VerticalAlignment="Bottom" Cursor="Hand"
+                    Background="#F05A28" Foreground="White"
+                    FontWeight="Bold" FontSize="12" BorderThickness="0"
+                    Padding="18,10">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
 
         <ListView Grid.Row="1" x:Name="GamesList" Background="Transparent" BorderThickness="0" 
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" d:ItemsSource="{d:SampleData ItemCount=3}">
@@ -40,75 +61,142 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Button Cursor="Hand" Click="GameTile_Click" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="MainBorder" Background="#1A1A1A" Padding="24,20" CornerRadius="8" BorderBrush="#2E2E2E" BorderThickness="1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                    <Grid>
+                        <!-- Card background — hover highlight only when not editing -->
+                        <Border x:Name="CardBorder" Background="#1A1A1A" Padding="24,20"
+                                CornerRadius="8" BorderBrush="#2E2E2E" BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True"/>
+                                                <Condition Binding="{Binding IsEditing}" Value="False"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Background" Value="#222222"/>
+                                            <Setter Property="BorderBrush" Value="#F05A28"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
 
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
-                                            <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                            <Grid>
+                                <!-- VIEW MODE content -->
+                                <Grid Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
+                                        <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding HomeTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
+                                            <TextBlock Text=" - " Foreground="White" FontSize="14" Opacity="0.8"/>
+                                            <TextBlock Text="{Binding AwayTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
                                         </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,44,0">
+                                        <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" Foreground="#999" FontSize="14" HorizontalAlignment="Right"/>
+                                        <Border Background="#242424" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding CourtNumber, StringFormat='COURT {0}'}" Foreground="#F05A28" FontSize="10" FontWeight="Bold"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
 
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
-                                            <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center"/>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
-                                                <TextBlock Text="{Binding HomeTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
-                                                <TextBlock Text=" - " Foreground="White" FontSize="14" Opacity="0.8"/>
-                                                <TextBlock Text="{Binding AwayTeamScore}" Foreground="White" FontSize="14" Opacity="0.8"/>
-                                            </StackPanel>
-                                        </StackPanel>
+                                <!-- EDIT MODE content -->
+                                <Grid Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                            <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
-                                            <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
-                                        </StackPanel>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="HOME" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{Binding HomeTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                    </StackPanel>
 
-                                        <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" Foreground="#999" FontSize="14" HorizontalAlignment="Right"/>
-                                            <Border Background="#242424" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Right">
-                                                <TextBlock Text="{Binding CourtNumber, StringFormat='COURT {0}'}" Foreground="#F05A28" FontSize="10" FontWeight="Bold"/>
-                                            </Border>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="MainBorder" Property="Background" Value="#222222"/>
-                                        <Setter TargetName="MainBorder" Property="BorderBrush" Value="#F05A28"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0">
+                                        <TextBlock Text="VS" Foreground="#F05A28" FontSize="16" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="50"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0"
+                                                     Text="{Binding EditHomeScore, UpdateSourceTrigger=PropertyChanged}"
+                                                     Background="#242424" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1"
+                                                     Padding="4,4" FontSize="14" TextAlignment="Center" MaxLength="4"/>
+                                            <TextBlock Grid.Column="1" Text=" – " Foreground="White"
+                                                       FontSize="14" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="2"
+                                                     Text="{Binding EditAwayScore, UpdateSourceTrigger=PropertyChanged}"
+                                                     Background="#242424" Foreground="White"
+                                                     BorderBrush="#F05A28" BorderThickness="1"
+                                                     Padding="4,4" FontSize="14" TextAlignment="Center" MaxLength="4"/>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="AWAY" FontSize="10" Foreground="#555" FontWeight="Bold" Margin="0,0,0,4"/>
+                                        <TextBlock Text="{Binding AwayTeamName}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="20,0,0,0">
+                                        <Button Content="✓" Width="32" Height="32" Margin="0,0,0,6"
+                                                Background="#2E7D32" Foreground="White" BorderThickness="0"
+                                                FontSize="14" Cursor="Hand" Tag="{Binding}"
+                                                Click="SaveGame_Click"/>
+                                        <Button Content="✗" Width="32" Height="32"
+                                                Background="#5A2A2A" Foreground="White" BorderThickness="0"
+                                                FontSize="14" Cursor="Hand" Tag="{Binding}"
+                                                Click="CancelGameEdit_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                                <!-- Transparent click overlay — last child so it's on top in z-order -->
+                                <Button Background="Transparent" BorderThickness="0"
+                                        Cursor="Hand" Click="GameTile_Click" Tag="{Binding}"
+                                        Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- ⋮ button — view mode only -->
+                        <Button Content="⋮" Width="28" Height="28"
+                                Style="{StaticResource GhostButton}"
+                                FontSize="16"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Margin="0,6,10,0" Tag="{Binding}"
+                                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
+                                Click="GameOptions_Click">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Edit" Click="EditGame_Click"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button x:Name="AddGameButton" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                Margin="0,0,10,10" Width="64" Height="64"
-                Background="#F05A28" BorderThickness="0" Cursor="Hand"
-                Click="AddGame_Click">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Grid>
-                        <Ellipse Fill="{TemplateBinding Background}">
-                            <Ellipse.Effect>
-                                <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.4" ShadowDepth="4"/>
-                            </Ellipse.Effect>
-                        </Ellipse>
-                        <TextBlock Text="+" Foreground="White" FontSize="36" 
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,4"/>
-                    </Grid>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
     </Grid>
 </Page>
