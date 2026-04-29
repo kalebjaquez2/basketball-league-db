@@ -30,47 +30,50 @@ namespace Frontend
 
             TilesPanel.Children.Clear();
 
-            // Add Season button
-            var addStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-            addStack.Children.Add(new TextBlock
+            // Add Season button — admin only
+            if (Session.IsAdmin)
             {
-                Text = "+",
-                FontSize = 40,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 8)
-            });
-            addStack.Children.Add(new TextBlock
-            {
-                Text = "Add Season",
-                FontSize = 16,
-                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999")),
-                HorizontalAlignment = HorizontalAlignment.Center
-            });
+                var addStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+                addStack.Children.Add(new TextBlock
+                {
+                    Text = "+",
+                    FontSize = 40,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28")),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(0, 0, 0, 8)
+                });
+                addStack.Children.Add(new TextBlock
+                {
+                    Text = "Add Season",
+                    FontSize = 16,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999")),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
 
-            var addBorder = new Border
-            {
-                Width = 260,
-                Height = 160,
-                CornerRadius = new CornerRadius(8),
-                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A1A1A")),
-                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#444444")),
-                BorderThickness = new Thickness(1),
-                Child = addStack
-            };
+                var addBorder = new Border
+                {
+                    Width = 260,
+                    Height = 160,
+                    CornerRadius = new CornerRadius(8),
+                    Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A1A1A")),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#444444")),
+                    BorderThickness = new Thickness(1),
+                    Child = addStack
+                };
 
-            var addButton = new Button
-            {
-                Content = addBorder,
-                Width = 260,
-                Height = 160,
-                Margin = new Thickness(0, 0, 16, 16),
-                Cursor = Cursors.Hand,
-                Background = Brushes.Transparent,
-                BorderThickness = new Thickness(0)
-            };
-            addButton.Click += AddSeason_Click;
-            TilesPanel.Children.Add(addButton);
+                var addButton = new Button
+                {
+                    Content = addBorder,
+                    Width = 260,
+                    Height = 160,
+                    Margin = new Thickness(0, 0, 16, 16),
+                    Cursor = Cursors.Hand,
+                    Background = Brushes.Transparent,
+                    BorderThickness = new Thickness(0)
+                };
+                addButton.Click += AddSeason_Click;
+                TilesPanel.Children.Add(addButton);
+            }
 
             foreach (var season in seasons)
             {
