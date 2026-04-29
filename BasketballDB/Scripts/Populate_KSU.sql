@@ -6,7 +6,16 @@
 
 USE kalebjaquez;
 GO
-
+/****************************
+ * Initial admin account
+ * Username: admin  Password: admin  (SHA-256)
+ ****************************/
+IF NOT EXISTS (SELECT 1 FROM Basketball.Users WHERE Username = N'admin')
+    INSERT INTO Basketball.Users (Username, PasswordHash, IsAdmin)
+    VALUES (N'admin',
+            N'8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+            1);
+GO
 /****************************
  * Basketball.Location
  ****************************/
