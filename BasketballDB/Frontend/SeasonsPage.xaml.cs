@@ -94,7 +94,7 @@ namespace Frontend
                 var editStack = new StackPanel
                 {
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(14, 10, 14, 10),
+                    Margin = new Thickness(14, 6, 14, 6),
                     Visibility = Visibility.Collapsed
                 };
 
@@ -103,24 +103,24 @@ namespace Frontend
                 editStack.Children.Add(new TextBlock
                 {
                     Text = "START DATE", Foreground = gray,
-                    FontSize = 10, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 3)
+                    FontSize = 10, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 2)
                 });
                 var startPicker = new DatePicker
                 {
                     SelectedDate = season.StartDate.ToDateTime(TimeOnly.MinValue),
-                    Margin = new Thickness(0, 0, 0, 6)
+                    Height = 24, Margin = new Thickness(0, 0, 0, 4)
                 };
                 editStack.Children.Add(startPicker);
 
                 editStack.Children.Add(new TextBlock
                 {
                     Text = "END DATE", Foreground = gray,
-                    FontSize = 10, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 3)
+                    FontSize = 10, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 2)
                 });
                 var endPicker = new DatePicker
                 {
                     SelectedDate = season.EndDate.ToDateTime(TimeOnly.MinValue),
-                    Margin = new Thickness(0, 0, 0, 8)
+                    Height = 24, Margin = new Thickness(0, 0, 0, 6)
                 };
                 editStack.Children.Add(endPicker);
 
