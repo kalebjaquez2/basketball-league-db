@@ -81,17 +81,6 @@
                             </Border.Style>
 
                             <Grid>
-                                <!-- Transparent click overlay inside border so IsMouseOver trigger works correctly -->
-                                <Button Background="Transparent" BorderThickness="0"
-                                        Cursor="Hand" Click="GameTile_Click" Tag="{Binding}"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="Transparent"/>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-
                                 <!-- VIEW MODE content -->
                                 <Grid Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                     <Grid.ColumnDefinitions>
@@ -177,6 +166,16 @@
                                                 Click="CancelGameEdit_Click"/>
                                     </StackPanel>
                                 </Grid>
+                                <!-- Transparent click overlay — last child so it's on top in z-order -->
+                                <Button Background="Transparent" BorderThickness="0"
+                                        Cursor="Hand" Click="GameTile_Click" Tag="{Binding}"
+                                        Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </Grid>
                         </Border>
 
