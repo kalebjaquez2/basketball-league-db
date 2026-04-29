@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,7 @@ namespace Frontend
     {
         private readonly Season _season;
         private readonly string _connectionString;
+        private ObservableCollection<EditableTeam> _teams = new();
 
         public TeamsPage(Season season, string connectionString)
         {
@@ -37,7 +39,8 @@ namespace Frontend
                     .Select(t => new TeamWithPerformance(t, performance.FirstOrDefault(p => p.TeamID == t.TeamID)))
                     .Select(t => new EditableTeam(t))
                     .ToList();
-                TeamsDataContainer.Collection = combined;
+                _teams = new ObservableCollection<EditableTeam>(combined);
+                TeamsDataContainer.Collection = _teams;
             }
             catch (Exception ex)
             {
@@ -163,6 +166,19 @@ namespace Frontend
         {
             if (sender is Button btn && btn.Tag is EditableTeam team)
                 team.IsEditing = false;
+        }
+
+        private void DeleteTeam_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditableTeam team)
+            {
+                _teams.Remove(team);
+                LoadStandings();
+                LoadMostActivePlayers();
+            }
         }
     }
 }

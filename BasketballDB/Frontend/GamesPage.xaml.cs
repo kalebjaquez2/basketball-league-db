@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ namespace Frontend
         private readonly Team _team;
         private readonly string _connectionString;
         private readonly int _seasonId;
+        private ObservableCollection<EditableGame> _games = new();
 
         public GamesPage(Team team, string connectionString)
         {
@@ -33,7 +35,8 @@ namespace Frontend
                 var games = repo.RetrieveGamesByTeam(_team.TeamID)
                     .Select(g => new EditableGame(g))
                     .ToList();
-                GamesList.ItemsSource = games;
+                _games = new ObservableCollection<EditableGame>(games);
+                GamesList.ItemsSource = _games;
             }
             catch (Exception ex)
             {
@@ -112,6 +115,17 @@ namespace Frontend
         {
             if (sender is Button btn && btn.Tag is EditableGame game)
                 game.IsEditing = false;
+        }
+
+        private void DeleteGame_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditableGame game)
+            {
+                _games.Remove(game);
+            }
         }
     }
 }

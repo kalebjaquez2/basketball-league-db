@@ -3,6 +3,7 @@ using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace Frontend
     {
         private readonly Team _team;
         private readonly string _connectionString;
+        private ObservableCollection<EditablePlayer> _players = new();
 
         public RosterPage(Team team, string connectionString)
         {
@@ -34,7 +36,8 @@ namespace Frontend
                 var players = repo.RetrievePlayersByTeam(_team.TeamID)
                     .Select(p => new EditablePlayer(p))
                     .ToList();
-                PlayersList.ItemsSource = players;
+                _players = new ObservableCollection<EditablePlayer>(players);
+                PlayersList.ItemsSource = _players;
             }
             catch (Exception ex)
             {
@@ -130,6 +133,17 @@ namespace Frontend
         {
             if (sender is Button btn && btn.Tag is EditablePlayer player)
                 player.IsEditing = false;
+        }
+
+        private void DeletePlayer_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditablePlayer player)
+            {
+                _players.Remove(player);
+            }
         }
     }
 }
