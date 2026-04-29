@@ -58,6 +58,17 @@ namespace Frontend
             }
         }
 
+        private void AddPlayer_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new AddPlayerDialog(_team.TeamID, _connectionString);
+            dialog.Owner = Window.GetWindow(this);
+            if (dialog.ShowDialog() == true)
+            {
+                LoadPlayers();
+                LoadTopScorers();
+            }
+        }
+
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             if (NavigationService.CanGoBack)
