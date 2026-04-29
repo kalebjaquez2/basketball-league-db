@@ -20,8 +20,8 @@
 
             <StackPanel Grid.Column="0">
                 <Button Content="← BACK TO TEAMS" Click="Back_Click"
-                        Background="Transparent" BorderThickness="0" Foreground="#555555"
-                        FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+                        Style="{StaticResource GhostButton}"
+                        FontSize="11" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,20"/>
                 <TextBlock x:Name="PageTitle" Text="TEAM SCHEDULE" FontSize="36" FontWeight="Bold" Foreground="White"/>
                 <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
             </StackPanel>
@@ -182,8 +182,8 @@
 
                         <!-- ⋮ button — view mode only -->
                         <Button Content="⋮" Width="28" Height="28"
-                                Background="Transparent" BorderThickness="0"
-                                Foreground="#555555" FontSize="16" Cursor="Hand"
+                                Style="{StaticResource GhostButton}"
+                                FontSize="16"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
                                 Margin="0,6,10,0" Tag="{Binding}"
                                 Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"

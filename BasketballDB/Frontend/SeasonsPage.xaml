@@ -11,8 +11,8 @@
 
         <StackPanel Grid.Row="0" Margin="0,0,0,40">
             <Button Content="← BACK TO LEAGUES" Click="Back_Click"
-                    Background="Transparent" BorderThickness="0" Foreground="#555555"
-                    FontSize="11" FontWeight="Bold" Cursor="Hand" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+                    Style="{StaticResource GhostButton}"
+                    FontSize="11" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,20"/>
             <TextBlock Text="VIEWING SEASONS FOR" FontSize="12" Foreground="#999999" Margin="0,0,0,4" FontWeight="SemiBold"/>
             <TextBlock x:Name="LeagueHeader" FontSize="36" FontWeight="Bold" Foreground="White" Text="League Name"/>
             <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>

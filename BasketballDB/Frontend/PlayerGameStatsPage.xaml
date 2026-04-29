@@ -69,13 +69,10 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,20">
             <Button Content="← BACK TO SCHEDULE"
                     Click="Back_Click"
-                    Background="Transparent"
-                    Foreground="#555555"
-                    BorderThickness="0"
+                    Style="{StaticResource GhostButton}"
                     HorizontalAlignment="Left"
                     FontSize="11"
                     FontWeight="Bold"
-                    Cursor="Hand"
                     Margin="0,0,0,10"/>
             <TextBlock x:Name="GameHeader"
                        FontSize="28"
@@ -227,8 +224,8 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Button Content="⋮" Width="28" Height="24"
-                                                Background="Transparent" BorderThickness="0"
-                                                Foreground="#555555" FontSize="14" Cursor="Hand"
+                                                Style="{StaticResource GhostButton}"
+                                                FontSize="14"
                                                 Tag="{Binding}"
                                                 Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
                                                 Click="StatsOptions_Click">
@@ -390,8 +387,8 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Button Content="⋮" Width="28" Height="24"
-                                                Background="Transparent" BorderThickness="0"
-                                                Foreground="#555555" FontSize="14" Cursor="Hand"
+                                                Style="{StaticResource GhostButton}"
+                                                FontSize="14"
                                                 Tag="{Binding}"
                                                 Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
                                                 Click="StatsOptions_Click">

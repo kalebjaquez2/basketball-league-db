@@ -22,8 +22,8 @@
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,30">
             <StackPanel>
                 <Button Content="← BACK" Click="Back_Click"
-                        Background="Transparent" BorderThickness="0"
-                        Foreground="#555" FontSize="11" FontWeight="Bold"
+                        Style="{StaticResource GhostButton}"
+                        FontSize="11" FontWeight="Bold"
                         HorizontalAlignment="Left"/>
                 <TextBlock x:Name="PageTitle"
                            FontSize="36" FontWeight="Bold" Foreground="White"/>
@@ -109,8 +109,8 @@
                             <!-- ⋮ — view mode only -->
                             <Button Grid.Column="4"
                                     Content="⋮" Width="28" Height="28"
-                                    Background="Transparent" BorderThickness="0"
-                                    Foreground="#555555" FontSize="16" Cursor="Hand"
+                                    Style="{StaticResource GhostButton}"
+                                    FontSize="16"
                                     Margin="8,0,0,0" Tag="{Binding}"
                                     Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
                                     Click="PlayerOptions_Click">

@@ -170,12 +170,11 @@ namespace Frontend
                 var optionsBtn = new Button
                 {
                     Content = "⋮", Width = 28, Height = 28,
-                    Background = Brushes.Transparent, BorderThickness = new Thickness(0),
-                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#555555")),
-                    FontSize = 16, Cursor = Cursors.Hand,
+                    FontSize = 16,
                     HorizontalAlignment = HorizontalAlignment.Right,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(0, 6, 6, 0)
+                    Margin = new Thickness(0, 6, 6, 0),
+                    Style = (Style)Application.Current.Resources["GhostButton"]
                 };
                 var editMenuItem = new MenuItem { Header = "Edit" };
                 var contextMenu = new ContextMenu();

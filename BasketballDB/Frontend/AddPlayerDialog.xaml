@@ -22,12 +22,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="InputCombo" TargetType="ComboBox">
-            <Setter Property="Background" Value="#1A1A1A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#2E2E2E"/>
-            <Setter Property="Padding" Value="10,8"/>
-        </Style>
         <Style x:Key="SaveBtn" TargetType="Button">
             <Setter Property="Background" Value="#F05A28"/>
             <Setter Property="Foreground" Value="White"/>
@@ -102,7 +96,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="POSITION *" Style="{StaticResource FieldLabel}"/>
-                    <ComboBox x:Name="PositionBox" Style="{StaticResource InputCombo}">
+                    <ComboBox x:Name="PositionBox">
                         <ComboBoxItem Content="PG"/>
                         <ComboBoxItem Content="SG"/>
                         <ComboBoxItem Content="SF"/>
@@ -142,7 +136,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="CANCEL" Click="Close_Click"
                         Background="Transparent" Foreground="#666"
-                        Margin="0,0,15,0" Cursor="Hand" BorderThickness="0"/>
+                        Padding="12,10" Margin="0,0,15,0" Cursor="Hand" BorderThickness="0"/>
                 <Button Content="ADD PLAYER" Style="{StaticResource SaveBtn}" Click="Save_Click"/>
             </StackPanel>
         </StackPanel>
