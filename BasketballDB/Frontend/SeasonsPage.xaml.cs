@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Frontend
 {
@@ -30,6 +31,14 @@ namespace Frontend
             var seasons = repo.RetrieveSeasonsByLeague(_league.LeagueID);
 
             TilesPanel.Children.Clear();
+
+            // Transparent button template — suppresses default WPF hover brightening
+            var transparentTemplate = new ControlTemplate(typeof(Button));
+            var borderFactory = new FrameworkElementFactory(typeof(Border));
+            borderFactory.SetValue(Border.BackgroundProperty, Brushes.Transparent);
+            var cpFactory = new FrameworkElementFactory(typeof(ContentPresenter));
+            borderFactory.AppendChild(cpFactory);
+            transparentTemplate.VisualTree = borderFactory;
 
             // Add Season button (unchanged)
             var addStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
@@ -59,6 +68,9 @@ namespace Frontend
                 Background = Brushes.Transparent, BorderThickness = new Thickness(0)
             };
             addButton.Click += AddSeason_Click;
+            addButton.Template = transparentTemplate;
+            addButton.MouseEnter += (s, e) => addBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28"));
+            addButton.MouseLeave += (s, e) => addBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#444444"));
             TilesPanel.Children.Add(addButton);
 
             foreach (var season in seasons)
@@ -152,6 +164,7 @@ namespace Frontend
                     BorderThickness = new Thickness(0), DataContext = season
                 };
                 navBtn.Click += SeasonTile_Click;
+                navBtn.Template = transparentTemplate;
 
                 // ── ⋮ options button ──────────────────────────
                 var optionsBtn = new Button
@@ -235,6 +248,8 @@ namespace Frontend
                 container.Children.Add(tileBorder);
                 container.Children.Add(navBtn);
                 container.Children.Add(optionsBtn);
+                container.MouseEnter += (s, e) => tileBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28"));
+                container.MouseLeave += (s, e) => tileBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2E2E2E"));
                 TilesPanel.Children.Add(container);
             }
         }

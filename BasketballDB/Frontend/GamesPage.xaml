@@ -81,6 +81,17 @@
                             </Border.Style>
 
                             <Grid>
+                                <!-- Transparent click overlay inside border so IsMouseOver trigger works correctly -->
+                                <Button Background="Transparent" BorderThickness="0"
+                                        Cursor="Hand" Click="GameTile_Click" Tag="{Binding}"
+                                        Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+
                                 <!-- VIEW MODE content -->
                                 <Grid Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                     <Grid.ColumnDefinitions>
@@ -168,11 +179,6 @@
                                 </Grid>
                             </Grid>
                         </Border>
-
-                        <!-- Transparent click overlay for navigation — view mode only -->
-                        <Button Background="Transparent" BorderThickness="0"
-                                Cursor="Hand" Click="GameTile_Click" Tag="{Binding}"
-                                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
 
                         <!-- ⋮ button — view mode only -->
                         <Button Content="⋮" Width="28" Height="28"
