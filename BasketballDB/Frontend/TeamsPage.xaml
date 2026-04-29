@@ -45,7 +45,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemsSource>
                         <CompositeCollection>
-                            <ContentControl>
+                            <ContentControl x:Name="AddTeamTile">
                                 <Button Width="260" Height="210" Margin="0,0,16,16"
                                         Cursor="Hand" Click="AddTeam_Click">
                                     <Button.Template>

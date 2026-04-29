@@ -13,9 +13,49 @@ namespace Frontend
         //for ksu server
         //private const string ConnectionString = @"(localdb)\MSSQLLocalDB;";
        // private const string ConnectionString = @"Data Source=mssql.cs.ksu.edu;Initial Catalog=kalebjaquez;User ID=kalebjaquez;Password=Ulysses#20040907;TrustServerCertificate=True;";
-        public MainWindow() { 
+        public MainWindow()
+        {
             InitializeComponent();
+            ApplySession();
             LoadLeagues();
+        }
+
+        private void ApplySession()
+        {
+            UsernameLabel.Text = Session.Username;
+            ManageAccountsButton.Visibility = Session.IsAdmin
+                ? Visibility.Visible : Visibility.Collapsed;
+            AddLeagueButton.Visibility = Session.IsAdmin
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ManageAccounts_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ManageAccountsWindow();
+            win.Owner = this;
+            win.ShowDialog();
+        }
+
+        private void SignOut_Click(object sender, RoutedEventArgs e)
+        {
+            Session.UserID = 0;
+            Session.Username = "";
+            Session.IsAdmin = false;
+
+            // Close this window first, then show login as a proper dialog
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            Close();
+
+            var login = new LoginWindow();
+            if (login.ShowDialog() == true)
+            {
+                Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+                new MainWindow().Show();
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         private void LoadLeagues()

@@ -24,6 +24,8 @@ namespace Frontend
             _seasonId = team.SeasonID;
             PageTitle.Text = $"{_team.TeamName.ToUpper()} SCHEDULE";
             LoadGames();
+            if (!Session.IsAdmin)
+                AddGameButton.Visibility = Visibility.Collapsed;
         }
 
         private void LoadGames()

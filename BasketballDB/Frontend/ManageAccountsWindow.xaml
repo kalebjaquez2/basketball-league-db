@@ -1,0 +1,166 @@
+<Window x:Class="Frontend.ManageAccountsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Manage Accounts" Height="580" Width="560"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True" Background="#0D0D0D">
+
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#999999"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#242424"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#F05A28"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PassBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#242424"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+        <Style x:Key="OrangeBtn" TargetType="Button">
+            <Setter Property="Background" Value="#F05A28"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" Margin="20,10"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF6A35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title bar -->
+        <Border Grid.Row="0" Background="#1A1A1A" CornerRadius="8,8,0,0">
+            <Grid>
+                <TextBlock Text="MANAGE ACCOUNTS" Foreground="#999999"
+                           FontWeight="Bold" FontSize="11"
+                           VerticalAlignment="Center" Margin="16,0"/>
+                <Button Content="✕" HorizontalAlignment="Right" Width="40"
+                        Background="Transparent" BorderThickness="0"
+                        Foreground="#555555" Cursor="Hand" Click="Close_Click"/>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="1" Margin="24">
+
+            <!-- Existing users list -->
+            <TextBlock Text="EXISTING ACCOUNTS" Foreground="#F05A28"
+                       FontWeight="Bold" FontSize="11" Margin="0,0,0,12"/>
+
+            <!-- Column headers -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="USERNAME" Foreground="#555555"
+                           FontSize="10" FontWeight="Bold"/>
+                <TextBlock Grid.Column="1" Text="ADMIN" Foreground="#555555"
+                           FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="EDIT" Foreground="#555555"
+                           FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+            </Grid>
+            <Rectangle Height="1" Fill="#2E2E2E" Margin="0,0,0,8"/>
+
+            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="UsersList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding Username}"
+                                           Foreground="White" FontSize="13"
+                                           VerticalAlignment="Center"/>
+                                <CheckBox Grid.Column="1"
+                                          IsChecked="{Binding IsAdmin, Mode=OneWay}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Click="AdminCheck_Click"
+                                          DataContext="{Binding}"/>
+                                <Button Grid.Column="2" Content="EDIT"
+                                        Click="EditUser_Click"
+                                        DataContext="{Binding}"
+                                        HorizontalAlignment="Center"
+                                        Background="Transparent" BorderThickness="0"
+                                        Foreground="#F05A28" FontSize="10"
+                                        FontWeight="Bold" Cursor="Hand"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Divider -->
+            <Rectangle Height="1" Fill="#2E2E2E" Margin="0,20,0,20"/>
+
+            <!-- Add new user section -->
+            <TextBlock Text="ADD NEW USER" Foreground="#F05A28"
+                       FontWeight="Bold" FontSize="11" Margin="0,0,0,12"/>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="USERNAME" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="NewUsernameBox" Style="{StaticResource InputBox}" MaxLength="64"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="PASSWORD" Style="{StaticResource FieldLabel}"/>
+                    <PasswordBox x:Name="NewPasswordBox" Style="{StaticResource PassBox}" MaxLength="128"/>
+                </StackPanel>
+            </Grid>
+
+            <CheckBox x:Name="GrantAdminCheck" Foreground="#CCCCCC"
+                      FontSize="12" Margin="0,0,0,16">
+                <TextBlock Text="Grant admin access" Foreground="#CCCCCC"/>
+            </CheckBox>
+
+            <TextBlock x:Name="AddErrorMessage" Foreground="#FF4444" FontSize="12"
+                       Margin="0,0,0,10" Visibility="Collapsed" TextWrapping="Wrap"/>
+
+            <Button Content="CREATE USER" Style="{StaticResource OrangeBtn}"
+                    HorizontalAlignment="Right" Click="AddUser_Click"/>
+
+        </StackPanel>
+    </Grid>
+</Window>

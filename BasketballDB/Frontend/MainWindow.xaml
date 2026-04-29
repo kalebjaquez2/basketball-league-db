@@ -149,14 +149,16 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<!-- Custom Title Bar -->
+		<!-- Unified Title Bar: app title | user session | window controls -->
 		<Grid Grid.Row="0" Background="#111111">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
-			<Border VerticalAlignment="Bottom" Height="1" Background="#1E1E1E" Grid.ColumnSpan="2"/>
+			<Border VerticalAlignment="Bottom" Height="1" Background="#1E1E1E" Grid.ColumnSpan="3"/>
 
+			<!-- Left: App title -->
 			<StackPanel Grid.Column="0" Orientation="Horizontal"
                         VerticalAlignment="Center" Margin="16,0">
 				<Rectangle Width="3" Height="16" Fill="#F05A28"
@@ -165,7 +167,29 @@
                            Foreground="White" VerticalAlignment="Center"/>
 			</StackPanel>
 
-			<StackPanel Grid.Column="1" Orientation="Horizontal">
+			<!-- Center-right: User session info -->
+			<StackPanel Grid.Column="1" Orientation="Horizontal"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Margin="0,0,8,0">
+				<TextBlock Text="Logged in as " Foreground="#555555" FontSize="11"
+                           VerticalAlignment="Center"/>
+				<TextBlock x:Name="UsernameLabel" Foreground="#F05A28"
+                           FontSize="11" FontWeight="Bold" VerticalAlignment="Center"
+                           Margin="0,0,20,0"/>
+				<Button x:Name="ManageAccountsButton" Content="MANAGE ACCOUNTS"
+                        Click="ManageAccounts_Click" Cursor="Hand"
+                        Background="Transparent" BorderThickness="0"
+                        Foreground="#F05A28" FontWeight="Bold" FontSize="11"
+                        Margin="0,0,20,0" Visibility="Collapsed"
+                        WindowChrome.IsHitTestVisibleInChrome="True"/>
+				<Button Content="SIGN OUT" Click="SignOut_Click" Cursor="Hand"
+                        Background="Transparent" BorderThickness="0"
+                        Foreground="#555555" FontSize="11"
+                        WindowChrome.IsHitTestVisibleInChrome="True"/>
+			</StackPanel>
+
+			<!-- Right: Window controls -->
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
 				<Button Content="—" Style="{StaticResource WinCtrlBtn}" Click="Minimize_Click"/>
 				<Button x:Name="MaxRestoreBtn" Content="□" Style="{StaticResource WinCtrlBtn}" Click="MaxRestore_Click"/>
 				<Button Content="✕" Style="{StaticResource CloseBtn}" Click="CloseWindow_Click"/>
@@ -189,8 +213,9 @@
 				<!-- Tiles: Add tile first, then league tiles -->
 				<WrapPanel>
 
-					<!-- Add League Tile (always first) -->
-					<Button Style="{StaticResource AddTileStyle}" Click="AddLeague_Click">
+					<!-- Add League Tile (admin only) -->
+					<Button x:Name="AddLeagueButton" Style="{StaticResource AddTileStyle}"
+					        Click="AddLeague_Click">
 						<StackPanel HorizontalAlignment="Center">
 							<TextBlock Text="+" FontSize="40" HorizontalAlignment="Center"
                                        Foreground="#F05A28" Margin="0,0,0,8"/>

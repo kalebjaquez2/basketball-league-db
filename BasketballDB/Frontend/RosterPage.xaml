@@ -32,7 +32,7 @@
             </StackPanel>
 
             <!-- Add Player button aligned to the bottom-right of the header -->
-            <Button Click="AddPlayer_Click" Cursor="Hand"
+            <Button x:Name="AddPlayerButton" Click="AddPlayer_Click" Cursor="Hand"
                     HorizontalAlignment="Right" VerticalAlignment="Bottom"
                     Background="Transparent" BorderThickness="0">
                 <Border Background="#F05A28" CornerRadius="6" Padding="18,10">

@@ -26,7 +26,7 @@
                 <Rectangle Height="3" Width="80" Fill="#F05A28" HorizontalAlignment="Left" Margin="0,12,0,0"/>
             </StackPanel>
 
-            <Button Grid.Column="1" Content="+ ADD GAME" Click="AddGame_Click"
+            <Button x:Name="AddGameButton" Grid.Column="1" Content="+ ADD GAME" Click="AddGame_Click"
                     VerticalAlignment="Bottom" Cursor="Hand"
                     Background="#F05A28" Foreground="White"
                     FontWeight="Bold" FontSize="12" BorderThickness="0"
