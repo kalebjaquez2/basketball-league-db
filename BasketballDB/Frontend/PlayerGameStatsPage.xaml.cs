@@ -22,6 +22,12 @@ namespace Frontend
             LoadBoxScore();
             LoadTeamNames();
             LoadGameStatsSummary();
+
+            if (!Session.IsAdmin)
+            {
+                HomeStatsGrid.Columns[HomeStatsGrid.Columns.Count - 1].Visibility = Visibility.Collapsed;
+                AwayStatsGrid.Columns[AwayStatsGrid.Columns.Count - 1].Visibility = Visibility.Collapsed;
+            }
         }
 
         private void LoadBoxScore()

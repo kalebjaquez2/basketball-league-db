@@ -161,7 +161,7 @@
 		</Grid>
 
 		<!-- Session bar -->
-		<Border Grid.Row="1" Background="#1A1A1A" BorderBrush="#2E2E2E" BorderThickness="0,0,0,1">
+		<Border Grid.Row="1" Background="#111111" BorderBrush="#1E1E1E" BorderThickness="0,1,0,1">
 			<Grid Margin="20,0">
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 					<TextBlock Text="Logged in as " Foreground="#555555" FontSize="11"
