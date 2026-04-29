@@ -151,11 +151,11 @@
 
 		<!-- Custom Title Bar -->
 		<Grid Grid.Row="0" Background="#111111">
-			<Border VerticalAlignment="Bottom" Height="1" Background="#1E1E1E"/>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="Auto"/>
 			</Grid.ColumnDefinitions>
+			<Border VerticalAlignment="Bottom" Height="1" Background="#1E1E1E" Grid.ColumnSpan="2"/>
 
 			<StackPanel Grid.Column="0" Orientation="Horizontal"
                         VerticalAlignment="Center" Margin="16,0">
