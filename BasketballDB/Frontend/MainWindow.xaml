@@ -77,9 +77,35 @@
 	</Window.Resources>
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- Top bar: user info + admin actions -->
+		<Border Grid.Row="0" Background="#1A1A1A" BorderBrush="#2E2E2E" BorderThickness="0,0,0,1">
+			<Grid Margin="20,0">
+				<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+					<TextBlock Text="Logged in as " Foreground="#555555" FontSize="11"/>
+					<TextBlock x:Name="UsernameLabel" Foreground="#F05A28"
+					           FontSize="11" FontWeight="Bold"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
+				            VerticalAlignment="Center">
+					<Button x:Name="ManageAccountsButton" Content="MANAGE ACCOUNTS"
+					        Click="ManageAccounts_Click" Cursor="Hand"
+					        Background="Transparent" BorderThickness="0"
+					        Foreground="#F05A28" FontWeight="Bold" FontSize="11"
+					        Margin="0,0,20,0" Visibility="Collapsed"/>
+					<Button Content="SIGN OUT" Click="SignOut_Click" Cursor="Hand"
+					        Background="Transparent" BorderThickness="0"
+					        Foreground="#555555" FontSize="11"/>
+				</StackPanel>
+			</Grid>
+		</Border>
 
 		<!-- HOME SCREEN -->
-		<ScrollViewer x:Name="HomeScreen" VerticalScrollBarVisibility="Auto">
+		<ScrollViewer x:Name="HomeScreen" Grid.Row="1" VerticalScrollBarVisibility="Auto">
 			<StackPanel Margin="40">
 
 				<!-- Hero Header -->
@@ -95,8 +121,9 @@
 				<!-- Tiles: Add tile first, then league tiles -->
 				<WrapPanel>
 
-					<!-- Add League Tile (always first) -->
-					<Button Style="{StaticResource AddTileStyle}" Click="AddLeague_Click">
+					<!-- Add League Tile (admin only) -->
+					<Button x:Name="AddLeagueButton" Style="{StaticResource AddTileStyle}"
+					        Click="AddLeague_Click">
 						<StackPanel HorizontalAlignment="Center">
 							<TextBlock Text="+" FontSize="40" HorizontalAlignment="Center"
                                        Foreground="#F05A28" Margin="0,0,0,8"/>
@@ -143,7 +170,7 @@
 		</ScrollViewer>
 
 		<!-- CONTENT FRAME - other views load here -->
-		<Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"
+		<Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"
                Background="#0D0D0D" Visibility="Collapsed"/>
 
 	</Grid>

@@ -22,6 +22,8 @@ namespace Frontend
             LoadTeams();
             LoadStandings();
             LoadMostActivePlayers();
+            if (!Session.IsAdmin)
+                AddTeamTile.Visibility = Visibility.Collapsed;
         }
 
         private void LoadTeams()

@@ -22,6 +22,8 @@ namespace Frontend
             PageTitle.Text = $"{_team.TeamName.ToUpper()} ROSTER";
             LoadPlayers();
             LoadTopScorers();
+            if (!Session.IsAdmin)
+                AddPlayerButton.Visibility = Visibility.Collapsed;
         }
 
         private void LoadPlayers()

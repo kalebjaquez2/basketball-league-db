@@ -9,6 +9,21 @@ namespace Frontend
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var login = new LoginWindow();
+            if (login.ShowDialog() != true)
+            {
+                Shutdown();
+                return;
+            }
+
+            ShutdownMode = ShutdownMode.OnLastWindowClose;
+            var main = new MainWindow();
+            main.Show();
+        }
     }
 
 }

@@ -287,28 +287,28 @@ JOIN Basketball.Players p
 
 CROSS APPLY (
     SELECT
-        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
-        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
-        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
-        ABS(CHECKSUM(NEWID())) % 8 AS assists,
-        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 7919 + CAST(g.GameID AS BIGINT) * 6271 + 1)) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 3571 + CAST(g.GameID AS BIGINT) * 4969 + 2)) % 6        AS turnovers,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 2311 + CAST(g.GameID AS BIGINT) * 8221 + 3)) % 10       AS rebounds,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5039 + CAST(g.GameID AS BIGINT) * 1723 + 4)) % 8        AS assists,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 9001 + CAST(g.GameID AS BIGINT) * 3329 + 5)) % 5        AS fouls
 ) stats
 
--- FG chain (FIXED)
+-- FG chain (deterministic)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 1009 + CAST(g.GameID AS BIGINT) * 2003 + 6)) % 18) + 5 AS fgTaken
 ) fgTakenCalc
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5003 + CAST(g.GameID AS BIGINT) * 7001 + 7)) % (fgTakenCalc.fgTaken + 1) AS fgMade,
            fgTakenCalc.fgTaken AS fgTaken
 ) fg
 
--- 3PT chain (FIXED)
+-- 3PT chain (deterministic)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
 ) tpTakenCalc
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
            tpTakenCalc.tpTaken AS tpTaken
 ) tp
 
@@ -341,28 +341,28 @@ JOIN Basketball.Players p
 
 CROSS APPLY (
     SELECT
-        ABS(CHECKSUM(NEWID())) % 30 + 5 AS playingTime,
-        ABS(CHECKSUM(NEWID())) % 6 AS turnovers,
-        ABS(CHECKSUM(NEWID())) % 10 AS rebounds,
-        ABS(CHECKSUM(NEWID())) % 8 AS assists,
-        ABS(CHECKSUM(NEWID())) % 5 AS fouls
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 7919 + CAST(g.GameID AS BIGINT) * 6271 + 1)) % 30 + 5 AS playingTime,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 3571 + CAST(g.GameID AS BIGINT) * 4969 + 2)) % 6        AS turnovers,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 2311 + CAST(g.GameID AS BIGINT) * 8221 + 3)) % 10       AS rebounds,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5039 + CAST(g.GameID AS BIGINT) * 1723 + 4)) % 8        AS assists,
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 9001 + CAST(g.GameID AS BIGINT) * 3329 + 5)) % 5        AS fouls
 ) stats
 
--- FG chain (FIXED)
+-- FG chain (deterministic)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(NEWID())) % 18) + 5 AS fgTaken
+    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 1009 + CAST(g.GameID AS BIGINT) * 2003 + 6)) % 18) + 5 AS fgTaken
 ) fgTakenCalc
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(NEWID())) % (fgTakenCalc.fgTaken + 1) AS fgMade,
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5003 + CAST(g.GameID AS BIGINT) * 7001 + 7)) % (fgTakenCalc.fgTaken + 1) AS fgMade,
            fgTakenCalc.fgTaken AS fgTaken
 ) fg
 
--- 3PT chain (FIXED)
+-- 3PT chain (deterministic)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(NEWID())) % 10) + 1 AS tpTaken
+    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
 ) tpTakenCalc
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(NEWID())) % (tpTakenCalc.tpTaken + 1) AS tpMade,
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
            tpTakenCalc.tpTaken AS tpTaken
 ) tp;
 
@@ -384,6 +384,17 @@ SET
         WHERE PGS.GameID = Basketball.Games.GameID
           AND PGS.TeamID = Basketball.Games.AwayTeamID
     );
+GO
+
+/****************************
+ * Initial admin account
+ * Username: admin  Password: admin  (SHA-256)
+ ****************************/
+IF NOT EXISTS (SELECT 1 FROM Basketball.Users WHERE Username = N'admin')
+    INSERT INTO Basketball.Users (Username, PasswordHash, IsAdmin)
+    VALUES (N'admin',
+            N'8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+            1);
 GO
 
 PRINT 'Populate.sql complete.';

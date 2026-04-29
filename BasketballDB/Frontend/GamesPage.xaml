@@ -92,8 +92,8 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                Margin="0,0,10,10" Width="64" Height="64" 
+        <Button x:Name="AddGameButton" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="0,0,10,10" Width="64" Height="64"
                 Background="#F05A28" BorderThickness="0" Cursor="Hand"
                 Click="AddGame_Click">
             <Button.Template>
