@@ -291,7 +291,7 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="#282828"/>
                             </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
+                            <Trigger Property="HasSelectedDays" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="#F05A28"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
