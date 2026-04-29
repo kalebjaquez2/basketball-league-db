@@ -1,0 +1,150 @@
+<Window x:Class="Frontend.AddPlayerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Player" Height="520" Width="460"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        WindowStyle="None" AllowsTransparency="True" Background="#0D0D0D">
+
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#999999"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#F05A28"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="InputCombo" TargetType="ComboBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+        <Style x:Key="SaveBtn" TargetType="Button">
+            <Setter Property="Background" Value="#F05A28"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="24,10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF6A35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title bar -->
+        <Border Grid.Row="0" Background="#1A1A1A" CornerRadius="8,8,0,0">
+            <Grid>
+                <TextBlock Text="REGISTER NEW PLAYER" Foreground="#999999"
+                           FontWeight="Bold" FontSize="11"
+                           VerticalAlignment="Center" Margin="16,0"/>
+                <Button Content="✕" HorizontalAlignment="Right" Width="40"
+                        Background="Transparent" BorderThickness="0"
+                        Foreground="#555555" Cursor="Hand" Click="Close_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Form -->
+        <StackPanel Grid.Row="1" Margin="30">
+
+            <!-- First / Last Name row -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="FIRST NAME *" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="FirstNameBox" Style="{StaticResource InputBox}" MaxLength="32"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="LAST NAME *" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="LastNameBox" Style="{StaticResource InputBox}" MaxLength="32"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Jersey / Position row -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="JERSEY # *" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="JerseyNumberBox" Style="{StaticResource InputBox}" MaxLength="3"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="POSITION *" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="PositionBox" Style="{StaticResource InputCombo}">
+                        <ComboBoxItem Content="PG"/>
+                        <ComboBoxItem Content="SG"/>
+                        <ComboBoxItem Content="SF"/>
+                        <ComboBoxItem Content="PF"/>
+                        <ComboBoxItem Content="C"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <!-- Age / Weight / Height row -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="AGE" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="AgeBox" Style="{StaticResource InputBox}" MaxLength="3"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="HEIGHT" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="HeightBox" Style="{StaticResource InputBox}"
+                             MaxLength="16" ToolTip="e.g. 6'2&quot;"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                    <TextBlock Text="WEIGHT (lbs)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox x:Name="WeightBox" Style="{StaticResource InputBox}" MaxLength="4"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock x:Name="ErrorMessage" Foreground="#FF4444" FontSize="12"
+                       Margin="0,0,0,10" Visibility="Collapsed" TextWrapping="Wrap"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="CANCEL" Click="Close_Click"
+                        Background="Transparent" Foreground="#666"
+                        Margin="0,0,15,0" Cursor="Hand" BorderThickness="0"/>
+                <Button Content="ADD PLAYER" Style="{StaticResource SaveBtn}" Click="Save_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
