@@ -112,6 +112,7 @@
                                             <Button.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Edit" Click="EditTeam_Click"/>
+                                                    <MenuItem Header="Delete" Style="{StaticResource DeleteMenuItemStyle}" Click="DeleteTeam_Click"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
                                         </Button>

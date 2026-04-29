@@ -190,6 +190,7 @@
                             <Button.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Edit" Click="EditGame_Click"/>
+                                    <MenuItem Header="Delete" Style="{StaticResource DeleteMenuItemStyle}" Click="DeleteGame_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>

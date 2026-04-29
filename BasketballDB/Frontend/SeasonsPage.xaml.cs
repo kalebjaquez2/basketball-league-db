@@ -181,8 +181,14 @@ namespace Frontend
                     Style = (Style)Application.Current.Resources["GhostButton"]
                 };
                 var editMenuItem = new MenuItem { Header = "Edit" };
+                var deleteMenuItem = new MenuItem
+                {
+                    Header = "Delete",
+                    Style = (Style)Application.Current.Resources["DeleteMenuItemStyle"]
+                };
                 var contextMenu = new ContextMenu();
                 contextMenu.Items.Add(editMenuItem);
+                contextMenu.Items.Add(deleteMenuItem);
                 optionsBtn.ContextMenu = contextMenu;
 
                 // Open context menu on ⋮ click
@@ -253,6 +259,7 @@ namespace Frontend
                 container.Children.Add(optionsBtn);
                 container.MouseEnter += (s, e) => tileBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F05A28"));
                 container.MouseLeave += (s, e) => tileBorder.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2E2E2E"));
+                deleteMenuItem.Click += (s, e) => TilesPanel.Children.Remove(container);
                 TilesPanel.Children.Add(container);
             }
         }

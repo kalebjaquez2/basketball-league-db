@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Frontend
 {
@@ -22,6 +23,7 @@ namespace Frontend
             LoadBoxScore();
             LoadTeamNames();
             LoadGameStatsSummary();
+
         }
 
         private void LoadBoxScore()
@@ -84,25 +86,11 @@ namespace Frontend
                 NavigationService.GoBack();
         }
 
-        private void StatsOptions_Click(object sender, RoutedEventArgs e)
+        private void StatsGrid_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Button btn)
-            {
-                btn.ContextMenu.PlacementTarget = btn;
-                btn.ContextMenu.IsOpen = true;
-                e.Handled = true;
-            }
-        }
-
-        private void EditStats_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi &&
-                mi.Parent is ContextMenu cm &&
-                cm.PlacementTarget is Button btn &&
-                btn.Tag is EditablePlayerGameStats stats)
-            {
+            if (!Session.IsAdmin) return;
+            if (sender is DataGrid dg && dg.SelectedItem is EditablePlayerGameStats stats && !stats.IsEditing)
                 stats.IsEditing = true;
-            }
         }
 
         private void SaveStats_Click(object sender, RoutedEventArgs e)

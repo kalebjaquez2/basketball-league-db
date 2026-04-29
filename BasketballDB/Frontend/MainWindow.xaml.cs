@@ -123,5 +123,18 @@ namespace Frontend
                 MessageBox.Show("Error: League data not found on the clicked tile.");
             }
         }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+        private void MaxRestore_Click(object sender, RoutedEventArgs e) =>
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+        private void CloseWindow_Click(object sender, RoutedEventArgs e) => Close();
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            MaxRestoreBtn.Content = WindowState == WindowState.Maximized ? "❐" : "□";
+        }
     }
 }
