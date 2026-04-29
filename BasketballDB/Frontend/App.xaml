@@ -5,6 +5,9 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis"/>
+
         <!-- Minimalist thumb shared by both orientations -->
         <Style x:Key="MinimalScrollThumb" TargetType="Thumb">
             <Setter Property="Background" Value="#3A3A3A"/>
