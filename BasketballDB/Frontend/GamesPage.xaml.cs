@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
@@ -26,6 +27,12 @@ namespace Frontend
             LoadGames();
             if (!Session.IsAdmin)
                 AddGameButton.Visibility = Visibility.Collapsed;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            LoadGames();
         }
 
         private void LoadGames()

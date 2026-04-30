@@ -117,10 +117,17 @@
                     FontWeight="Bold"
                     Margin="0,0,0,10"/>
             <Grid>
-                <TextBlock x:Name="GameHeader"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="White"/>
+                <StackPanel>
+                    <TextBlock x:Name="GameHeader"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="White"/>
+                    <TextBlock x:Name="ScoreDisplay"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="#F05A28"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
                 <Button x:Name="AutoFillButton"
                         Content="GENERATE STATS"
                         Click="AutoFillStats_Click"

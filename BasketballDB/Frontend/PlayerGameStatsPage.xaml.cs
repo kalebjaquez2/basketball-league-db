@@ -72,6 +72,7 @@ namespace Frontend
             HomeTeamLabel.Text = homeTeam.TeamName;
             AwayTeamLabel.Text = awayTeam.TeamName;
             GameHeader.Text = $"{homeTeam.TeamName} vs {awayTeam.TeamName}";
+            ScoreDisplay.Text = $"{_game.HomeTeamScore}  —  {_game.AwayTeamScore}";
         }
 
         private void LoadGameStatsSummary()
@@ -258,6 +259,8 @@ namespace Frontend
             var executor = new SqlCommandExecutor(_connectionString);
             var repo = new SqlGameRepository(executor);
             repo.UpdateGame(_game.GameID, homeScore, awayScore, _game.OvertimeCount);
+
+            ScoreDisplay.Text = $"{homeScore}  —  {awayScore}";
         }
 
         private void StatBox_GotFocus(object sender, RoutedEventArgs e)
