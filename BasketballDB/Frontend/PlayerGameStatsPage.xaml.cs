@@ -27,7 +27,8 @@ namespace Frontend
             LoadBoxScore();
             LoadTeamNames();
             LoadGameStatsSummary();
-
+            if (Session.IsAdmin)
+                AutoFillButton.Visibility = System.Windows.Visibility.Visible;
         }
 
         private void LoadBoxScore()
@@ -208,6 +209,40 @@ namespace Frontend
             {
                 MessageBox.Show("Error saving stats: " + ex.Message);
             }
+        }
+
+        private void AutoFillStats_Click(object sender, RoutedEventArgs e)
+        {
+            var rng = new Random();
+            var executor = new SqlCommandExecutor(_connectionString);
+            var repo = new SqlPlayerGameStatsRepository(executor);
+
+            var allRows = (HomeStatsGrid.ItemsSource as List<EditablePlayerGameStats> ?? new())
+                .Concat(AwayStatsGrid.ItemsSource as List<EditablePlayerGameStats> ?? new());
+
+            foreach (var row in allRows)
+            {
+                int fgTaken    = rng.Next(5, 23);
+                int fgMade     = rng.Next(0, fgTaken + 1);
+                int tpTaken    = rng.Next(1, 11);
+                int tpMade     = rng.Next(0, tpTaken + 1);
+
+                repo.UpdatePlayerGameStats(
+                    row.PlayerID, row.GameID, row.TeamID,
+                    rng.Next(5, 35),  // minutes
+                    rng.Next(0, 6),   // turnovers
+                    rng.Next(0, 10),  // rebounds
+                    rng.Next(0, 8),   // assists
+                    rng.Next(0, 4),   // steals
+                    rng.Next(0, 3),   // blocks
+                    fgMade, fgTaken,
+                    tpMade, tpTaken,
+                    rng.Next(0, 5)    // fouls
+                );
+            }
+
+            LoadBoxScore();
+            LoadGameStatsSummary();
         }
 
         private void StatBox_GotFocus(object sender, RoutedEventArgs e)
