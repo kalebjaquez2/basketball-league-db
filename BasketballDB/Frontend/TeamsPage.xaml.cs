@@ -24,8 +24,8 @@ namespace Frontend
             LoadTeams();
             LoadStandings();
             LoadMostActivePlayers();
-            if (!Session.IsAdmin)
-                AddTeamTile.Visibility = Visibility.Collapsed;
+            if (Session.IsAdmin)
+                AddTeamButton.Visibility = Visibility.Visible;
         }
 
         private void LoadTeams()
@@ -42,7 +42,7 @@ namespace Frontend
                     .Select(t => new EditableTeam(t))
                     .ToList();
                 _teams = new ObservableCollection<EditableTeam>(combined);
-                TeamsDataContainer.Collection = _teams;
+                TeamsList.ItemsSource = _teams;
             }
             catch (Exception ex)
             {
