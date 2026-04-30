@@ -16,6 +16,7 @@ namespace Frontend
         private readonly Game _game;
         private readonly string _connectionString;
         private DispatcherTimer? _debounceTimer;
+        private EditablePlayerGameStats? _editingStats;
 
         public PlayerGameStatsPage(Game game, string connectionString)
         {
@@ -91,25 +92,47 @@ namespace Frontend
         private void StatsGrid_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (!Session.IsAdmin) return;
-            if (sender is not DataGrid dg || dg.SelectedItem is not EditablePlayerGameStats stats) return;
+            if (sender is not DataGrid dg) return;
 
-            if (stats.IsEditing)
+            var clicked = dg.SelectedItem as EditablePlayerGameStats;
+
+            // Close any open row — if it's a different row, stop here so the
+            // grid reloads cleanly before the user opens another one
+            if (_editingStats != null && _editingStats != clicked)
             {
-                _debounceTimer?.Stop();
-                _debounceTimer = null;
-                stats.PropertyChanged -= Stats_PropertyChanged;
-                SaveStatsInternal(stats);
-                stats.IsEditing = false;
-                dg.SelectedItem = null;
-                LoadBoxScore();
-                LoadGameStatsSummary();
+                CloseEditing(dg);
+                return;
             }
+
+            if (clicked == null)
+            {
+                CloseEditing(dg);
+                return;
+            }
+
+            if (clicked.IsEditing)
+                CloseEditing(dg);
             else
             {
-                stats.PropertyChanged += Stats_PropertyChanged;
-                stats.IsEditing = true;
+                _editingStats = clicked;
+                clicked.PropertyChanged += Stats_PropertyChanged;
+                clicked.IsEditing = true;
                 dg.SelectedItem = null;
             }
+        }
+
+        private void CloseEditing(DataGrid dg)
+        {
+            if (_editingStats == null) return;
+            _debounceTimer?.Stop();
+            _debounceTimer = null;
+            _editingStats.PropertyChanged -= Stats_PropertyChanged;
+            SaveStatsInternal(_editingStats);
+            _editingStats.IsEditing = false;
+            _editingStats = null;
+            dg.SelectedItem = null;
+            LoadBoxScore();
+            LoadGameStatsSummary();
         }
 
         private void Stats_PropertyChanged(object? sender, PropertyChangedEventArgs e)
