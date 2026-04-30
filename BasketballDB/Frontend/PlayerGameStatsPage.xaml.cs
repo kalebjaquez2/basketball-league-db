@@ -154,6 +154,7 @@ namespace Frontend
             _editingStats = null;
             dg.SelectedItem = null;
             LoadBoxScore();
+            UpdateGameScore();
             LoadGameStatsSummary();
         }
 
@@ -242,7 +243,21 @@ namespace Frontend
             }
 
             LoadBoxScore();
+            UpdateGameScore();
             LoadGameStatsSummary();
+        }
+
+        private void UpdateGameScore()
+        {
+            var homeRows = HomeStatsGrid.ItemsSource as List<EditablePlayerGameStats> ?? new();
+            var awayRows = AwayStatsGrid.ItemsSource as List<EditablePlayerGameStats> ?? new();
+
+            int homeScore = homeRows.Sum(r => r.Points);
+            int awayScore = awayRows.Sum(r => r.Points);
+
+            var executor = new SqlCommandExecutor(_connectionString);
+            var repo = new SqlGameRepository(executor);
+            repo.UpdateGame(_game.GameID, homeScore, awayScore, _game.OvertimeCount);
         }
 
         private void StatBox_GotFocus(object sender, RoutedEventArgs e)
