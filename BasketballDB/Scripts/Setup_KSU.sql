@@ -386,6 +386,15 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE Basketball.DeleteLeague
+    @LeagueID INT
+AS
+BEGIN
+    DELETE FROM Basketball.League
+    WHERE LeagueID = @LeagueID;
+END
+GO
+
 /****************************
  * Season Procedures
  ****************************/
