@@ -233,7 +233,7 @@
 													Margin="0,8,8,0" Width="26" Height="26" Cursor="Hand">
 												<Button.Template>
 													<ControlTemplate TargetType="Button">
-														<Border x:Name="Bd" Background="#333333" CornerRadius="4">
+														<Border x:Name="Bd" Background="Transparent" CornerRadius="4">
 															<TextBlock Text="⋮" Foreground="#CCCCCC" FontSize="15"
 																	   HorizontalAlignment="Center" VerticalAlignment="Center"/>
 														</Border>

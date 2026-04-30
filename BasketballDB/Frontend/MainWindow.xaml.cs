@@ -168,11 +168,6 @@ namespace Frontend
                 cm.PlacementTarget is not Button btn ||
                 btn.Tag is not EditableLeague league) return;
 
-            var result = MessageBox.Show(
-                $"Delete \"{league.LeagueName}\"? This cannot be undone.",
-                "Delete League", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes) return;
-
             try
             {
                 var executor = new SqlCommandExecutor(ConnectionString);
