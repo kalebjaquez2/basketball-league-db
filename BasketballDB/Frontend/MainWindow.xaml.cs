@@ -12,7 +12,6 @@ namespace Frontend
 
         //for ksu server
         //private const string ConnectionString = @"(localdb)\MSSQLLocalDB;";
-       // private const string ConnectionString = @"Data Source=mssql.cs.ksu.edu;Initial Catalog=kalebjaquez;User ID=kalebjaquez;Password=Ulysses#20040907;TrustServerCertificate=True;";
         public MainWindow()
         {
             InitializeComponent();

@@ -55,8 +55,12 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="#1A1A1A" Padding="16" Margin="0,0,0,10"
-                            CornerRadius="6" Width="450">
+        CornerRadius="6" Width="450">
                         <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -66,54 +70,56 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Jersey # — view -->
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding JerseyNumber, StringFormat='#{0}'}"
-                                       Foreground="#F05A28" FontSize="16" FontWeight="Bold"
-                                       Margin="0,0,16,0" VerticalAlignment="Center"
-                                       Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="0"
+                   Text="{Binding JerseyNumber, StringFormat='#{0}'}"
+                   Foreground="#F05A28" FontSize="16" FontWeight="Bold"
+                   Margin="0,0,16,0" VerticalAlignment="Center"
+                   Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
                             <!-- Jersey # — edit -->
-                            <TextBox Grid.Column="0" Width="48"
-                                     Text="{Binding EditJerseyNumber, UpdateSourceTrigger=PropertyChanged}"
-                                     Background="#242424" Foreground="#F05A28"
-                                     BorderBrush="#F05A28" BorderThickness="1"
-                                     Padding="4,2" FontSize="14" FontWeight="Bold"
-                                     Margin="0,0,10,0" VerticalAlignment="Center"
-                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                            <TextBox Grid.Column="0" Grid.Row="0" Width="48"
+                 Text="{Binding EditJerseyNumber, UpdateSourceTrigger=PropertyChanged}"
+                 Background="#242424" Foreground="#F05A28"
+                 BorderBrush="#F05A28" BorderThickness="1"
+                 Padding="4,2" FontSize="14" FontWeight="Bold"
+                 Margin="0,0,10,0" VerticalAlignment="Center"
+                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
 
-                            <!-- First + Last name — always shown, never editable -->
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding FirstName, StringFormat='{}{0} '}"
-                                       Foreground="White" FontSize="16" FontWeight="Bold"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2"
-                                       Text="{Binding LastName}"
-                                       Foreground="White" FontSize="16" FontWeight="Bold"
-                                       VerticalAlignment="Center"/>
+                            <!-- First + Last name -->
+                            <TextBlock Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0"
+           Foreground="White" FontSize="16" FontWeight="Bold"
+           VerticalAlignment="Center">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} {1}">
+                                        <Binding Path="FirstName"/>
+                                        <Binding Path="LastName"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
 
                             <!-- Position badge — view -->
-                            <Border Grid.Column="3" Background="#2E2E2E"
-                                    CornerRadius="4" Padding="8,4" Margin="16,0,0,0"
-                                    Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                            <Border Grid.Column="3" Grid.Row="0" Background="#2E2E2E"
+                CornerRadius="4" Padding="8,4" Margin="16,0,0,0"
+                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                 <TextBlock Text="{Binding Position}"
-                                           Foreground="#F05A28" FontSize="12" FontWeight="Bold"/>
+                       Foreground="#F05A28" FontSize="12" FontWeight="Bold"/>
                             </Border>
                             <!-- Position — edit -->
-                            <TextBox Grid.Column="3" Width="56"
-                                     Text="{Binding EditPosition, UpdateSourceTrigger=PropertyChanged}"
-                                     Background="#242424" Foreground="#F05A28"
-                                     BorderBrush="#F05A28" BorderThickness="1"
-                                     Padding="4,2" FontSize="12" FontWeight="Bold"
-                                     Margin="10,0,0,0" VerticalAlignment="Center"
-                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+                            <TextBox Grid.Column="3" Grid.Row="0" Width="56"
+                 Text="{Binding EditPosition, UpdateSourceTrigger=PropertyChanged}"
+                 Background="#242424" Foreground="#F05A28"
+                 BorderBrush="#F05A28" BorderThickness="1"
+                 Padding="4,2" FontSize="12" FontWeight="Bold"
+                 Margin="10,0,0,0" VerticalAlignment="Center"
+                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
 
                             <!-- ⋮ — view mode only -->
-                            <Button Grid.Column="4"
-                                    Content="⋮" Width="28" Height="28"
-                                    Style="{StaticResource GhostButton}"
-                                    FontSize="16"
-                                    Margin="8,0,0,0" Tag="{Binding}"
-                                    Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
-                                    Click="PlayerOptions_Click">
+                            <Button Grid.Column="4" Grid.Row="0"
+                Content="⋮" Width="28" Height="28"
+                Style="{StaticResource GhostButton}"
+                FontSize="16"
+                Margin="8,0,0,0" Tag="{Binding}"
+                Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"
+                Click="PlayerOptions_Click">
                                 <Button.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Edit" Click="EditPlayer_Click"/>
@@ -122,17 +128,68 @@
                                 </Button.ContextMenu>
                             </Button>
                             <!-- ✓ ✗ — edit mode only -->
-                            <StackPanel Grid.Column="4" Orientation="Horizontal"
-                                        Margin="8,0,0,0" VerticalAlignment="Center"
-                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Grid.Column="4" Grid.Row="0" Orientation="Horizontal"
+                    Margin="8,0,0,0" VerticalAlignment="Center"
+                    Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                 <Button Content="✓" Width="26" Height="26" Margin="0,0,4,0"
-                                        Background="#2E7D32" Foreground="White" BorderThickness="0"
-                                        FontSize="13" Cursor="Hand" Tag="{Binding}"
-                                        Click="SavePlayer_Click"/>
+                    Background="#2E7D32" Foreground="White" BorderThickness="0"
+                    FontSize="13" Cursor="Hand" Tag="{Binding}"
+                    Click="SavePlayer_Click"/>
                                 <Button Content="✗" Width="26" Height="26"
-                                        Background="#5A2A2A" Foreground="White" BorderThickness="0"
-                                        FontSize="13" Cursor="Hand" Tag="{Binding}"
-                                        Click="CancelPlayerEdit_Click"/>
+                    Background="#5A2A2A" Foreground="White" BorderThickness="0"
+                    FontSize="13" Cursor="Hand" Tag="{Binding}"
+                    Click="CancelPlayerEdit_Click"/>
+                            </StackPanel>
+
+                            <!-- Age / Height / Weight — second row, only shown if values exist -->
+                            <!-- Age / Height / Weight — second row -->
+                            <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1"
+            Orientation="Horizontal" Margin="0,6,0,0">
+
+                                <!-- Age view -->
+                                <TextBlock Text="{Binding Age, StringFormat='Age: {0}'}"
+               Foreground="#666666" FontSize="11" Margin="0,0,12,0"
+               Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                <!-- Age edit -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,12,0"
+                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="Age:" Foreground="#666666" FontSize="11"
+                   Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <TextBox Width="40" Text="{Binding EditAge, UpdateSourceTrigger=PropertyChanged}"
+                 Background="#242424" Foreground="White"
+                 BorderBrush="#444444" BorderThickness="1"
+                 Padding="4,2" FontSize="11" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- Height view -->
+                                <TextBlock Text="{Binding Height, StringFormat='Ht: {0}'}"
+               Foreground="#666666" FontSize="11" Margin="0,0,12,0"
+               Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                <!-- Height edit -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,12,0"
+                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="Ht:" Foreground="#666666" FontSize="11"
+                   Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <TextBox Width="56" Text="{Binding EditHeight, UpdateSourceTrigger=PropertyChanged}"
+                 Background="#242424" Foreground="White"
+                 BorderBrush="#444444" BorderThickness="1"
+                 Padding="4,2" FontSize="11" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- Weight view -->
+                                <TextBlock Text="{Binding Weight, StringFormat='Wt: {0} lbs'}"
+               Foreground="#666666" FontSize="11"
+               Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}"/>
+                                <!-- Weight edit -->
+                                <StackPanel Orientation="Horizontal"
+                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="Wt:" Foreground="#666666" FontSize="11"
+                   Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                    <TextBox Width="48" Text="{Binding EditWeight, UpdateSourceTrigger=PropertyChanged}"
+                 Background="#242424" Foreground="White"
+                 BorderBrush="#444444" BorderThickness="1"
+                 Padding="4,2" FontSize="11" VerticalAlignment="Center"/>
+                                </StackPanel>
                             </StackPanel>
                         </Grid>
                     </Border>

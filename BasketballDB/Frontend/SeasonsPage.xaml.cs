@@ -194,6 +194,7 @@ namespace Frontend
                 // Open context menu on ⋮ click
                 optionsBtn.Click += (s, e) =>
                 {
+                    if (!Session.IsAdmin) return;
                     var ob = (Button)s;
                     ob.ContextMenu.PlacementTarget = ob;
                     ob.ContextMenu.IsOpen = true;

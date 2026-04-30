@@ -10,6 +10,10 @@ namespace Frontend
         private string _editJerseyNumber;
         private string _editPosition;
 
+        private string _editAge;
+        private string _editHeight;
+        private string _editWeight;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public Player Model { get; }
@@ -20,6 +24,14 @@ namespace Frontend
         public string FirstName => Model.FirstName;
         public string LastName => Model.LastName;
         public string? Position => Model.Position;
+
+
+        public bool HasAge => Model.Age.HasValue;
+        public bool HasHeight => !string.IsNullOrEmpty(Model.Height);
+        public bool HasWeight => Model.Weight.HasValue;
+        public int? Age => Model.Age;
+        public string? Height => Model.Height;
+        public int? Weight => Model.Weight;
 
         public bool IsEditing
         {
@@ -39,11 +51,30 @@ namespace Frontend
             set { _editPosition = value; OnPropertyChanged(); }
         }
 
+        public string EditAge
+        {
+            get => _editAge;
+            set { _editAge = value; OnPropertyChanged(); }
+        }
+        public string EditHeight
+        {
+            get => _editHeight;
+            set { _editHeight = value; OnPropertyChanged(); }
+        }
+        public string EditWeight
+        {
+            get => _editWeight;
+            set { _editWeight = value; OnPropertyChanged(); }
+        }
+
         public EditablePlayer(Player model)
         {
             Model = model;
             _editJerseyNumber = model.JerseyNumber.ToString();
             _editPosition = model.Position ?? string.Empty;
+            _editAge = model.Age?.ToString() ?? string.Empty;
+            _editHeight = model.Height ?? string.Empty;
+            _editWeight = model.Weight?.ToString() ?? string.Empty;
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

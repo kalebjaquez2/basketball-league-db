@@ -68,6 +68,7 @@ namespace Frontend
 
         private void GameOptions_Click(object sender, RoutedEventArgs e)
         {
+            if(!Session.IsAdmin) return;
             if (sender is Button btn)
             {
                 btn.ContextMenu.PlacementTarget = btn;

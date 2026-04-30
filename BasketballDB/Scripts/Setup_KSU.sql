@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS Basketball.Teams;
 DROP TABLE IF EXISTS Basketball.Seasons;
 DROP TABLE IF EXISTS Basketball.League;
 DROP TABLE IF EXISTS Basketball.Location;
+DROP TABLE IF EXISTS Basketball.Users;
 
 /****************************
  * 1. Location
@@ -265,6 +266,25 @@ BEGIN
     );
 END;
 GO
+
+/****************************
+ * 8. Users
+ ****************************/
+IF OBJECT_ID(N'Basketball.Users') IS NULL
+BEGIN
+    CREATE TABLE Basketball.Users
+    (
+        UserID       INT          NOT NULL IDENTITY(1,1),
+        Username     NVARCHAR(64) NOT NULL,
+        PasswordHash NVARCHAR(64) NOT NULL,
+        IsAdmin      BIT          NOT NULL
+            CONSTRAINT DF_Basketball_Users_IsAdmin DEFAULT(0),
+        CONSTRAINT PK_Basketball_Users PRIMARY KEY CLUSTERED (UserID ASC),
+        CONSTRAINT UK_Basketball_Users_Username UNIQUE (Username)
+    );
+END;
+GO
+
 /*******************************************************
  * STORED PROCEDURES
  *******************************************************/
@@ -553,9 +573,9 @@ CREATE OR ALTER PROCEDURE Basketball.CreatePlayer
     @Weight INT = NULL,
     @PlayerID INT OUTPUT
 AS
-INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, LastName, 
+INSERT Basketball.Players(TeamID, JerseyNumber, FirstName, LastName,
     [Position], Age, Height, Weight)
-VALUES(@TeamID, @JerseyNumber, @FirstName, @LastName, 
+VALUES(@TeamID, @JerseyNumber, @FirstName, @LastName,
     @Position, @Age, @Height, @Weight);
 SET @PlayerID = SCOPE_IDENTITY();
 GO
@@ -563,7 +583,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.FetchPlayer
     @PlayerID INT
 AS
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, 
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName,
     [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE PlayerID = @PlayerID;
@@ -572,7 +592,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.RetrievePlayersByTeam
     @TeamID INT
 AS
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, 
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName,
     [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE TeamID = @TeamID;
@@ -593,7 +613,7 @@ SET JerseyNumber = @JerseyNumber,
     Height = @Height,
     Weight = @Weight
 WHERE PlayerID = @PlayerID;
-SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, 
+SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName,
     [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE PlayerID = @PlayerID;
@@ -612,7 +632,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.CreatePlayerGameStats
     @PlayerID INT, @GameID INT, @TeamID INT,
     @PlayingTime INT = 0, @Turnovers INT = 0,
-    @Rebounds INT = 0, @Assists INT = 0, 
+    @Rebounds INT = 0, @Assists INT = 0,
     @Steals INT = 0, @Blocks INT = 0
 AS
 INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID,
@@ -670,7 +690,7 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
     @PlayerID INT, @GameID INT,
     @PlayingTime INT, @Turnovers INT,
-    @Rebounds INT, @Assists INT, 
+    @Rebounds INT, @Assists INT,
     @Steals INT, @Blocks INT
 AS
 UPDATE Basketball.PlayerGameStats
@@ -691,7 +711,163 @@ DELETE FROM Basketball.PlayerGameStats
 WHERE PlayerID = @PlayerID AND GameID = @GameID;
 GO
 
+/****************************
+ * User Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.CreateUser
+    @Username     NVARCHAR(64),
+    @PasswordHash NVARCHAR(64),
+    @IsAdmin      BIT,
+    @UserID       INT OUTPUT
+AS
+INSERT Basketball.Users(Username, PasswordHash, IsAdmin)
+VALUES(@Username, @PasswordHash, @IsAdmin);
+SET @UserID = SCOPE_IDENTITY();
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.FetchUserByUsername
+    @Username NVARCHAR(64)
+AS
+SELECT UserID, Username, PasswordHash, IsAdmin
+FROM Basketball.Users
+WHERE Username = @Username;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveUsers
+AS
+SELECT UserID, Username, IsAdmin
+FROM Basketball.Users
+ORDER BY Username;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateUserAdminStatus
+    @UserID  INT,
+    @IsAdmin BIT
+AS
+UPDATE Basketball.Users
+SET IsAdmin = @IsAdmin
+WHERE UserID = @UserID;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.UpdateUserCredentials
+    @UserID       INT,
+    @Username     NVARCHAR(64),
+    @PasswordHash NVARCHAR(64) = NULL
+AS
+UPDATE Basketball.Users
+SET Username     = @Username,
+    PasswordHash = CASE WHEN @PasswordHash IS NOT NULL
+                        THEN @PasswordHash
+                        ELSE PasswordHash END
+WHERE UserID = @UserID;
+GO
+
+/****************************
+ * Aggregating / Stats Procedures
+ ****************************/
+CREATE OR ALTER PROCEDURE Basketball.RetrieveMostActivePlayers
+    @SeasonID INT
+AS
+SELECT
+    P.PlayerID,
+    P.FirstName + N' ' + P.LastName AS PlayerName,
+    P.TeamID,
+    COUNT(PGS.GameID) AS GamesPlayed,
+    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS PointsPerGame,
+    RANK() OVER(
+        ORDER BY COUNT(PGS.GameID) DESC,
+        AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+            AS DECIMAL(10,2))) DESC
+    ) AS SeasonRank
+FROM Basketball.Players P
+    INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
+    INNER JOIN Basketball.PlayerGameStats PGS ON PGS.PlayerID = P.PlayerID
+WHERE T.SeasonID = @SeasonID
+GROUP BY P.PlayerID, P.FirstName, P.LastName, P.TeamID
+ORDER BY SeasonRank ASC;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveTopScorersByTeam
+    @SeasonID INT
+AS
+SELECT
+    P.TeamID,
+    P.PlayerID,
+    P.FirstName + N' ' + P.LastName AS PlayerName,
+    COUNT(PGS.GameID) AS GamesPlayed,
+    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePointsPerGame,
+    RANK() OVER(
+        PARTITION BY P.TeamID
+        ORDER BY SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) DESC
+    ) AS TeamRank
+FROM Basketball.Players P
+    INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
+    INNER JOIN Basketball.PlayerGameStats PGS ON PGS.PlayerID = P.PlayerID
+WHERE T.SeasonID = @SeasonID
+GROUP BY P.TeamID, P.PlayerID, P.FirstName, P.LastName
+ORDER BY P.TeamID ASC, TeamRank ASC;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveTeamPerformance
+    @SeasonID INT
+AS
+WITH TeamGames(TeamID, TeamName, IsWin, Score) AS
+(
+    SELECT
+        T.TeamID, T.TeamName,
+        CASE WHEN G.HomeTeamScore > G.AwayTeamScore THEN 1 ELSE 0 END,
+        G.HomeTeamScore
+    FROM Basketball.Teams T
+        INNER JOIN Basketball.Games G ON G.HomeTeamID = T.TeamID
+    WHERE T.SeasonID = @SeasonID
+    UNION ALL
+    SELECT
+        T.TeamID, T.TeamName,
+        CASE WHEN G.AwayTeamScore > G.HomeTeamScore THEN 1 ELSE 0 END,
+        G.AwayTeamScore
+    FROM Basketball.Teams T
+        INNER JOIN Basketball.Games G ON G.AwayTeamID = T.TeamID
+    WHERE T.SeasonID = @SeasonID
+)
+SELECT
+    TeamID,
+    TeamName,
+    SUM(IsWin) AS Wins,
+    SUM(1 - IsWin) AS Losses,
+    CAST(AVG(CAST(Score AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageScorePerGame
+FROM TeamGames
+GROUP BY TeamID, TeamName
+ORDER BY Wins DESC, AverageScorePerGame DESC;
+GO
+
+CREATE OR ALTER PROCEDURE Basketball.RetrieveGameStatsSummary
+    @StartDate DATE,
+    @EndDate DATE
+AS
+SELECT
+    G.GameID,
+    G.Date AS GameDate,
+    HT.TeamName AS HomeTeam,
+    AT.TeamName AS AwayTeam,
+    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+        AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePoints,
+    CAST(AVG(CAST(PGS.Rebounds AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageRebounds,
+    CAST(AVG(CAST(PGS.Assists AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageAssists,
+    CAST(AVG(CAST(PGS.Turnovers AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageTurnovers
+FROM Basketball.Games G
+    INNER JOIN Basketball.Teams HT ON HT.TeamID = G.HomeTeamID
+    INNER JOIN Basketball.Teams AT ON AT.TeamID = G.AwayTeamID
+    INNER JOIN Basketball.PlayerGameStats PGS ON PGS.GameID = G.GameID
+WHERE G.Date BETWEEN @StartDate AND @EndDate
+GROUP BY G.GameID, G.Date, HT.TeamName, AT.TeamName
+ORDER BY G.Date ASC;
+GO
+
 PRINT 'Setup_KSU.sql complete.';
-PRINT 'Tables: Location, League, Seasons, Teams, Games, Players, PlayerGameStats';
+PRINT 'Tables: Location, League, Seasons, Teams, Games, Players, PlayerGameStats, Users';
 PRINT 'All stored procedures created.';
 GO
