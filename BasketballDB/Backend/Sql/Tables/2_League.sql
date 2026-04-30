@@ -32,3 +32,18 @@ BEGIN
         LeagueName ASC
     );
 END;
+
+/****************************
+ * Soft Delete Column
+ ****************************/
+IF NOT EXISTS
+    (
+        SELECT *
+        FROM sys.columns
+        WHERE object_id = OBJECT_ID(N'Basketball.League')
+            AND name = 'IsDeleted'
+    )
+BEGIN
+    ALTER TABLE Basketball.League
+    ADD IsDeleted BIT NOT NULL DEFAULT 0;
+END;

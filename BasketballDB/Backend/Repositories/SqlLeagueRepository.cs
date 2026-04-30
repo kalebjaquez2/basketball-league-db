@@ -39,6 +39,11 @@ namespace Backend.Repositories
                 ?? throw new RecordNotFoundException(leagueID.ToString());
         }
 
+        public void DeleteLeague(int leagueID)
+        {
+            executor.ExecuteNonQuery(new DeleteLeagueDelegate(leagueID));
+        }
+
 
 
 
@@ -124,6 +129,15 @@ namespace Backend.Repositories
 
 
 
+
+        private class DeleteLeagueDelegate(int leagueID)
+            : DataDelegate("Basketball.DeleteLeague")
+        {
+            public override void PrepareCommand(Command command)
+            {
+                command.Parameters.AddWithValue("LeagueID", leagueID);
+            }
+        }
 
         // ── Shared Translator ───────────────────────────────────
 

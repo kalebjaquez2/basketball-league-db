@@ -14,11 +14,12 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.RetrieveLeagues
 AS
 BEGIN
-    SELECT L.LeagueID, L.LeagueName, 
+    SELECT L.LeagueID, L.LeagueName,
            (Loc.City + ', ' + Loc.State) AS [Location], -- Merges city/state for the UI
            L.LocationID
     FROM Basketball.League L
-    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID;
+    INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID
+    WHERE ISNULL(L.IsDeleted, 0) = 0;
 END
 GO
 
@@ -33,6 +34,17 @@ BEGIN
     FROM Basketball.League L
     INNER JOIN Basketball.Location Loc ON L.LocationID = Loc.LocationID
     WHERE L.LeagueID = @LeagueID;
+END
+GO
+
+-- Soft delete a league
+CREATE OR ALTER PROCEDURE Basketball.DeleteLeague
+    @LeagueID INT
+AS
+BEGIN
+    UPDATE Basketball.League
+    SET IsDeleted = 1
+    WHERE LeagueID = @LeagueID;
 END
 GO
 

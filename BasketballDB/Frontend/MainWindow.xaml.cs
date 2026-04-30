@@ -1,5 +1,7 @@
 ﻿using Backend.Repositories;
 using DataAccess;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -7,11 +9,13 @@ namespace Frontend
 {
     public partial class MainWindow : Window
     {
-        // Example connection string - adjust to match your SSMS setup
         private const string ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BasketballLeague560;Integrated Security=True;TrustServerCertificate=True;";
 
         //for ksu server
         //private const string ConnectionString = @"(localdb)\MSSQLLocalDB;";
+
+        private ObservableCollection<EditableLeague> _leagues = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -63,9 +67,9 @@ namespace Frontend
             {
                 var executor = new SqlCommandExecutor(ConnectionString);
                 var repo = new SqlLeagueRepository(executor);
-
-                // Use the backend to fetch all leagues
-                LeagueTilesControl.ItemsSource = repo.RetrieveLeagues();
+                _leagues = new ObservableCollection<EditableLeague>(
+                    repo.RetrieveLeagues().Select(l => new EditableLeague(l)));
+                LeagueTilesControl.ItemsSource = _leagues;
             }
             catch (Exception ex)
             {
@@ -104,22 +108,78 @@ namespace Frontend
 
         private void LeagueTile_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Get the League object from the clicked button's DataContext
-            // This is much more reliable than checking for a Tag
-            if (sender is FrameworkElement element && element.DataContext is Backend.Models.League selectedLeague)
+            if (sender is FrameworkElement fe && fe.Tag is EditableLeague league && !league.IsEditing)
             {
-                // 2. Show the Frame (hides the league list)
                 ShowFrame();
-
-                // 3. Create the SeasonsPage and navigate to it
-                // We pass the whole league object and the connection string
-                var seasonsPage = new SeasonsPage(selectedLeague, ConnectionString);
-                MainFrame.Navigate(seasonsPage);
+                MainFrame.Navigate(new SeasonsPage(league.Model, ConnectionString));
             }
-            else
+        }
+
+        private void LeagueOptions_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Session.IsAdmin) return;
+            if (sender is Button btn)
+                btn.ContextMenu.IsOpen = true;
+        }
+
+        private void EditLeague_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is Button btn &&
+                btn.Tag is EditableLeague league)
             {
-                // If this hits, the XAML isn't passing the DataContext correctly
-                MessageBox.Show("Error: League data not found on the clicked tile.");
+                league.IsEditing = true;
+            }
+        }
+
+        private void SaveLeague_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not FrameworkElement fe || fe.Tag is not EditableLeague league) return;
+            try
+            {
+                var executor = new SqlCommandExecutor(ConnectionString);
+                var repo = new SqlLeagueRepository(executor);
+                repo.UpdateLeague(league.LeagueID, league.EditName, league.Model.LocationID);
+                LoadLeagues();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving league: " + ex.Message);
+            }
+        }
+
+        private void CancelLeagueEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.Tag is EditableLeague league)
+            {
+                league.EditName = league.LeagueName;
+                league.IsEditing = false;
+            }
+        }
+
+        private void DeleteLeague_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem mi ||
+                mi.Parent is not ContextMenu cm ||
+                cm.PlacementTarget is not Button btn ||
+                btn.Tag is not EditableLeague league) return;
+
+            var result = MessageBox.Show(
+                $"Delete \"{league.LeagueName}\"? This cannot be undone.",
+                "Delete League", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                var executor = new SqlCommandExecutor(ConnectionString);
+                var repo = new SqlLeagueRepository(executor);
+                repo.DeleteLeague(league.LeagueID);
+                _leagues.Remove(league);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting league: " + ex.Message);
             }
         }
 

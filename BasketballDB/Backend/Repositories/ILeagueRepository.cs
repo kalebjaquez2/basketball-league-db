@@ -28,5 +28,10 @@ namespace Backend.Repositories
         /// Updates an existing league.
         /// </summary>
         League UpdateLeague(int leagueID, string leagueName, int locationId);
+
+        /// <summary>
+        /// Soft-deletes a league by ID.
+        /// </summary>
+        void DeleteLeague(int leagueID);
     }
 }
