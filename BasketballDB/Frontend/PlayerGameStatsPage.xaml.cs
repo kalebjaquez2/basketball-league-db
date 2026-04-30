@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -32,13 +33,33 @@ namespace Frontend
         private void LoadBoxScore()
         {
             var executor = new SqlCommandExecutor(_connectionString);
-            var repo = new SqlPlayerGameStatsRepository(executor);
-            var allStats = repo.RetrieveStatsByGame(_game.GameID)
-                .Select(s => new EditablePlayerGameStats(s))
-                .ToList();
+            var statsRepo = new SqlPlayerGameStatsRepository(executor);
+            var playerRepo = new SqlPlayerRepository(executor);
 
-            HomeStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.HomeTeamID).ToList();
-            AwayStatsGrid.ItemsSource = allStats.Where(s => s.TeamID == _game.AwayTeamID).ToList();
+            var existingStats = statsRepo.RetrieveStatsByGame(_game.GameID)
+                .ToDictionary(s => s.PlayerID);
+
+            var homePlayers = playerRepo.RetrievePlayersByTeam(_game.HomeTeamID);
+            var awayPlayers = playerRepo.RetrievePlayersByTeam(_game.AwayTeamID);
+
+            HomeStatsGrid.ItemsSource = BuildStatsList(homePlayers, existingStats, _game.HomeTeamID);
+            AwayStatsGrid.ItemsSource = BuildStatsList(awayPlayers, existingStats, _game.AwayTeamID);
+        }
+
+        private List<EditablePlayerGameStats> BuildStatsList(
+            IReadOnlyList<Player> players,
+            Dictionary<int, PlayerGameStats> existingStats,
+            int teamID)
+        {
+            return players.Select(p =>
+            {
+                if (existingStats.TryGetValue(p.PlayerID, out var s))
+                    return new EditablePlayerGameStats(s);
+
+                return new EditablePlayerGameStats(new PlayerGameStats(
+                    p.PlayerID, _game.GameID, teamID, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                { PlayerName = p.PlayerName });
+            }).ToList();
         }
 
         private void LoadTeamNames()

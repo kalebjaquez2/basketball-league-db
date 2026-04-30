@@ -730,21 +730,47 @@ INNER JOIN Basketball.Players P ON S.PlayerID = P.PlayerID
 WHERE S.PlayerID = @PlayerID;
 GO
 
--- Update PlayerGameStats
+-- Upsert PlayerGameStats
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
-    @PlayerID INT, @GameID INT,
+    @PlayerID INT, @GameID INT, @TeamID INT,
     @PlayingTime INT, @Turnovers INT,
-    @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT
+    @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT,
+    @FieldGoalsMade INT = 0, @FieldGoalsTaken INT = 0,
+    @ThreePointersMade INT = 0, @ThreePointersTaken INT = 0,
+    @PersonalFouls INT = 0
 AS
-UPDATE Basketball.PlayerGameStats
-SET 
-    PlayingTime = @PlayingTime,
-    Turnovers = @Turnovers,
-    Rebounds = @Rebounds,
-    Assists = @Assists,
-    Steals = @Steals,
-    Blocks = @Blocks
-WHERE PlayerID = @PlayerID AND GameID = @GameID;
+IF NOT EXISTS (SELECT 1 FROM Basketball.PlayerGameStats WHERE PlayerID = @PlayerID AND GameID = @GameID)
+    INSERT Basketball.PlayerGameStats (
+        PlayerID, GameID, TeamID, PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks,
+        FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+    VALUES (@PlayerID, @GameID, @TeamID, @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks,
+        @FieldGoalsMade, @FieldGoalsTaken, @ThreePointersMade, @ThreePointersTaken, @PersonalFouls)
+ELSE
+    UPDATE Basketball.PlayerGameStats
+    SET
+        PlayingTime = @PlayingTime,
+        Turnovers = @Turnovers,
+        Rebounds = @Rebounds,
+        Assists = @Assists,
+        Steals = @Steals,
+        Blocks = @Blocks,
+        FieldGoalsMade = @FieldGoalsMade,
+        FieldGoalsTaken = @FieldGoalsTaken,
+        ThreePointersMade = @ThreePointersMade,
+        ThreePointersTaken = @ThreePointersTaken,
+        PersonalFouls = @PersonalFouls
+    WHERE PlayerID = @PlayerID AND GameID = @GameID;
+
+SELECT
+    S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
+    S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
+    S.FieldGoalsMade, S.FieldGoalsTaken,
+    S.ThreePointersMade, S.ThreePointersTaken,
+    S.PersonalFouls,
+    P.FirstName + ' ' + P.LastName AS PlayerName
+FROM Basketball.PlayerGameStats S
+INNER JOIN Basketball.Players P ON S.PlayerID = P.PlayerID
+WHERE S.PlayerID = @PlayerID AND S.GameID = @GameID;
 GO
 
 -- Delete PlayerGameStats

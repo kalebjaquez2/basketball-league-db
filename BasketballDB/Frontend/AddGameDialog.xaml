@@ -29,10 +29,22 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="30,10,30,30">
                 <TextBlock Text="HOME TEAM" Style="{StaticResource FieldLabel}" Margin="0,5,0,6"/>
-                <ComboBox x:Name="HomeTeamCombo" DisplayMemberPath="TeamName" SelectedValuePath="TeamID"/>
+                <ComboBox x:Name="HomeTeamCombo" SelectedValuePath="TeamID">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TeamName}" Foreground="White"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <TextBlock Text="AWAY TEAM" Style="{StaticResource FieldLabel}"/>
-                <ComboBox x:Name="AwayTeamCombo" DisplayMemberPath="TeamName" SelectedValuePath="TeamID"/>
+                <ComboBox x:Name="AwayTeamCombo" SelectedValuePath="TeamID">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TeamName}" Foreground="White"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <TextBlock Text="DATE" Style="{StaticResource FieldLabel}"/>
                 <DatePicker x:Name="GameDatePicker"/>

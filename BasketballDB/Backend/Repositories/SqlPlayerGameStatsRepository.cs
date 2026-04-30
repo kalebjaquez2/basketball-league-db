@@ -52,7 +52,7 @@ namespace Backend.Repositories
             int threePointersMade, int threePointersTaken, int personalFouls)
         {
             return executor.ExecuteReader(
-                new UpdatePlayerGameStatsDelegate(playerID, gameID,
+                new UpdatePlayerGameStatsDelegate(playerID, gameID, teamID,
                     playingTime, turnovers, rebounds, assists, steals, blocks,
                     fieldGoalsMade, fieldGoalsTaken, threePointersMade, threePointersTaken, personalFouls))
                 ?? throw new RecordNotFoundException($"{playerID},{gameID}");
@@ -142,7 +142,7 @@ namespace Backend.Repositories
         }
 
         // UPDATED: Constructor and PrepareCommand now include all parameters
-        private class UpdatePlayerGameStatsDelegate(int playerID, int gameID,
+        private class UpdatePlayerGameStatsDelegate(int playerID, int gameID, int teamID,
             int playingTime, int turnovers, int rebounds, int assists,
             int steals, int blocks, int fieldGoalsMade, int fieldGoalsTaken,
             int threePointersMade, int threePointersTaken, int personalFouls)
@@ -152,6 +152,7 @@ namespace Backend.Repositories
             {
                 command.Parameters.AddWithValue("PlayerID", playerID);
                 command.Parameters.AddWithValue("GameID", gameID);
+                command.Parameters.AddWithValue("TeamID", teamID);
                 command.Parameters.AddWithValue("PlayingTime", playingTime);
                 command.Parameters.AddWithValue("Turnovers", turnovers);
                 command.Parameters.AddWithValue("Rebounds", rebounds);
