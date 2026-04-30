@@ -303,9 +303,9 @@ CROSS APPLY (
            fgTakenCalc.fgTaken AS fgTaken
 ) fg
 
--- 3PT chain (deterministic)
+-- 3PT chain (capped at fgTaken)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % (fg.fgTaken + 1) AS tpTaken
 ) tpTakenCalc
 CROSS APPLY (
     SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
@@ -357,14 +357,14 @@ CROSS APPLY (
            fgTakenCalc.fgTaken AS fgTaken
 ) fg
 
--- 3PT chain (deterministic)
+-- 3PT chain (capped at fgTaken)
 CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
+    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % (fg.fgTaken + 1) AS tpTaken
 ) tpTakenCalc
 CROSS APPLY (
     SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
            tpTakenCalc.tpTaken AS tpTaken
-) tp;
+) tp
 
 /****************************
  * Fix game scores to match actual player point totals
