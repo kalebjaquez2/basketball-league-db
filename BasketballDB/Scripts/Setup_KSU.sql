@@ -390,8 +390,39 @@ CREATE OR ALTER PROCEDURE Basketball.DeleteLeague
     @LeagueID INT
 AS
 BEGIN
-    DELETE FROM Basketball.League
-    WHERE LeagueID = @LeagueID;
+    DELETE PGS
+    FROM Basketball.PlayerGameStats PGS
+    WHERE PGS.TeamID IN (
+        SELECT T.TeamID FROM Basketball.Teams T
+        INNER JOIN Basketball.Seasons S ON T.SeasonID = S.SeasonID
+        WHERE S.LeagueID = @LeagueID
+    );
+
+    DELETE G
+    FROM Basketball.Games G
+    WHERE G.HomeTeamID IN (
+        SELECT T.TeamID FROM Basketball.Teams T
+        INNER JOIN Basketball.Seasons S ON T.SeasonID = S.SeasonID
+        WHERE S.LeagueID = @LeagueID
+    );
+
+    DELETE P
+    FROM Basketball.Players P
+    WHERE P.TeamID IN (
+        SELECT T.TeamID FROM Basketball.Teams T
+        INNER JOIN Basketball.Seasons S ON T.SeasonID = S.SeasonID
+        WHERE S.LeagueID = @LeagueID
+    );
+
+    DELETE T
+    FROM Basketball.Teams T
+    WHERE T.SeasonID IN (
+        SELECT S.SeasonID FROM Basketball.Seasons S
+        WHERE S.LeagueID = @LeagueID
+    );
+
+    DELETE FROM Basketball.Seasons WHERE LeagueID = @LeagueID;
+    DELETE FROM Basketball.League  WHERE LeagueID = @LeagueID;
 END
 GO
 
