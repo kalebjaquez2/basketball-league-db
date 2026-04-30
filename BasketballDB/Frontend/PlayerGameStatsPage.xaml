@@ -24,7 +24,7 @@
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="RowHeight" Value="36"/>
+            <Setter Property="RowHeight" Value="40"/>
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -85,7 +85,7 @@
         </Style>
 
         <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Padding" Value="4,2"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
@@ -183,11 +183,11 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                             <TextBox Text="{Binding EditFGMade, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                             <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
                                             <TextBox Text="{Binding EditFGTaken, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                         </StackPanel>
                                     </Grid>
@@ -204,11 +204,11 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                             <TextBox Text="{Binding EditThreeMade, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                             <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
                                             <TextBox Text="{Binding EditThreeTaken, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                         </StackPanel>
                                     </Grid>
@@ -315,11 +315,11 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                             <TextBox Text="{Binding EditFGMade, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                             <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
                                             <TextBox Text="{Binding EditFGTaken, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                         </StackPanel>
                                     </Grid>
@@ -336,11 +336,11 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                             <TextBox Text="{Binding EditThreeMade, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                             <TextBlock Text="/" Foreground="#555" Margin="2,0" VerticalAlignment="Center"/>
                                             <TextBox Text="{Binding EditThreeTaken, UpdateSourceTrigger=PropertyChanged}"
-                                                     Width="30" Background="#2A2A2A" Foreground="White"
+                                                     Width="36" Background="#2A2A2A" Foreground="White"
                                                      BorderBrush="#F05A28" BorderThickness="1" TextAlignment="Center" MaxLength="3"/>
                                         </StackPanel>
                                     </Grid>

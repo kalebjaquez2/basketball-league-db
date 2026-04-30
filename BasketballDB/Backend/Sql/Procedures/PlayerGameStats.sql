@@ -73,17 +73,36 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
     @PlayerID INT, @GameID INT,
     @PlayingTime INT, @Turnovers INT,
-    @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT
+    @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT,
+    @FieldGoalsMade INT = 0, @FieldGoalsTaken INT = 0,
+    @ThreePointersMade INT = 0, @ThreePointersTaken INT = 0,
+    @PersonalFouls INT = 0
 AS
 UPDATE Basketball.PlayerGameStats
-SET 
+SET
     PlayingTime = @PlayingTime,
     Turnovers = @Turnovers,
     Rebounds = @Rebounds,
     Assists = @Assists,
     Steals = @Steals,
-    Blocks = @Blocks
+    Blocks = @Blocks,
+    FieldGoalsMade = @FieldGoalsMade,
+    FieldGoalsTaken = @FieldGoalsTaken,
+    ThreePointersMade = @ThreePointersMade,
+    ThreePointersTaken = @ThreePointersTaken,
+    PersonalFouls = @PersonalFouls
 WHERE PlayerID = @PlayerID AND GameID = @GameID;
+
+SELECT
+    S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
+    S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
+    S.FieldGoalsMade, S.FieldGoalsTaken,
+    S.ThreePointersMade, S.ThreePointersTaken,
+    S.PersonalFouls,
+    P.FirstName + ' ' + P.LastName AS PlayerName
+FROM Basketball.PlayerGameStats S
+INNER JOIN Basketball.Players P ON S.PlayerID = P.PlayerID
+WHERE S.PlayerID = @PlayerID AND S.GameID = @GameID;
 GO
 
 -- Delete PlayerGameStats
