@@ -27,6 +27,8 @@ namespace Frontend
             LoadTopScorers();
             if (!Session.IsAdmin)
                 AddPlayerButton.Visibility = Visibility.Collapsed;
+            else
+                GenerateRosterButton.Visibility = Visibility.Visible;
         }
 
         private void LoadPlayers()
@@ -62,6 +64,55 @@ namespace Frontend
             {
                 MessageBox.Show("Error loading top scorers: " + ex.Message);
             }
+        }
+
+        private void GenerateRoster_Click(object sender, RoutedEventArgs e)
+        {
+            var rng = new Random();
+            string[] firstNames = ["Marcus", "Derek", "Tyrone", "Calvin", "Jerome",
+                                   "Andre", "Lamar", "Darnell", "Kenny", "Reggie",
+                                   "Terrence", "Malik", "Darius", "Victor", "Byron",
+                                   "Cedric", "Nathan", "Elijah", "Oscar", "Willis"];
+            string[] lastNames  = ["Webb", "Hollins", "Bass", "Morrow", "Patel",
+                                   "Simmons", "Hughes", "Cruz", "Foster", "Banks",
+                                   "Price", "Stone", "Cole", "James", "King",
+                                   "Ross", "Perry", "Reed", "Rivera", "Morgan"];
+            string[] heights    = ["5'10\"", "6'0\"", "6'1\"", "6'2\"",
+                                   "6'3\"", "6'4\"", "6'5\"", "6'6\""];
+            (string pos, int minHt, int maxWt)[] slots =
+            [
+                ("PG", 2, 3),   // index into heights for typical range
+                ("SG", 3, 4),
+                ("SF", 4, 5),
+                ("PF", 5, 6),
+                ("C",  6, 7),
+            ];
+
+            var usedJerseys = _players.Select(p => p.JerseyNumber).ToHashSet();
+            var executor = new SqlCommandExecutor(_connectionString);
+            var repo = new SqlPlayerRepository(executor);
+
+            foreach (var (pos, htMin, htMax) in slots)
+            {
+                int jersey = rng.Next(1, 100);
+                while (usedJerseys.Contains(jersey))
+                    jersey = rng.Next(1, 100);
+                usedJerseys.Add(jersey);
+
+                repo.CreatePlayer(
+                    _team.TeamID,
+                    jersey,
+                    firstNames[rng.Next(firstNames.Length)],
+                    lastNames[rng.Next(lastNames.Length)],
+                    pos,
+                    rng.Next(20, 36),
+                    heights[rng.Next(htMin, htMax + 1)],
+                    rng.Next(170, 240)
+                );
+            }
+
+            LoadPlayers();
+            LoadTopScorers();
         }
 
         private void AddPlayer_Click(object sender, RoutedEventArgs e)

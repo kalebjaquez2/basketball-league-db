@@ -134,7 +134,8 @@
                         Visibility="Collapsed">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Bd" Background="#F05A28" CornerRadius="4">
+                            <Border x:Name="Bd" Background="#F05A28" CornerRadius="4"
+                                    Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>

@@ -31,21 +31,34 @@
                            HorizontalAlignment="Left" Margin="0,12,0,0"/>
             </StackPanel>
 
-            <!-- Add Player button aligned to the bottom-right of the header -->
-            <Button x:Name="AddPlayerButton" Click="AddPlayer_Click" Cursor="Hand"
-                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Background="Transparent" BorderThickness="0">
-                <Border Background="#F05A28" CornerRadius="6" Padding="18,10">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="+" FontSize="16" FontWeight="Bold"
-                                   Foreground="White" Margin="0,0,8,0"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Text="ADD PLAYER" FontSize="12"
-                                   FontWeight="Bold" Foreground="White"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-            </Button>
+            <!-- Header buttons aligned to the bottom-right -->
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Orientation="Horizontal">
+                <Button x:Name="GenerateRosterButton" Click="GenerateRoster_Click" Cursor="Hand"
+                        Background="Transparent" BorderThickness="0"
+                        Margin="0,0,10,0" Visibility="Collapsed">
+                    <Border Background="#2E2E2E" CornerRadius="6" Padding="18,10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="GENERATE ROSTER" FontSize="12"
+                                       FontWeight="Bold" Foreground="White"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Button>
+                <Button x:Name="AddPlayerButton" Click="AddPlayer_Click" Cursor="Hand"
+                        Background="Transparent" BorderThickness="0">
+                    <Border Background="#F05A28" CornerRadius="6" Padding="18,10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="+" FontSize="16" FontWeight="Bold"
+                                       Foreground="White" Margin="0,0,8,0"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="ADD PLAYER" FontSize="12"
+                                       FontWeight="Bold" Foreground="White"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- Left: Players List -->
