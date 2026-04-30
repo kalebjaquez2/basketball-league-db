@@ -125,6 +125,8 @@ namespace Frontend
 
         private void TeamOptions_Click(object sender, RoutedEventArgs e)
         {
+            if (!Session.IsAdmin) return;
+
             if (sender is Button btn)
             {
                 btn.ContextMenu.PlacementTarget = btn;

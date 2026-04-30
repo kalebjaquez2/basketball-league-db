@@ -83,6 +83,7 @@ namespace Frontend
 
         private void PlayerOptions_Click(object sender, RoutedEventArgs e)
         {
+            if (!Session.IsAdmin) return;
             if (sender is Button btn)
             {
                 btn.ContextMenu.PlacementTarget = btn;
@@ -117,10 +118,18 @@ namespace Frontend
                     string? pos = string.IsNullOrWhiteSpace(player.EditPosition)
                         ? null : player.EditPosition.Trim();
 
+                    int? age = int.TryParse(player.EditAge, out int parsedAge)
+                        ? parsedAge : null;
+
+                    string? height = string.IsNullOrWhiteSpace(player.EditHeight)
+                        ? null : player.EditHeight.Trim();
+
+                    int? weight = int.TryParse(player.EditWeight, out int parsedWeight)
+                        ? parsedWeight : null;
+
                     var executor = new SqlCommandExecutor(_connectionString);
                     var repo = new SqlPlayerRepository(executor);
-                    repo.UpdatePlayer(player.PlayerID, jerseyNum, pos,
-                        player.Model.Age, player.Model.Height, player.Model.Weight);
+                    repo.UpdatePlayer(player.PlayerID, jerseyNum, pos, age, height, weight);
                     LoadPlayers();
                 }
                 catch (Exception ex)
