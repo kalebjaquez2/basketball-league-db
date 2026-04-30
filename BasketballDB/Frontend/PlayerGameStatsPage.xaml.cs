@@ -2,11 +2,12 @@ using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Frontend
 {
@@ -14,6 +15,7 @@ namespace Frontend
     {
         private readonly Game _game;
         private readonly string _connectionString;
+        private DispatcherTimer? _debounceTimer;
 
         public PlayerGameStatsPage(Game game, string connectionString)
         {
@@ -89,51 +91,79 @@ namespace Frontend
         private void StatsGrid_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (!Session.IsAdmin) return;
-            if (sender is DataGrid dg && dg.SelectedItem is EditablePlayerGameStats stats && !stats.IsEditing)
-                stats.IsEditing = true;
-        }
+            if (sender is not DataGrid dg || dg.SelectedItem is not EditablePlayerGameStats stats) return;
 
-        private void SaveStats_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.Tag is EditablePlayerGameStats stats)
+            if (stats.IsEditing)
             {
-                try
-                {
-                    int minutes  = Parse(stats.EditMinutes);
-                    int rebounds = Parse(stats.EditRebounds);
-                    int assists  = Parse(stats.EditAssists);
-                    int turnovers= Parse(stats.EditTurnovers);
-                    int steals   = Parse(stats.EditSteals);
-                    int blocks   = Parse(stats.EditBlocks);
-                    int fgMade   = Parse(stats.EditFGMade);
-                    int fgTaken  = Parse(stats.EditFGTaken);
-                    int threeMade= Parse(stats.EditThreeMade);
-                    int threeTaken=Parse(stats.EditThreeTaken);
-                    int fouls    = Parse(stats.EditFouls);
-
-                    var executor = new SqlCommandExecutor(_connectionString);
-                    var repo = new SqlPlayerGameStatsRepository(executor);
-                    repo.UpdatePlayerGameStats(
-                        stats.PlayerID, stats.GameID, stats.TeamID,
-                        minutes, turnovers, rebounds, assists, steals, blocks,
-                        fgMade, fgTaken, threeMade, threeTaken, fouls
-                    );
-
-                    LoadBoxScore();
-                    LoadGameStatsSummary();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error saving stats: " + ex.Message);
-                    stats.IsEditing = false;
-                }
+                _debounceTimer?.Stop();
+                _debounceTimer = null;
+                stats.PropertyChanged -= Stats_PropertyChanged;
+                SaveStatsInternal(stats);
+                stats.IsEditing = false;
+                dg.SelectedItem = null;
+                LoadBoxScore();
+                LoadGameStatsSummary();
+            }
+            else
+            {
+                stats.PropertyChanged += Stats_PropertyChanged;
+                stats.IsEditing = true;
+                dg.SelectedItem = null;
             }
         }
 
-        private void CancelStatsEdit_Click(object sender, RoutedEventArgs e)
+        private void Stats_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is EditablePlayerGameStats stats)
-                stats.IsEditing = false;
+            if (sender is EditablePlayerGameStats stats && e.PropertyName?.StartsWith("Edit") == true)
+                ScheduleSave(stats);
+        }
+
+        private void ScheduleSave(EditablePlayerGameStats stats)
+        {
+            _debounceTimer?.Stop();
+            _debounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
+            _debounceTimer.Tick += (s, e) =>
+            {
+                _debounceTimer!.Stop();
+                SaveStatsInternal(stats);
+            };
+            _debounceTimer.Start();
+        }
+
+        private void SaveStatsInternal(EditablePlayerGameStats stats)
+        {
+            try
+            {
+                int minutes   = Parse(stats.EditMinutes);
+                int rebounds  = Parse(stats.EditRebounds);
+                int assists   = Parse(stats.EditAssists);
+                int turnovers = Parse(stats.EditTurnovers);
+                int steals    = Parse(stats.EditSteals);
+                int blocks    = Parse(stats.EditBlocks);
+                int fgMade    = Parse(stats.EditFGMade);
+                int fgTaken   = Parse(stats.EditFGTaken);
+                int threeMade = Parse(stats.EditThreeMade);
+                int threeTaken= Parse(stats.EditThreeTaken);
+                int fouls     = Parse(stats.EditFouls);
+
+                var executor = new SqlCommandExecutor(_connectionString);
+                var repo = new SqlPlayerGameStatsRepository(executor);
+                repo.UpdatePlayerGameStats(
+                    stats.PlayerID, stats.GameID, stats.TeamID,
+                    minutes, turnovers, rebounds, assists, steals, blocks,
+                    fgMade, fgTaken, threeMade, threeTaken, fouls
+                );
+
+                LoadGameStatsSummary();
+            }
+            catch (FormatException)
+            {
+                // User is mid-typing an invalid value — skip this save
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving stats: " + ex.Message);
+            }
         }
 
         private static int Parse(string s) =>

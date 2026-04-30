@@ -5,6 +5,12 @@
       Background="#0D0D0D">
 
     <Page.Resources>
+        <!-- Override system selection colors to stay dark -->
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#1F2638"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="#1A1A1A"/>
             <Setter Property="Foreground" Value="White"/>
@@ -36,9 +42,28 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#1F2638"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#222222"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                    <Setter Property="Background" Value="#1A2030"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style TargetType="DataGridCell">
             <Setter Property="Padding" Value="10"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
@@ -51,6 +76,22 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#FF8C5A"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Page.Resources>
 
@@ -219,24 +260,6 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Width="50">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
-                                        <Button Content="✓" Width="22" Height="22" Margin="0,0,2,0"
-                                                Background="#2E7D32" Foreground="White" BorderThickness="0"
-                                                FontSize="11" Cursor="Hand" Tag="{Binding}"
-                                                Click="SaveStats_Click"/>
-                                        <Button Content="✗" Width="22" Height="22"
-                                                Background="#5A2A2A" Foreground="White" BorderThickness="0"
-                                                FontSize="11" Cursor="Hand" Tag="{Binding}"
-                                                Click="CancelStatsEdit_Click"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -366,24 +389,6 @@
                                                  TextAlignment="Center" MaxLength="3" VerticalAlignment="Center"
                                                  Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
                                     </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Width="50">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                                Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
-                                        <Button Content="✓" Width="22" Height="22" Margin="0,0,2,0"
-                                                Background="#2E7D32" Foreground="White" BorderThickness="0"
-                                                FontSize="11" Cursor="Hand" Tag="{Binding}"
-                                                Click="SaveStats_Click"/>
-                                        <Button Content="✗" Width="22" Height="22"
-                                                Background="#5A2A2A" Foreground="White" BorderThickness="0"
-                                                FontSize="11" Cursor="Hand" Tag="{Binding}"
-                                                Click="CancelStatsEdit_Click"/>
-                                    </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
