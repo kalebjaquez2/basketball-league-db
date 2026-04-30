@@ -119,7 +119,10 @@ namespace Frontend
         {
             if (!Session.IsAdmin) return;
             if (sender is Button btn)
+            {
+                btn.ContextMenu.PlacementTarget = btn;
                 btn.ContextMenu.IsOpen = true;
+            }
         }
 
         private void EditLeague_Click(object sender, RoutedEventArgs e)

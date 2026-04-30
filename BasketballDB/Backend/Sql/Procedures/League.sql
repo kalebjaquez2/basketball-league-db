@@ -37,13 +37,11 @@ BEGIN
 END
 GO
 
--- Soft delete a league
 CREATE OR ALTER PROCEDURE Basketball.DeleteLeague
     @LeagueID INT
 AS
 BEGIN
-    UPDATE Basketball.League
-    SET IsDeleted = 1
+    DELETE FROM Basketball.League
     WHERE LeagueID = @LeagueID;
 END
 GO
