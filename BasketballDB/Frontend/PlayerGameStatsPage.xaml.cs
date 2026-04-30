@@ -189,6 +189,12 @@ namespace Frontend
             }
         }
 
+        private void StatBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb)
+                tb.CaretIndex = tb.Text.Length;
+        }
+
         private static int Parse(string s) =>
             string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s);
     }

@@ -27,17 +27,25 @@
                     <TextBlock Text="TEAMS" FontSize="30" FontWeight="Bold" Foreground="White"/>
                     <TextBlock x:Name="SeasonHeader" FontSize="13" Foreground="#666666" Margin="0,2,0,0"/>
                 </StackPanel>
-                <Button x:Name="AddTeamButton" Content="+ ADD TEAM"
+                <Button x:Name="AddTeamButton"
                         Click="AddTeam_Click"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Visibility="Collapsed"
-                        Background="#F05A28" Foreground="White" BorderThickness="0"
-                        Padding="16,9" FontSize="11" FontWeight="Bold" Cursor="Hand">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4"/>
-                        </Style>
-                    </Button.Resources>
+                        Cursor="Hand" Foreground="White" FontSize="11" FontWeight="Bold">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="#F05A28" CornerRadius="4" Padding="16,9">
+                                <TextBlock Text="+ ADD TEAM" Foreground="White"
+                                           FontSize="11" FontWeight="Bold"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="#D94E22"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
                 </Button>
             </Grid>
             <Rectangle Height="1" Fill="#2A2A2A" Margin="0,14,0,0"/>
@@ -66,24 +74,20 @@
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="#242424"/>
-                                            <Setter Property="BorderBrush" Value="#F05A28"/>
+                                            <Setter Property="BorderBrush" Value="#444444"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="3"/>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="30"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Accent strip -->
-                                <Border Grid.Row="0" Background="#F05A28"/>
-
-                                <!-- Row 1: Team identity — view mode -->
-                                <Grid Grid.Row="1" Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
+                                <!-- Row 0: Team identity — view mode -->
+                                <Grid Grid.Row="0" Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="🛡️" FontSize="26"
                                                    HorizontalAlignment="Center" Margin="0,0,0,6"/>
@@ -107,8 +111,8 @@
                                     </Button>
                                 </Grid>
 
-                                <!-- Row 1: Team name edit — edit mode -->
-                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="14,10,14,10"
+                                <!-- Row 0: Team name edit — edit mode -->
+                                <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="14,10,14,10"
                                             Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                     <TextBlock Text="🛡️" FontSize="26"
                                                HorizontalAlignment="Center" Margin="0,0,0,8"/>
@@ -120,8 +124,8 @@
                                              Padding="8,6" FontSize="13" TextAlignment="Center"/>
                                 </StackPanel>
 
-                                <!-- Row 2: W/L badges — hidden in edit mode -->
-                                <StackPanel Grid.Row="2" Margin="0,4,0,6"
+                                <!-- Row 1: W/L badges — hidden in edit mode -->
+                                <StackPanel Grid.Row="1" Margin="0,4,0,6"
                                             Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                     <StackPanel Orientation="Horizontal"
                                                 HorizontalAlignment="Center" Margin="0,0,0,4">
@@ -150,65 +154,85 @@
                                                HorizontalAlignment="Center"/>
                                 </StackPanel>
 
-                                <!-- Row 3: Action buttons — view mode -->
-                                <Grid Grid.Row="3"
+                                <!-- Row 2: Action buttons — view mode -->
+                                <Grid Grid.Row="2"
                                       Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVis}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Content="SCHEDULE"
-                                            Click="TeamTile_Click" Tag="{Binding}"
-                                            Background="#F05A28" Foreground="White"
-                                            BorderThickness="0" FontWeight="SemiBold"
-                                            FontSize="10" Cursor="Hand">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="0,0,0,8"/>
-                                            </Style>
-                                        </Button.Resources>
+                                    <Button Grid.Column="0" Click="TeamTile_Click" Tag="{Binding}" Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bd" Background="#F05A28" CornerRadius="0,0,0,8">
+                                                    <TextBlock Text="SCHEDULE" Foreground="White"
+                                                               FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#D94E22"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                     </Button>
-                                    <Button Grid.Column="1" Content="ROSTER"
-                                            Click="Roster_Click" Tag="{Binding}"
-                                            Background="#2A2A2A" Foreground="White"
-                                            BorderThickness="0" FontWeight="SemiBold"
-                                            FontSize="10" Cursor="Hand">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="0,0,8,0"/>
-                                            </Style>
-                                        </Button.Resources>
+                                    <Button Grid.Column="1" Click="Roster_Click" Tag="{Binding}" Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bd" Background="#2A2A2A" CornerRadius="0,0,8,0">
+                                                    <TextBlock Text="ROSTER" Foreground="White"
+                                                               FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#363636"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                     </Button>
                                 </Grid>
 
-                                <!-- Row 3: Save/Cancel — edit mode -->
-                                <Grid Grid.Row="3"
+                                <!-- Row 2: Save/Cancel — edit mode -->
+                                <Grid Grid.Row="2"
                                       Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Content="✓  SAVE"
-                                            Click="SaveTeam_Click" Tag="{Binding}"
-                                            Background="#2E7D32" Foreground="White"
-                                            BorderThickness="0" FontWeight="SemiBold"
-                                            FontSize="10" Cursor="Hand">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="0,0,0,8"/>
-                                            </Style>
-                                        </Button.Resources>
+                                    <Button Grid.Column="0" Click="SaveTeam_Click" Tag="{Binding}" Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bd" Background="#2E7D32" CornerRadius="0,0,0,8">
+                                                    <TextBlock Text="✓  SAVE" Foreground="White"
+                                                               FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#256628"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                     </Button>
-                                    <Button Grid.Column="1" Content="✗  CANCEL"
-                                            Click="CancelTeamEdit_Click" Tag="{Binding}"
-                                            Background="#5A2A2A" Foreground="White"
-                                            BorderThickness="0" FontWeight="SemiBold"
-                                            FontSize="10" Cursor="Hand">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="0,0,8,0"/>
-                                            </Style>
-                                        </Button.Resources>
+                                    <Button Grid.Column="1" Click="CancelTeamEdit_Click" Tag="{Binding}" Cursor="Hand">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="Bd" Background="#5A2A2A" CornerRadius="0,0,8,0">
+                                                    <TextBlock Text="✗  CANCEL" Foreground="White"
+                                                               FontSize="10" FontWeight="SemiBold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Bd" Property="Background" Value="#6E3333"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -219,111 +243,114 @@
         </ScrollViewer>
 
         <!-- Right: Stats Panels -->
-        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top">
+        <ScrollViewer Grid.Row="1" Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel>
 
-            <!-- Standings -->
-            <Border Background="#161616" BorderBrush="#2A2A2A"
-                    BorderThickness="1" CornerRadius="8"
-                    Padding="16" Margin="0,0,0,12">
-                <StackPanel>
-                    <TextBlock Text="STANDINGS" FontSize="11" FontWeight="Bold"
-                               Foreground="#F05A28" Margin="0,0,0,14"/>
+                <!-- Standings -->
+                <Border Background="#161616" BorderBrush="#2A2A2A"
+                        BorderThickness="1" CornerRadius="8"
+                        Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="STANDINGS" FontSize="11" FontWeight="Bold"
+                                   Foreground="#F05A28" Margin="0,0,0,14"/>
 
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="28"/>
-                            <ColumnDefinition Width="28"/>
-                            <ColumnDefinition Width="42"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="TEAM" FontSize="10" Foreground="#444444" FontWeight="Bold"/>
-                        <TextBlock Grid.Column="1" Text="W" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="L" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="AVG" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </Grid>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="28"/>
+                                <ColumnDefinition Width="28"/>
+                                <ColumnDefinition Width="42"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="TEAM" FontSize="10" Foreground="#444444" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="W" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="L" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="AVG" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </Grid>
 
-                    <Rectangle Height="1" Fill="#222222" Margin="0,0,0,8"/>
+                        <Rectangle Height="1" Fill="#222222" Margin="0,0,0,8"/>
 
-                    <ItemsControl x:Name="StandingsList">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,0,0,9">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="28"/>
-                                        <ColumnDefinition Width="28"/>
-                                        <ColumnDefinition Width="42"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding TeamName}"
-                                               FontSize="12" Foreground="White" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Wins}"
-                                               FontSize="12" Foreground="#4CAF50" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Losses}"
-                                               FontSize="12" Foreground="#FF4444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding AverageScorePerGame}"
-                                               FontSize="12" Foreground="#888888" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
+                        <ItemsControl x:Name="StandingsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,9">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="28"/>
+                                            <ColumnDefinition Width="28"/>
+                                            <ColumnDefinition Width="42"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding TeamName}"
+                                                   FontSize="12" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Wins}"
+                                                   FontSize="12" Foreground="#4CAF50" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Losses}"
+                                                   FontSize="12" Foreground="#FF4444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding AverageScorePerGame}"
+                                                   FontSize="12" Foreground="#888888" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
 
-            <!-- Most Active Players -->
-            <Border Background="#161616" BorderBrush="#2A2A2A"
-                    BorderThickness="1" CornerRadius="8"
-                    Padding="16">
-                <StackPanel>
-                    <TextBlock Text="MOST ACTIVE PLAYERS" FontSize="11" FontWeight="Bold"
-                               Foreground="#F05A28" Margin="0,0,0,14"/>
+                <!-- Most Active Players -->
+                <Border Background="#161616" BorderBrush="#2A2A2A"
+                        BorderThickness="1" CornerRadius="8"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="MOST ACTIVE PLAYERS" FontSize="11" FontWeight="Bold"
+                                   Foreground="#F05A28" Margin="0,0,0,14"/>
 
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="34"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="PLAYER" FontSize="10" Foreground="#444444" FontWeight="Bold"/>
-                        <TextBlock Grid.Column="1" Text="GP" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="PTS" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="3" Text="PPG" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    </Grid>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="34"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="PLAYER" FontSize="10" Foreground="#444444" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="GP" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="PTS" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="PPG" FontSize="10" Foreground="#444444" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </Grid>
 
-                    <Rectangle Height="1" Fill="#222222" Margin="0,0,0,8"/>
+                        <Rectangle Height="1" Fill="#222222" Margin="0,0,0,8"/>
 
-                    <ItemsControl x:Name="MostActivePlayersList">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,0,0,9">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="30"/>
-                                        <ColumnDefinition Width="30"/>
-                                        <ColumnDefinition Width="34"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <TextBlock Text="{Binding SeasonRank}"
-                                                   FontSize="10" Foreground="#F05A28"
-                                                   FontWeight="Bold" Margin="0,0,5,0"
-                                                   VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding PlayerName}"
-                                                   FontSize="12" Foreground="White"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="{Binding GamesPlayed}"
-                                               FontSize="12" Foreground="#888888" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding TotalPoints}"
-                                               FontSize="12" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding PointsPerGame}"
-                                               FontSize="12" Foreground="#F05A28" HorizontalAlignment="Center"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
+                        <ItemsControl x:Name="MostActivePlayersList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,9">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="34"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <TextBlock Text="{Binding SeasonRank}"
+                                                       FontSize="10" Foreground="#F05A28"
+                                                       FontWeight="Bold" Margin="0,0,5,0"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding PlayerName}"
+                                                       FontSize="12" Foreground="White"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding GamesPlayed}"
+                                                   FontSize="12" Foreground="#888888" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TotalPoints}"
+                                                   FontSize="12" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding PointsPerGame}"
+                                                   FontSize="12" Foreground="#F05A28" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
 
-        </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
