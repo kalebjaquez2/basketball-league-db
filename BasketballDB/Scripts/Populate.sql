@@ -305,11 +305,10 @@ CROSS APPLY (
 
 -- 3PT chain (capped at fgTaken)
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % (fg.fgTaken / 3 + 1) AS tpTaken
-) tpTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
-           tpTakenCalc.tpTaken AS tpTaken
+    SELECT 
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) 
+        % (CASE WHEN tpTakenCalc.tpTaken < fg.fgMade THEN tpTakenCalc.tpTaken + 1 ELSE fg.fgMade + 1 END) AS tpMade,
+        tpTakenCalc.tpTaken AS tpTaken
 ) tp
 
 
@@ -359,11 +358,10 @@ CROSS APPLY (
 
 -- 3PT chain (capped at fgTaken)
 CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % (fg.fgTaken / 3 + 1) AS tpTaken
-) tpTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
-           tpTakenCalc.tpTaken AS tpTaken
+    SELECT 
+        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) 
+        % (CASE WHEN tpTakenCalc.tpTaken < fg.fgMade THEN tpTakenCalc.tpTaken + 1 ELSE fg.fgMade + 1 END) AS tpMade,
+        tpTakenCalc.tpTaken AS tpTaken
 ) tp
 
 /****************************
