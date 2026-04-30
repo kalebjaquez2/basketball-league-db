@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using Backend.Models;
 using Backend.Repositories;
 using DataAccess;
@@ -24,15 +23,13 @@ namespace Frontend
             _connectionString = connectionString;
             _seasonId = team.SeasonID;
             PageTitle.Text = $"{_team.TeamName.ToUpper()} SCHEDULE";
-            LoadGames();
             if (!Session.IsAdmin)
                 AddGameButton.Visibility = Visibility.Collapsed;
-        }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            LoadGames();
+            IsVisibleChanged += (s, e) =>
+            {
+                if ((bool)e.NewValue) LoadGames();
+            };
         }
 
         private void LoadGames()
