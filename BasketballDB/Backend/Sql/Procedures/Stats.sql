@@ -7,12 +7,12 @@ SELECT
     P.FirstName + N' ' + P.LastName AS PlayerName,
     P.TeamID,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+    SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3 
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS PointsPerGame,
     RANK() OVER(
         ORDER BY COUNT(PGS.GameID) DESC,
-        AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+        AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3 
             AS DECIMAL(10,2))) DESC
     ) AS SeasonRank
 FROM Basketball.Players P
@@ -32,12 +32,12 @@ SELECT
     P.PlayerID,
     P.FirstName + N' ' + P.LastName AS PlayerName,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+    SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3 
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePointsPerGame,
     RANK() OVER(
         PARTITION BY P.TeamID
-        ORDER BY SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) DESC
+        ORDER BY SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) DESC
     ) AS TeamRank
 FROM Basketball.Players P
     INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
@@ -90,7 +90,7 @@ SELECT
     G.Date AS GameDate,
     HT.TeamName AS HomeTeam,
     AT.TeamName AS AwayTeam,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3 
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3 
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePoints,
     CAST(AVG(CAST(PGS.Rebounds AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageRebounds,
     CAST(AVG(CAST(PGS.Assists AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageAssists,

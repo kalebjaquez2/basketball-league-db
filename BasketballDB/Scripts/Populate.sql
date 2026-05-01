@@ -360,6 +360,7 @@ INSERT INTO Basketball.PlayerGameStats
     (PlayerID, GameID, TeamID,
      PlayingTime, Turnovers, Rebounds, Assists,
      FieldGoalsMade, FieldGoalsTaken,
+     TwoPointersMade, TwoPointersTaken,
      ThreePointersMade, ThreePointersTaken,
      PersonalFouls)
 SELECT
@@ -372,6 +373,8 @@ SELECT
     ps.Assists,
     ps.TwoPointersMade  + ps.ThreePointersMade   AS FieldGoalsMade,
     ps.TwoPointersTaken + ps.ThreePointersTaken  AS FieldGoalsTaken,
+    ps.TwoPointersMade,
+    ps.TwoPointersTaken,
     ps.ThreePointersMade,
     ps.ThreePointersTaken,
     ps.PersonalFouls

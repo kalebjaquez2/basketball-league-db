@@ -251,6 +251,12 @@ BEGIN
         FieldGoalsTaken INT NOT NULL 
             CONSTRAINT DF_Basketball_PlayerGameStats_FieldGoalsTaken DEFAULT(0),
 
+        TwoPointersMade INT NOT NULL
+            CONSTRAINT DF_Basketball_PlayerGameStats_TwoPointersMade DEFAULT(0),
+
+        TwoPointersTaken INT NOT NULL
+            CONSTRAINT DF_Basketball_PlayerGameStats_TwoPointersTaken DEFAULT(0),
+
         ThreePointersMade INT NOT NULL 
             CONSTRAINT DF_Basketball_PlayerGameStats_ThreePointersMade DEFAULT(0),
 
@@ -278,6 +284,9 @@ BEGIN
         CONSTRAINT CK_PlayerGameStats_FieldGoals_Valid
             CHECK (FieldGoalsMade <= FieldGoalsTaken),
 
+        CONSTRAINT CK_PlayerGameStats_TwoPointers_Valid
+            CHECK (TwoPointersMade <= TwoPointersTaken),
+
         CONSTRAINT CK_PlayerGameStats_ThreePointers_Valid
             CHECK (ThreePointersMade <= ThreePointersTaken),
 
@@ -291,6 +300,8 @@ BEGIN
                 Blocks >= 0 AND
                 FieldGoalsMade >= 0 AND
                 FieldGoalsTaken >= 0 AND
+                TwoPointersMade >= 0 AND
+                TwoPointersTaken >= 0 AND
                 ThreePointersMade >= 0 AND
                 ThreePointersTaken >= 0 AND
                 PersonalFouls >= 0
@@ -626,7 +637,7 @@ CREATE OR ALTER PROCEDURE Basketball.CreatePlayer
     @JerseyNumber INT,
     @FirstName NVARCHAR(32),
     @LastName NVARCHAR(32),
-    @Position NVARCHAR(16), -- Added Parameter
+    @Position NVARCHAR(16),
     @Age INT = NULL,
     @Height NVARCHAR(16) = NULL,
     @Weight INT = NULL,
@@ -660,20 +671,19 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.UpdatePlayer
     @PlayerID INT,
     @JerseyNumber INT,
-    @Position NVARCHAR(16), -- Added Parameter
+    @Position NVARCHAR(16),
     @Age INT = NULL,
     @Height NVARCHAR(16) = NULL,
     @Weight INT = NULL
 AS
 UPDATE Basketball.Players
 SET JerseyNumber = @JerseyNumber,
-    [Position] = @Position, -- Updated Column
+    [Position] = @Position,
     Age = @Age,
     Height = @Height,
     Weight = @Weight
 WHERE PlayerID = @PlayerID;
 
--- Returning the updated record so C# can refresh the object
 SELECT PlayerID, TeamID, JerseyNumber, FirstName, LastName, [Position], Age, Height, Weight
 FROM Basketball.Players
 WHERE PlayerID = @PlayerID;
@@ -694,12 +704,24 @@ GO
 CREATE OR ALTER PROCEDURE Basketball.CreatePlayerGameStats
     @PlayerID INT, @GameID INT, @TeamID INT,
     @PlayingTime INT = 0, @Turnovers INT = 0,
-    @Rebounds INT = 0, @Assists INT = 0, @Steals INT = 0, @Blocks INT = 0
+    @Rebounds INT = 0, @Assists INT = 0, @Steals INT = 0, @Blocks INT = 0,
+    @FieldGoalsMade INT = 0, @FieldGoalsTaken INT = 0,
+    @TwoPointersMade INT = 0, @TwoPointersTaken INT = 0,
+    @ThreePointersMade INT = 0, @ThreePointersTaken INT = 0,
+    @PersonalFouls INT = 0
 AS
 INSERT Basketball.PlayerGameStats(PlayerID, GameID, TeamID, 
-    PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks)
+    PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks,
+    FieldGoalsMade, FieldGoalsTaken,
+    TwoPointersMade, TwoPointersTaken,
+    ThreePointersMade, ThreePointersTaken,
+    PersonalFouls)
 VALUES(@PlayerID, @GameID, @TeamID, 
-    @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks);
+    @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks,
+    @FieldGoalsMade, @FieldGoalsTaken,
+    @TwoPointersMade, @TwoPointersTaken,
+    @ThreePointersMade, @ThreePointersTaken,
+    @PersonalFouls);
 GO
 
 -- Fetch PlayerGameStats by PlayerID and GameID
@@ -720,6 +742,8 @@ BEGIN
         S.Blocks,
         S.FieldGoalsMade,
         S.FieldGoalsTaken,
+        S.TwoPointersMade,
+        S.TwoPointersTaken,
         S.ThreePointersMade,
         S.ThreePointersTaken,
         S.PersonalFouls, 
@@ -729,6 +753,7 @@ BEGIN
     WHERE S.PlayerID = @PlayerID AND S.GameID = @GameID;
 END;
 GO
+
 -- Get the player stats by game
 CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByGame
     @GameID INT
@@ -738,6 +763,7 @@ BEGIN
         S.PlayerID, S.GameID, S.TeamID, S.PlayingTime, 
         S.Rebounds, S.Assists, S.Steals, S.Blocks, S.Turnovers,
         S.FieldGoalsMade, S.FieldGoalsTaken, 
+        S.TwoPointersMade, S.TwoPointersTaken,
         S.ThreePointersMade, S.ThreePointersTaken,
         S.PersonalFouls,
         P.FirstName + ' ' + P.LastName AS PlayerName,
@@ -755,6 +781,10 @@ CREATE OR ALTER PROCEDURE Basketball.RetrieveStatsByPlayer
 AS
 SELECT S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
        S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
+       S.FieldGoalsMade, S.FieldGoalsTaken,
+       S.TwoPointersMade, S.TwoPointersTaken,
+       S.ThreePointersMade, S.ThreePointersTaken,
+       S.PersonalFouls,
        (P.FirstName + ' ' + P.LastName) AS PlayerName
 FROM Basketball.PlayerGameStats S
 INNER JOIN Basketball.Players P ON S.PlayerID = P.PlayerID
@@ -767,15 +797,22 @@ CREATE OR ALTER PROCEDURE Basketball.UpdatePlayerGameStats
     @PlayingTime INT, @Turnovers INT,
     @Rebounds INT, @Assists INT, @Steals INT, @Blocks INT,
     @FieldGoalsMade INT = 0, @FieldGoalsTaken INT = 0,
+    @TwoPointersMade INT = 0, @TwoPointersTaken INT = 0,
     @ThreePointersMade INT = 0, @ThreePointersTaken INT = 0,
     @PersonalFouls INT = 0
 AS
 IF NOT EXISTS (SELECT 1 FROM Basketball.PlayerGameStats WHERE PlayerID = @PlayerID AND GameID = @GameID)
     INSERT Basketball.PlayerGameStats (
         PlayerID, GameID, TeamID, PlayingTime, Turnovers, Rebounds, Assists, Steals, Blocks,
-        FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+        FieldGoalsMade, FieldGoalsTaken,
+        TwoPointersMade, TwoPointersTaken,
+        ThreePointersMade, ThreePointersTaken,
+        PersonalFouls)
     VALUES (@PlayerID, @GameID, @TeamID, @PlayingTime, @Turnovers, @Rebounds, @Assists, @Steals, @Blocks,
-        @FieldGoalsMade, @FieldGoalsTaken, @ThreePointersMade, @ThreePointersTaken, @PersonalFouls)
+        @FieldGoalsMade, @FieldGoalsTaken,
+        @TwoPointersMade, @TwoPointersTaken,
+        @ThreePointersMade, @ThreePointersTaken,
+        @PersonalFouls)
 ELSE
     UPDATE Basketball.PlayerGameStats
     SET
@@ -787,6 +824,8 @@ ELSE
         Blocks = @Blocks,
         FieldGoalsMade = @FieldGoalsMade,
         FieldGoalsTaken = @FieldGoalsTaken,
+        TwoPointersMade = @TwoPointersMade,
+        TwoPointersTaken = @TwoPointersTaken,
         ThreePointersMade = @ThreePointersMade,
         ThreePointersTaken = @ThreePointersTaken,
         PersonalFouls = @PersonalFouls
@@ -796,6 +835,7 @@ SELECT
     S.PlayerID, S.GameID, S.TeamID, S.PlayingTime,
     S.Turnovers, S.Rebounds, S.Assists, S.Steals, S.Blocks,
     S.FieldGoalsMade, S.FieldGoalsTaken,
+    S.TwoPointersMade, S.TwoPointersTaken,
     S.ThreePointersMade, S.ThreePointersTaken,
     S.PersonalFouls,
     P.FirstName + ' ' + P.LastName AS PlayerName
@@ -897,12 +937,12 @@ SELECT
     P.FirstName + N' ' + P.LastName AS PlayerName,
     P.TeamID,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+    SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS PointsPerGame,
     RANK() OVER(
         ORDER BY COUNT(PGS.GameID) DESC,
-        AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+        AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3
             AS DECIMAL(10,2))) DESC
     ) AS SeasonRank
 FROM Basketball.Players P
@@ -921,12 +961,12 @@ SELECT
     P.PlayerID,
     P.FirstName + N' ' + P.LastName AS PlayerName,
     COUNT(PGS.GameID) AS GamesPlayed,
-    SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+    SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) AS TotalPoints,
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePointsPerGame,
     RANK() OVER(
         PARTITION BY P.TeamID
-        ORDER BY SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3) DESC
+        ORDER BY SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3) DESC
     ) AS TeamRank
 FROM Basketball.Players P
     INNER JOIN Basketball.Teams T ON T.TeamID = P.TeamID
@@ -977,7 +1017,7 @@ SELECT
     G.Date AS GameDate,
     HT.TeamName AS HomeTeam,
     AT.TeamName AS AwayTeam,
-    CAST(AVG(CAST(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3
+    CAST(AVG(CAST(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3
         AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AveragePoints,
     CAST(AVG(CAST(PGS.Rebounds AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageRebounds,
     CAST(AVG(CAST(PGS.Assists AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AverageAssists,
