@@ -9,6 +9,8 @@ A .NET 8.0 WPF desktop application for managing a recreational basketball league
 ## Team Members
 
 - Kaleb Jaquez
+- Brett Stockwell
+- Christian Rottinghaus
 
 ---
 
