@@ -252,134 +252,151 @@ GO
 
 /****************************
  * Basketball.PlayerGameStats
- * One row per player per game
- * Each player (1-80) plays in multiple games
- * GameID matches actual games their team played
+ * One row per player per game. Each player has a fixed stat profile
+ * that is applied to every game their team plays.
+ *
+ * NOTE: Make sure TwoPointersMade and TwoPointersTaken columns exist
+ * in your Setup.sql. If not, uncomment the ALTER TABLE block below.
+ *
+ * FieldGoalsMade  = TwoPointersMade  + ThreePointersMade
+ * FieldGoalsTaken = TwoPointersTaken + ThreePointersTaken
  ****************************/
 
-INSERT INTO Basketball.PlayerGameStats
-(PlayerID, GameID, TeamID, PlayingTime, Turnovers, Rebounds, Assists,
- FieldGoalsMade, FieldGoalsTaken, ThreePointersMade, ThreePointersTaken, PersonalFouls)
+-- ALTER TABLE Basketball.PlayerGameStats
+-- ADD TwoPointersMade  INT NULL,
+--     TwoPointersTaken INT NULL;
+-- GO
 
--- =========================
--- HOME TEAM
--- =========================
+;WITH PlayerStats AS (
+    SELECT *
+    FROM (VALUES
+        -- PlayerID, Min, TO, Reb, Ast, 2PM, 2PA, 3PM, 3PA, Fouls
+        ( 1, 32, 3, 5, 6, 6, 12, 2, 5, 2),
+        ( 2, 30, 2, 4, 8, 5, 10, 3, 7, 3),
+        ( 3, 28, 2, 9, 2, 7, 13, 0, 1, 4),
+        ( 4, 25, 1, 6, 4, 4,  9, 1, 3, 2),
+        ( 5, 18, 2, 3, 2, 3,  7, 1, 4, 3),
+        ( 6, 34, 4, 7, 7, 8, 15, 2, 5, 1),
+        ( 7, 27, 2, 8, 2, 5, 11, 0, 2, 4),
+        ( 8, 29, 3, 4, 5, 6, 12, 3, 6, 2),
+        ( 9, 20, 1, 3, 3, 3,  8, 2, 5, 2),
+        (10, 14, 1, 2, 1, 2,  5, 1, 3, 1),
+        (11, 33, 3, 6, 7, 7, 13, 3, 7, 2),
+        (12, 26, 2, 5, 4, 5, 10, 2, 5, 3),
+        (13, 28, 2, 8, 3, 6, 12, 1, 2, 4),
+        (14, 22, 1, 4, 5, 4,  9, 2, 4, 2),
+        (15, 16, 2, 2, 2, 2,  6, 1, 3, 2),
+        (16, 31, 3, 5, 6, 6, 12, 3, 6, 2),
+        (17, 25, 2, 7, 3, 5, 10, 1, 3, 3),
+        (18, 27, 3, 4, 5, 6, 11, 2, 5, 2),
+        (19, 19, 1, 3, 2, 3,  7, 2, 4, 2),
+        (20, 12, 1, 1, 1, 1,  4, 0, 2, 1),
+        (21, 35, 4, 6, 8, 8, 14, 2, 4, 1),
+        (22, 29, 2, 5, 5, 5, 10, 3, 7, 2),
+        (23, 27, 3, 9, 2, 7, 13, 0, 1, 4),
+        (24, 23, 1, 5, 4, 4,  9, 1, 3, 2),
+        (25, 17, 2, 3, 2, 2,  6, 2, 5, 3),
+        (26, 32, 3, 4, 6, 6, 11, 3, 6, 2),
+        (27, 26, 2, 7, 3, 5, 10, 1, 3, 3),
+        (28, 28, 3, 5, 5, 6, 12, 2, 4, 2),
+        (29, 21, 1, 4, 3, 3,  8, 2, 5, 2),
+        (30, 15, 1, 2, 2, 2,  5, 1, 3, 1),
+        (31, 33, 3, 5, 7, 7, 13, 2, 5, 2),
+        (32, 30, 2, 4, 6, 5, 11, 3, 7, 3),
+        (33, 27, 2, 9, 2, 7, 12, 0, 2, 4),
+        (34, 24, 1, 5, 4, 4,  9, 2, 4, 2),
+        (35, 18, 2, 3, 2, 3,  7, 1, 3, 3),
+        (36, 34, 3, 6, 7, 8, 14, 2, 5, 1),
+        (37, 27, 2, 8, 3, 5, 11, 1, 2, 4),
+        (38, 29, 3, 4, 5, 6, 12, 3, 6, 2),
+        (39, 20, 1, 3, 3, 3,  8, 2, 5, 2),
+        (40, 14, 1, 2, 1, 2,  5, 1, 3, 1),
+        (41, 31, 3, 6, 6, 7, 13, 2, 5, 2),
+        (42, 26, 2, 5, 5, 5, 10, 2, 5, 3),
+        (43, 28, 2, 8, 2, 6, 12, 1, 2, 4),
+        (44, 22, 1, 4, 4, 4,  9, 1, 3, 2),
+        (45, 16, 2, 2, 2, 2,  6, 1, 3, 2),
+        (46, 32, 3, 5, 6, 6, 12, 3, 6, 2),
+        (47, 25, 2, 7, 3, 5, 10, 1, 3, 3),
+        (48, 27, 3, 4, 5, 6, 11, 2, 5, 2),
+        (49, 19, 1, 3, 2, 3,  7, 2, 4, 2),
+        (50, 12, 1, 1, 1, 1,  4, 0, 2, 1),
+        (51, 35, 4, 7, 8, 9, 15, 2, 5, 1),
+        (52, 29, 2, 5, 5, 5, 10, 3, 7, 2),
+        (53, 27, 3, 9, 2, 7, 13, 0, 1, 4),
+        (54, 23, 1, 5, 4, 4,  9, 1, 3, 2),
+        (55, 17, 2, 3, 2, 2,  6, 2, 5, 3),
+        (56, 32, 3, 4, 6, 6, 11, 3, 6, 2),
+        (57, 26, 2, 7, 3, 5, 10, 1, 3, 3),
+        (58, 28, 3, 5, 5, 6, 12, 2, 4, 2),
+        (59, 21, 1, 4, 3, 3,  8, 2, 5, 2),
+        (60, 15, 1, 2, 2, 2,  5, 1, 3, 1),
+        (61, 33, 3, 5, 7, 7, 13, 2, 5, 2),
+        (62, 30, 2, 4, 6, 5, 11, 3, 7, 3),
+        (63, 27, 2, 9, 2, 7, 12, 0, 2, 4),
+        (64, 24, 1, 5, 4, 4,  9, 2, 4, 2),
+        (65, 18, 2, 3, 2, 3,  7, 1, 3, 3),
+        (66, 34, 3, 6, 7, 8, 14, 2, 5, 1),
+        (67, 27, 2, 8, 3, 5, 11, 1, 2, 4),
+        (68, 29, 3, 4, 5, 6, 12, 3, 6, 2),
+        (69, 20, 1, 3, 3, 3,  8, 2, 5, 2),
+        (70, 14, 1, 2, 1, 2,  5, 1, 3, 1),
+        (71, 31, 3, 6, 6, 7, 13, 2, 5, 2),
+        (72, 26, 2, 5, 5, 5, 10, 2, 5, 3),
+        (73, 28, 2, 8, 2, 6, 12, 1, 2, 4),
+        (74, 22, 1, 4, 4, 4,  9, 1, 3, 2),
+        (75, 16, 2, 2, 2, 2,  6, 1, 3, 2),
+        (76, 32, 3, 5, 6, 6, 12, 3, 6, 2),
+        (77, 25, 2, 7, 3, 5, 10, 1, 3, 3),
+        (78, 27, 3, 4, 5, 6, 11, 2, 5, 2),
+        (79, 19, 1, 3, 2, 3,  7, 2, 4, 2),
+        (80, 12, 1, 1, 1, 1,  4, 0, 2, 1)
+    ) AS s (PlayerID, PlayingTime, Turnovers, Rebounds, Assists,
+            TwoPointersMade, TwoPointersTaken,
+            ThreePointersMade, ThreePointersTaken,
+            PersonalFouls)
+)
+INSERT INTO Basketball.PlayerGameStats
+    (PlayerID, GameID, TeamID,
+     PlayingTime, Turnovers, Rebounds, Assists,
+     FieldGoalsMade, FieldGoalsTaken,
+     ThreePointersMade, ThreePointersTaken,
+     PersonalFouls)
 SELECT
     p.PlayerID,
     g.GameID,
     p.TeamID,
-
-    stats.playingTime,
-    stats.turnovers,
-    stats.rebounds,
-    stats.assists,
-
-    fg.fgMade,
-    fg.fgTaken,
-    tp.tpMade,
-    tp.tpTaken,
-
-    stats.fouls
-
-FROM Basketball.Games g
+    ps.PlayingTime,
+    ps.Turnovers,
+    ps.Rebounds,
+    ps.Assists,
+    ps.TwoPointersMade  + ps.ThreePointersMade   AS FieldGoalsMade,
+    ps.TwoPointersTaken + ps.ThreePointersTaken  AS FieldGoalsTaken,
+    ps.ThreePointersMade,
+    ps.ThreePointersTaken,
+    ps.PersonalFouls
+FROM Basketball.Games  g
 JOIN Basketball.Players p
     ON p.TeamID = g.HomeTeamID
-
-CROSS APPLY (
-    SELECT
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 7919 + CAST(g.GameID AS BIGINT) * 6271 + 1)) % 30 + 5 AS playingTime,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 3571 + CAST(g.GameID AS BIGINT) * 4969 + 2)) % 6        AS turnovers,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 2311 + CAST(g.GameID AS BIGINT) * 8221 + 3)) % 10       AS rebounds,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5039 + CAST(g.GameID AS BIGINT) * 1723 + 4)) % 8        AS assists,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 9001 + CAST(g.GameID AS BIGINT) * 3329 + 5)) % 5        AS fouls
-) stats
-
--- FG chain (deterministic)
-CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 1009 + CAST(g.GameID AS BIGINT) * 2003 + 6)) % 18) + 5 AS fgTaken
-) fgTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5003 + CAST(g.GameID AS BIGINT) * 7001 + 7)) % (fgTakenCalc.fgTaken + 1) AS fgMade,
-           fgTakenCalc.fgTaken AS fgTaken
-) fg
-
--- 3PT chain (deterministic)
-CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
-) tpTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
-           tpTakenCalc.tpTaken AS tpTaken
-) tp
-
-
-UNION ALL
-
--- =========================
--- AWAY TEAM
--- =========================
-SELECT
-    p.PlayerID,
-    g.GameID,
-    p.TeamID,
-
-    stats.playingTime,
-    stats.turnovers,
-    stats.rebounds,
-    stats.assists,
-
-    fg.fgMade,
-    fg.fgTaken,
-    tp.tpMade,
-    tp.tpTaken,
-
-    stats.fouls
-
-FROM Basketball.Games g
-JOIN Basketball.Players p
-    ON p.TeamID = g.AwayTeamID
-
-CROSS APPLY (
-    SELECT
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 7919 + CAST(g.GameID AS BIGINT) * 6271 + 1)) % 30 + 5 AS playingTime,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 3571 + CAST(g.GameID AS BIGINT) * 4969 + 2)) % 6        AS turnovers,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 2311 + CAST(g.GameID AS BIGINT) * 8221 + 3)) % 10       AS rebounds,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5039 + CAST(g.GameID AS BIGINT) * 1723 + 4)) % 8        AS assists,
-        ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 9001 + CAST(g.GameID AS BIGINT) * 3329 + 5)) % 5        AS fouls
-) stats
-
--- FG chain (deterministic)
-CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 1009 + CAST(g.GameID AS BIGINT) * 2003 + 6)) % 18) + 5 AS fgTaken
-) fgTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 5003 + CAST(g.GameID AS BIGINT) * 7001 + 7)) % (fgTakenCalc.fgTaken + 1) AS fgMade,
-           fgTakenCalc.fgTaken AS fgTaken
-) fg
-
--- 3PT chain (deterministic)
-CROSS APPLY (
-    SELECT (ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 4007 + CAST(g.GameID AS BIGINT) * 6011 + 8)) % 10) + 1 AS tpTaken
-) tpTakenCalc
-CROSS APPLY (
-    SELECT ABS(CHECKSUM(CAST(p.PlayerID AS BIGINT) * 8009 + CAST(g.GameID AS BIGINT) * 3001 + 9)) % (tpTakenCalc.tpTaken + 1) AS tpMade,
-           tpTakenCalc.tpTaken AS tpTaken
-) tp;
+    OR p.TeamID = g.AwayTeamID
+JOIN PlayerStats ps
+    ON ps.PlayerID = p.PlayerID;
+GO
 
 /****************************
  * Fix game scores to match actual player point totals
- * Points = FieldGoalsMade * 2 + ThreePointersMade * 3
+ * Score = TwoPointersMade * 2 + ThreePointersMade * 3
  ****************************/
 UPDATE Basketball.Games
 SET
     HomeTeamScore = (
-        SELECT ISNULL(SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3), 0)
+        SELECT ISNULL(SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3), 0)
         FROM Basketball.PlayerGameStats PGS
         WHERE PGS.GameID = Basketball.Games.GameID
           AND PGS.TeamID = Basketball.Games.HomeTeamID
     ),
     AwayTeamScore = (
-        SELECT ISNULL(SUM(PGS.FieldGoalsMade * 2 + PGS.ThreePointersMade * 3), 0)
+        SELECT ISNULL(SUM(PGS.TwoPointersMade * 2 + PGS.ThreePointersMade * 3), 0)
         FROM Basketball.PlayerGameStats PGS
         WHERE PGS.GameID = Basketball.Games.GameID
           AND PGS.TeamID = Basketball.Games.AwayTeamID
@@ -400,4 +417,3 @@ GO
 PRINT 'Populate.sql complete.';
 PRINT 'Totals: 4 Locations, 2 Leagues, 4 Seasons, 16 Teams, 52 Games, 80 Players, 520 PlayerGameStats rows (5 players x 2 teams x 52 games).';
 GO
-

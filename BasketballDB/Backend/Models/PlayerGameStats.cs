@@ -12,7 +12,7 @@ namespace Backend.Models
         public int GameID { get; set; }
         public int TeamID { get; set; }
         public string? PlayerName { get; set; }
-        public int Points => (FieldGoalsMade * 2) + (ThreePointersMade * 3);
+        public int Points => (FieldGoalsMade * 2) + ThreePointersMade;
         public int PlayingTime { get; set; }
         public int Turnovers { get; set; }
         public int Rebounds { get; set; }
