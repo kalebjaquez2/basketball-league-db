@@ -25,7 +25,7 @@
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="RowHeight" Value="40"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
@@ -162,7 +162,7 @@
         <!-- Home + Away Box Scores -->
         <ScrollViewer Grid.Row="1"
                       Grid.Column="0"
-                      VerticalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Visible"
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
 
@@ -209,7 +209,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="FG" Width="100">
+                        <DataGridTemplateColumn Header="2PT" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -341,7 +341,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="FG" Width="100">
+                        <DataGridTemplateColumn Header="2PT" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
